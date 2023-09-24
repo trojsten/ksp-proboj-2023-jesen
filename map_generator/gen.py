@@ -5,10 +5,11 @@ import numpy as np
 from PIL import Image, ImageDraw
 from matplotlib.colors import ListedColormap
 from collections import deque
+import sys
 
 
-map_x, map_y = 200, 200
-player_count = 10
+map_x, map_y = int(sys.argv[1]), int(sys.argv[1])
+player_count = int(sys.argv[3])
 harbor_count = player_count * 2
 base_range = 5
 
@@ -87,6 +88,7 @@ def fill_pixels(image, possible_coordinates, count, color, distance):
             draw = ImageDraw.Draw(image)
             i, j = base_coordinate
             draw.point((i, j, i, j), fill=mark_color)
+    return len(chosen_pixels)
 
 
 def apply_colormap(data, colormap):
@@ -110,10 +112,10 @@ def is_land(colored_map, x, y):
 
 
 width, height = map_x, map_y  # Adjust the dimensions as needed
-scale = 50.0  # Adjust the scale for Perlin noise (smaller scale for more islands)
+scale = 40.0  # Adjust the scale for Perlin noise (smaller scale for more islands)
 octaves = 2
-persistence = 0.5
-lacunarity = 2.0
+persistence = 0.6
+lacunarity = 2.5
 seed = np.random.randint(0, 100)
 
 world_map, island_centers = generate_perlin_noise(
@@ -132,9 +134,19 @@ image = Image.fromarray(colored_map, mode="RGBA")
 # Find and mark harbor coordinates as red dots
 possible_coordinates = find_harbor_coordinates(colored_map)
 
-fill_pixels(image, possible_coordinates, harbor_count, (255, 0, 0, 255), 3)
-fill_pixels(image, possible_coordinates, player_count, (255, 255, 255, 255), base_range)
+print(
+    "Generated",
+    fill_pixels(image, possible_coordinates, harbor_count, (255, 0, 0, 255), 3),
+    "harbor pixels",
+)
+print(
+    "Generated",
+    fill_pixels(
+        image, possible_coordinates, player_count, (255, 255, 255, 255), base_range
+    ),
+    "base pixels",
+)
 
 # Display the image
-image.show()
-image.save("world_map.png")
+# image.show()
+image.save(sys.argv[4])
