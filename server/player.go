@@ -14,6 +14,7 @@ func NewPlayer(game *Game, idx int, name string) Player {
 		Index: idx,
 		Name:  name,
 		game:  game,
+		Gold:  NEW_PLAYER_GOLD,
 	}
 }
 

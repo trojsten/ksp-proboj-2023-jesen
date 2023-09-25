@@ -105,9 +105,15 @@ class Harbor:
     def read_harbors(cls, state_harbors: dict) -> List["Harbor"]:
         harbors = []
         for h in state_harbors:
-            harbors.append(Harbor(**h))
+            harbor = Harbor(h["x"], h["y"], Resources(h["production"]), Resources(h["storage"]), h["visible"])
+            harbors.append(harbor)
         return harbors
 
+    def __str__(self):
+        return f"Harbor({self.x} {self.y})"
+
+    def __repr__(self):
+        return "" if self.visible else "invisible" + f"Harbor({self.x} {self.y})"
 
 class TileEnum(enum.Enum):
     TILE_WATER = 0
@@ -121,6 +127,12 @@ class Tile:
     type: TileEnum
     index: int
 
+    def __str__(self):
+        return f"Tile({self.type.name}, player:{self.index})"
+
+    @classmethod
+    def read_tile(cls, tile):
+        return Tile(TileEnum(tile["type"]), tile["index"])
 
 @dataclass
 class Map:
@@ -130,7 +142,15 @@ class Map:
 
     @classmethod
     def read_map(cls, state_map) -> "Map":
-        return Map(**state_map)
+        tiles = []
+        for line in state_map["tiles"]:
+            tiles.append([])
+            for cell in line:
+                tiles[-1].append(Tile.read_tile(cell))
+        return Map(state_map["width"], state_map["height"], tiles)
+
+    def __str__(self):
+        return f"map {self.width}x{self.height}\n" + '\n'.join(','.join(str(tile) for tile in line) for line in self.tiles)
 
 
 class Player:
@@ -143,6 +163,9 @@ class Player:
     def __init__(self, index: int, gold: int):
         self.index: int = index
         self.gold: int = gold
+
+    def __str__(self):
+        return f"Player({self.index})"
 
 
 class ProbojPlayer:

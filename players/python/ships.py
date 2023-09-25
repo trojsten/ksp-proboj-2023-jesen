@@ -18,9 +18,9 @@ class ResourceEnum(enum.Enum):
 
 class Resources:
 
-    def __init__(self, resources):
+    def __init__(self, resources: dict[str: int]):
         assert len(resources) == len(ResourceEnum)
-        self.resources = resources[:]
+        self.resources = list(resources.values())
 
     @staticmethod
     def read_stat_levels():
@@ -38,6 +38,9 @@ class Resources:
 
     def __getitem__(self, key: ResourceEnum):
         return self.resources[key.value]
+
+    def __str__(self):
+        return str(self.resources)
 
 
 class ShipClass(enum.Enum):

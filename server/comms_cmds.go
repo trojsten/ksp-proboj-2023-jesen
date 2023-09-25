@@ -100,17 +100,7 @@ func loot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 			Pineapple: ship.Resources.Pineapple + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Pineapple)),
 			Gold:      ship.Resources.Gold + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Gold)),
 		}
-		wreckShip.Resources = Resources{
-			Wood:      0,
-			Stone:     0,
-			Iron:      0,
-			Gem:       0,
-			Wool:      0,
-			Hide:      0,
-			Wheat:     0,
-			Pineapple: 0,
-			Gold:      0,
-		}
+		wreckShip.Resources = Resources{}
 	}
 
 	return nil
@@ -149,11 +139,11 @@ func buy(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	}
 
 	if shipTypeId < 0 || shipTypeId >= len(ships) {
-		return fmt.Errorf("sscanf of ShipTypeId out of range: %d", shipTypeId)
+		return fmt.Errorf("ShipTypeId out of range: %d", shipTypeId)
 	}
 
 	if p.Gold < ships[shipTypeId].Stats().Price {
-		return fmt.Errorf("try to buy ship %d and dont have enough gold", shipTypeId)
+		return fmt.Errorf("try to buy ship %d and dont have enough gold (price: %d, have %d)", shipTypeId, ships[shipTypeId].Stats().Price, p.Gold)
 	}
 	p.Gold -= ships[shipTypeId].Stats().Price
 	commandedShips[shipTypeId] = true
@@ -185,7 +175,7 @@ func store(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	base := p.Base()
 
 	if base != nil {
-		for i, _ := range p.Ships() {
+		for i := range p.Ships() {
 			if p.Ships()[i].X == base.X && p.Ships()[i].Y == base.Y {
 				ship, err := p.Ship(g, p.Ships()[i].Id)
 				if err != nil {
