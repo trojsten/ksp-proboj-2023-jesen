@@ -1,9 +1,18 @@
 package main
 
-import "github.com/trojsten/ksp-proboj/client"
+import (
+	"fmt"
+	"github.com/trojsten/ksp-proboj/client"
+	"math/rand"
+	"time"
+)
 
 func main() {
 	runner := client.NewRunner()
+	runner.Log(fmt.Sprintf("started"))
+	seed := time.Now().UnixMilli()
+	rand.Seed(seed)
+	runner.Log(fmt.Sprintf("seed %d", seed))
 	players, config := runner.ReadConfig()
 
 	game := Game{runner: runner}

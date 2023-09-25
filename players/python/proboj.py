@@ -1,5 +1,5 @@
+import json
 import sys
-from typing import List
 
 from ships import *
 
@@ -83,6 +83,23 @@ class StoreTurn(Turn):
         print(f"STORE {self.amount}")
 
 
+@dataclass
+class Harbor:
+    x: int
+    y: int
+    production: Resources
+    storage: Resources
+    visible: bool
+
+    @classmethod
+    def read_harbors(cls, state_harbors: dict) -> List["Harbor"]:
+        harbors = []
+        for h in state_harbors:
+            harbors.append(Harbor(**(h["harbor"])))
+            harbors[-1].visible = h["visible"]
+        return harbors
+
+
 class TileEnum(enum.Enum):
     TILE_WATER = 0
     TILE_GROUND = 1
@@ -93,7 +110,7 @@ class TileEnum(enum.Enum):
 @dataclass
 class Tile:
     type: TileEnum
-    PlayerIndex: int
+    index: int
 
 
 @dataclass
@@ -103,63 +120,38 @@ class Map:
     tiles: List[List[Tile]]
 
     @classmethod
-    def read_map(cls) -> "Map":
-        return Map(0, 0, [])
+    def read_map(cls, state_map) -> "Map":
+        return Map(**state_map)
 
 
 class Player:
     """
-    Trieda, ktorá reprezentuje bežného hráča v hre.
-    * idx - jeho idčko
-    * ...
+    Trieda, ktorá reprezentuje Teba v hre.
+    * idx - tvoje idčko
+    * gold - koľko peňazí máš
     """
 
-    def __init__(self):
-        self.id: int = 0
-
-    @classmethod
-    def read_player(cls) -> "Player":
-        # TODO
-        player = Player()
-        return player
-
-    def __eq__(self, other):
-        return self.id == other.id
-
-    def __hash__(self):
-        return self.id
-
-
-class MyPlayer(Player):
-    """
-    Trieda, ktorá reprezentuje Tvojho hráča v hre.
-    * ...
-    """
-
-    def __init__(self):
-        super().__init__()
-        # TODO add
-
-    @classmethod
-    def read_myplayer(cls) -> "MyPlayer":
-        myplayer = MyPlayer()
-        return myplayer
+    def __init__(self, index: int, gold: int):
+        self.index: int = index
+        self.gold: int = gold
 
 
 class ProbojPlayer:
     """
     Táto trieda vykonáva ťahy v hre
-    * world - objekt, ktorý reprezentuje svet
+    * map - objekt, ktorý reprezentuje svet
+    * harbors - pole objektov, ktoré reprezentujú prístavy
+    * ships - pole objektov, ktoré reprezentujú lode
     * myself - Ty
     * _myself - Tvoje id
-    * players - `dictionary` hráčov `{id: Player}`
     """
 
     def __init__(self):
         self.map: Map
-        self.myself: MyPlayer
+        self.harbors: List[Harbor]
+        self.ships: List[Ship]
+        self.myself: Player
         self._myself: int
-        self.players: dict[int: Player]
 
     @staticmethod
     def log(*args):
@@ -168,26 +160,23 @@ class ProbojPlayer:
         """
         print(*args, file=sys.stderr)
 
-    def _read_myself(self):
+    def _read_myself(self, index: int, gold: int):
         """
         Načíta info o sebe
         """
-        self.myself = MyPlayer.read_myplayer()
-        self._myself = self.myself.id
-
-    def _read_players(self):
-        """
-        Načíta informácie o ostatných hráčoch
-        """
-        # TODO
+        self.myself = Player(index, gold)
+        self._myself = self.myself.index
 
     def _read_turn(self):
         """
         Načíta vstup pre hráča
         """
-        self.map = Map.read_map()
-        self._read_myself()
-        self._read_players()
+        state = json.loads(input())
+        self.log(state)
+        self.map = Map.read_map(state['map'])
+        self.harbors = Harbor.read_harbors(state['harbors'])
+        self.ships = Ship.read_ships(state['ships'])
+        self._read_myself(state["index"], state["gold"])
         input()
         input()
 

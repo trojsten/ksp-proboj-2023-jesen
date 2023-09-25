@@ -1,6 +1,7 @@
 import enum
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import List
 
 
 class ResourceEnum(enum.Enum):
@@ -138,11 +139,21 @@ class LooterScooter(ShipType):
 
 
 class Ship:
-    Id: int
-    PlayerIndex: int
-    Type: ShipType
-    X: int
-    Y: int
-    Health: int
-    IsWreck: bool
-    Resources: Resources
+    index: int
+    player_index: int
+    type: ShipType
+    x: int
+    y: int
+    health: int
+    is_wreck: bool
+    resources: Resources
+    stats: ShipStats
+    mine: bool
+
+    @classmethod
+    def read_ships(cls, state_ships: dict) -> List["Ship"]:
+        ships = []
+        for s in state_ships:
+            ships.append(Ship(**(s["ship"])))
+            ships[-1].mine = s["mine"]
+        return ships
