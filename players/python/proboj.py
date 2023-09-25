@@ -3,6 +3,16 @@ import sys
 
 from ships import *
 
+_input = input
+
+
+def lepsiInput():
+    d = _input()
+    print("citame:", d[:10], file=sys.stderr)
+    return d
+
+
+input = lepsiInput
 
 @dataclass
 class XY:
@@ -32,7 +42,7 @@ class MoveTurn(Turn):
         self.coords = coords
 
     def __str__(self):
-        print(f"MOVE {self.ship_id} {self.coords.x} {self.coords.y}")
+        return f"MOVE {self.ship_id} {self.coords.x} {self.coords.y}"
 
 
 class TradeTurn(Turn):
@@ -43,7 +53,7 @@ class TradeTurn(Turn):
         self.amount = amount
 
     def __str__(self):
-        print(f"TRADE {self.ship_id} {self.resource} {self.amount}")
+        return f"TRADE {self.ship_id} {self.resource} {self.amount}"
 
 
 class LootTurn(Turn):
@@ -52,7 +62,7 @@ class LootTurn(Turn):
         self.ship_id = ship_id
 
     def __str__(self):
-        print(f"LOOT {self.ship_id}")
+        return f"LOOT {self.ship_id}"
 
 
 class ShootTurn(Turn):
@@ -62,7 +72,7 @@ class ShootTurn(Turn):
         self.target = target
 
     def __str__(self):
-        print(f"SHOOT {self.ship_id} {self.target}")
+        return f"SHOOT {self.ship_id} {self.target}"
 
 
 class BuyTurn(Turn):
@@ -71,7 +81,7 @@ class BuyTurn(Turn):
         self.ship_id = ship_id
 
     def __str__(self):
-        print(f"BUY {self.ship_id}")
+        return f"BUY {self.ship_id}"
 
 
 class StoreTurn(Turn):
@@ -80,7 +90,7 @@ class StoreTurn(Turn):
         self.amount = amount
 
     def __str__(self):
-        print(f"STORE {self.amount}")
+        return f"STORE {self.amount}"
 
 
 @dataclass
@@ -95,8 +105,7 @@ class Harbor:
     def read_harbors(cls, state_harbors: dict) -> List["Harbor"]:
         harbors = []
         for h in state_harbors:
-            harbors.append(Harbor(**(h["harbor"])))
-            harbors[-1].visible = h["visible"]
+            harbors.append(Harbor(**h))
         return harbors
 
 
@@ -172,13 +181,12 @@ class ProbojPlayer:
         Načíta vstup pre hráča
         """
         state = json.loads(input())
-        self.log(state)
         self.map = Map.read_map(state['map'])
         self.harbors = Harbor.read_harbors(state['harbors'])
         self.ships = Ship.read_ships(state['ships'])
         self._read_myself(state["index"], state["gold"])
         input()
-        input()
+        # input()
 
     def _send_turns(self, turns: List[Turn]):
         """

@@ -6,7 +6,8 @@ import (
 )
 
 func (g *Game) Run() error {
-	for round := 0; true; round++ {
+	for round := 0; round < 10; round++ {
+		g.runner.Log(fmt.Sprintf("started round %d", round))
 		playerOrder := rand.Perm(len(g.Players))
 		for _, i := range playerOrder {
 			player := &g.Players[i]

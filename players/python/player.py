@@ -3,7 +3,7 @@ from proboj import *
 
 class MyPlayer(ProbojPlayer):
     def make_turn(self):
-        return []
+        return [] # [MoveTurn(0, XY(0, 0))]
 
 if __name__ == "__main__":
     p = MyPlayer()
