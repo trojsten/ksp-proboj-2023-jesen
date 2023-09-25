@@ -36,26 +36,31 @@ func handlePlayer(g *Game, p *Player) error {
 		if len(parts) == 2 {
 			args = parts[1]
 		}
-
+		var err error
 		switch command {
 		case MOVE:
-			move(g, p, args, commandedShips)
+			err = move(g, p, args, commandedShips)
 			break
 		case TRADE:
-			trade(g, p, args, commandedShips)
+			err = trade(g, p, args, commandedShips)
 			break
 		case LOOT:
-			loot(g, p, args, commandedShips)
+			err = loot(g, p, args, commandedShips)
 			break
 		case SHOOT:
-			shoot(g, p, args, commandedShips)
+			err = shoot(g, p, args, commandedShips)
 			break
 		case BUY:
-			buy(g, p, args, commandedShips)
+			err = buy(g, p, args, commandedShips)
 			break
 		case STORE:
-			store(g, p, args, commandedShips)
+			err = store(g, p, args, commandedShips)
 			break
+		default:
+			err = fmt.Errorf("unkown command")
+		}
+		if err != nil {
+			g.runner.Log(fmt.Sprintf("(%s) player send NOT valid command (%q): %s", p.Name, line, err))
 		}
 	}
 	return nil

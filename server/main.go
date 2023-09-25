@@ -31,4 +31,7 @@ func main() {
 		runner.Log(err.Error())
 		panic(err)
 	}
+	runner.Log("Game successfully ended")
+	// TODO scores
+	runner.End()
 }
