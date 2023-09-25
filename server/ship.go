@@ -27,11 +27,11 @@ type ShipStats struct {
 	MaxHealth    int       `json:"max_health"`
 	Damage       int       `json:"damage"`
 	Range        int       `json:"range"`
-	MaxMoveRange int       `json:"move_cooldown"`
+	MaxMoveRange int       `json:"max_move_range"`
 	MaxCargo     int       `json:"max_cargo"`
 	Price        int       `json:"price"`
-	Yield        float32   `json:"yield"`
-	Class        ShipClass `json:"class"`
+	Yield        float32   `json:"yield_frac"`
+	Class        ShipClass `json:"ship_class"`
 }
 
 type Resources struct {

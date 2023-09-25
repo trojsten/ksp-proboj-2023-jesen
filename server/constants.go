@@ -7,7 +7,7 @@ const BASE_DAMAGE_RADIUS = 4
 const BASE_DAMAGE = 1
 
 const SHIP_SEE_RANGE = 1.5
-const NEW_PLAYER_GOLD = 10
+const NEW_PLAYER_GOLD = 40
 
 const MOVE = "MOVE"
 const TRADE = "TRADE"

@@ -19,6 +19,7 @@ func main() {
 	for i, player := range players {
 		game.Players = append(game.Players, NewPlayer(&game, i, player))
 	}
+	game.Ships = map[int]*Ship{}
 
 	err := game.LoadMap(config)
 	if err != nil {

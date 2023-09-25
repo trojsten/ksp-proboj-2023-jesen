@@ -22,26 +22,14 @@ class Resources:
         assert len(resources) == len(ResourceEnum)
         self.resources = list(resources.values())
 
-    @staticmethod
-    def read_stat_levels():
-        resources = []
-        for idx, lvl in enumerate(map(int, input().split())):
-            resources.append(lvl)
-        return Resources(resources)
-
-    @staticmethod
-    def read_stat_values():
-        resources = []
-        for idx, lvl in enumerate(map(float, input().split())):
-            resources.append(lvl)
-        return Resources(resources)
-
     def __getitem__(self, key: ResourceEnum):
         return self.resources[key.value]
 
     def __str__(self):
         return str(self.resources)
-
+    
+    def __repr__(self):
+        return str(self.resources)
 
 class ShipClass(enum.Enum):
     SHIP_TRADE = 0
@@ -51,100 +39,30 @@ class ShipClass(enum.Enum):
 
 @dataclass
 class ShipStats:
-    MaxHealth: int
-    Damage: int
-    Range: int
-    MaxMoveRange: int
-    MaxCargo: int
-    Price: int
-    Yield: float
-    Class: ShipClass
+    max_health: int
+    damage: int
+    range: int
+    max_move_range: int
+    max_cargo: int
+    price: int
+    yield_frac: float
+    ship_class: ShipClass
 
 
-@dataclass
-class ShipType(ABC):
-
-    @staticmethod
-    def get_all_ships():
-        return [
-            Cln(),
-            Plt(),
-            SmallMerchantShip(),
-            LargeMerchantShip(),
-            SomalianPirateShip(),
-            BlackPearl(),
-            SniperAttackShip(),
-            LooterScooter(),
-        ]
-
-    @staticmethod
-    def get_ship(ship_id: int):
-        for ship in ShipType.get_all_ships():
-            if ship.ship_id == ship_id:
-                return ship
-        raise RuntimeError(f"Ship w/ {ship_id} not found")
-
-    @abstractmethod
-    def ship_id(self) -> int:
-        pass
-
-    @abstractmethod
-    def stats_values(self) -> ShipStats:
-        pass
-
+class ShipsEnum(enum.Enum):
+    Cln = 0
+    Plt = 1
+    SmallMerchantShip = 2
+    LargeMerchantShip = 3
+    SomalianPirateShip = 4
+    BlackPearl = 5
+    SniperAttackShip = 6
+    LooterScooter = 7
 
 @dataclass
-class Cln(ShipType):
-    ship_id = 0
-    stats_values = ShipStats(0, 0, 0, 0, 0, 0, 0, ShipClass.SHIP_TRADE)
-
-
-@dataclass
-class Plt(ShipType):
-    ship_id = 1
-    stats_values = ShipStats(0, 0, 0, 0, 0, 0, 0, ShipClass.SHIP_TRADE)
-
-
-@dataclass
-class SmallMerchantShip(ShipType):
-    ship_id = 2
-    stats_values = ShipStats(0, 0, 0, 0, 0, 0, 0, ShipClass.SHIP_TRADE)
-
-
-@dataclass
-class LargeMerchantShip(ShipType):
-    ship_id = 3
-    stats_values = ShipStats(0, 0, 0, 0, 0, 0, 0, ShipClass.SHIP_TRADE)
-
-
-@dataclass
-class SomalianPirateShip(ShipType):
-    ship_id = 4
-    stats_values = ShipStats(0, 0, 0, 0, 0, 0, 0, ShipClass.SHIP_ATTACK)
-
-
-@dataclass
-class BlackPearl(ShipType):
-    ship_id = 5
-    stats_values = ShipStats(0, 0, 0, 0, 0, 0, 0, ShipClass.SHIP_ATTACK)
-
-
-@dataclass
-class SniperAttackShip(ShipType):
-    ship_id = 6
-    stats_values = ShipStats(0, 0, 0, 0, 0, 0, 0, ShipClass.SHIP_ATTACK)
-
-
-@dataclass
-class LooterScooter(ShipType):
-    ship_id = 7
-    stats_values = ShipStats(0, 0, 0, 0, 0, 0, 0, ShipClass.SHIP_LOOT)
-
-
 class Ship:
     index: int
     player_index: int
-    type: ShipType
     x: int
     y: int
     health: int
@@ -157,6 +75,8 @@ class Ship:
     def read_ships(cls, state_ships: dict) -> List["Ship"]:
         ships = []
         for s in state_ships:
-            ships.append(Ship(**(s["ship"])))
-            ships[-1].mine = s["mine"]
+            ships.append(Ship(**s))
+            ships[-1].resources = Resources(s["resources"])
+            ships[-1].stats = ShipStats(**s["stats"])
+            ships[-1].stats.ship_class = ShipClass(s["stats"]["ship_class"])
         return ships

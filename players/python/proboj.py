@@ -77,11 +77,11 @@ class ShootTurn(Turn):
 
 class BuyTurn(Turn):
 
-    def __init__(self, ship_id: int):
-        self.ship_id = ship_id
+    def __init__(self, ship: ShipsEnum):
+        self.ship = ship
 
     def __str__(self):
-        return f"BUY {self.ship_id}"
+        return f"BUY {self.ship.value}"
 
 
 class StoreTurn(Turn):
@@ -95,8 +95,15 @@ class StoreTurn(Turn):
 
 @dataclass
 class Harbor:
-    x: int
-    y: int
+    """
+    Trieda, ktorá reprezentuje prístav v hre.
+    * XY - poloha prístavu
+    * production - koľko surovín prístav vygeneruje každý ťah.
+    * storage - koľko surovín má prístav na sklade.
+    * visible - či vidíš informácie o tomto prístave. Ak `False`, sú tam 0, alebo náhodné čísla.
+    """
+
+    coords: XY
     production: Resources
     storage: Resources
     visible: bool
@@ -105,15 +112,15 @@ class Harbor:
     def read_harbors(cls, state_harbors: dict) -> List["Harbor"]:
         harbors = []
         for h in state_harbors:
-            harbor = Harbor(h["x"], h["y"], Resources(h["production"]), Resources(h["storage"]), h["visible"])
+            harbor = Harbor(XY(h["x"], h["y"]), Resources(h["production"]), Resources(h["storage"]), h["visible"])
             harbors.append(harbor)
         return harbors
 
     def __str__(self):
-        return f"Harbor({self.x} {self.y})"
+        return f"Harbor({self.coords})"
 
     def __repr__(self):
-        return "" if self.visible else "invisible" + f"Harbor({self.x} {self.y})"
+        return "" if self.visible else "invisible" + f"Harbor({self.coords})"
 
 class TileEnum(enum.Enum):
     TILE_WATER = 0
@@ -124,11 +131,17 @@ class TileEnum(enum.Enum):
 
 @dataclass
 class Tile:
+    """
+    Trieda, ktorá reprezentuje mapu v hre.
+    * type - druh dlaždice. Jeden z `TileEnum`
+    * index - id hráča, ktorému patrí, inak -1
+    """
+
     type: TileEnum
     index: int
 
     def __str__(self):
-        return f"Tile({self.type.name}, player:{self.index})"
+        return f"(Tile({self.type.name}, player:{self.index})" if self.index != -1 else self.type.name[5:]
 
     @classmethod
     def read_tile(cls, tile):
@@ -136,6 +149,13 @@ class Tile:
 
 @dataclass
 class Map:
+    """
+    Trieda, ktorá reprezentuje mapu v hre.
+    * width - šírka mapy
+    * height - výška mapy
+    * tiles - 2D pole `Tiles`, teda samotná mapa
+    """
+
     width: int
     height: int
     tiles: List[List[Tile]]
@@ -190,7 +210,7 @@ class ProbojPlayer:
         """
         Vypíše dáta do logu. Syntax je rovnaká ako print().
         """
-        print(*args, file=sys.stderr)
+        print(*args, file=sys.stderr, flush=True)
 
     def _read_myself(self, index: int, gold: int):
         """
