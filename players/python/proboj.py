@@ -31,6 +31,9 @@ class MoveTurn(Turn):
     def __str__(self):
         return f"MOVE {self.ship_id} {self.coords.x} {self.coords.y}"
 
+    def __repr__(self):
+        return f"MOVE {self.ship_id} {self.coords.x} {self.coords.y}"
+
 
 class TradeTurn(Turn):
 
@@ -42,6 +45,9 @@ class TradeTurn(Turn):
     def __str__(self):
         return f"TRADE {self.ship_id} {self.resource} {self.amount}"
 
+    def __repr__(self):
+        return f"TRADE {self.ship_id} {self.resource} {self.amount}"
+
 
 class LootTurn(Turn):
 
@@ -49,6 +55,9 @@ class LootTurn(Turn):
         self.ship_id = ship_id
 
     def __str__(self):
+        return f"LOOT {self.ship_id}"
+
+    def __repr__(self):
         return f"LOOT {self.ship_id}"
 
 
@@ -61,6 +70,9 @@ class ShootTurn(Turn):
     def __str__(self):
         return f"SHOOT {self.ship_id} {self.target}"
 
+    def __repr__(self):
+        return f"SHOOT {self.ship_id} {self.target}"
+
 
 class BuyTurn(Turn):
 
@@ -70,6 +82,9 @@ class BuyTurn(Turn):
     def __str__(self):
         return f"BUY {self.ship.value}"
 
+    def __repr__(self):
+        return f"BUY {self.ship.value}"
+
 
 class StoreTurn(Turn):
 
@@ -77,6 +92,9 @@ class StoreTurn(Turn):
         self.amount = amount
 
     def __str__(self):
+        return f"STORE {self.amount}"
+
+    def __repr__(self):
         return f"STORE {self.amount}"
 
 
