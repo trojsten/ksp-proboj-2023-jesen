@@ -31,6 +31,7 @@ func handlePlayer(g *Game, p *Player) error {
 	var commandedShips = map[int]bool{}
 	for _, line := range strings.Split(resp, "\n") {
 		parts := strings.SplitN(line, " ", 2)
+		g.runner.Log(fmt.Sprintf("(%s) %s", p.Name, line))
 		command := parts[0]
 		args := ""
 		if len(parts) == 2 {

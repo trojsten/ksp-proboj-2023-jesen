@@ -124,9 +124,16 @@ func shoot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 
 	enemyShip := g.Ships[targetShipId]
 
-	if dist(ship.X, ship.Y, enemyShip.X, enemyShip.Y) <= ship.Type.Stats().Range {
+	if enemyShip == nil {
+		return fmt.Errorf("enemy ship with id %d not exist", targetShipId)
+	}
+
+	distance := dist(ship.X, ship.Y, enemyShip.X, enemyShip.Y)
+	if distance <= ship.Type.Stats().Range {
 		enemyShip.Health -= g.Ships[shipId].Type.Stats().Damage
 		g.Ships[targetShipId] = enemyShip
+	} else {
+		return fmt.Errorf("enemy ship with out of range (distance: %d, range: %d)", distance, ship.Type.Stats().Range)
 	}
 	return nil
 }
@@ -146,7 +153,6 @@ func buy(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		return fmt.Errorf("try to buy ship %d and dont have enough gold (price: %d, have %d)", shipTypeId, ships[shipTypeId].Stats().Price, p.Gold)
 	}
 	p.Gold -= ships[shipTypeId].Stats().Price
-	commandedShips[shipTypeId] = true
 	base := p.Base()
 	if base != nil {
 		g.Ships[g.MaxShipId] = &Ship{
