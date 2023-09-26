@@ -1,5 +1,8 @@
 #!/bin/env python3
-from proboj import * 
+import random
+
+from proboj import *
+
 
 class MyPlayer(ProbojPlayer):
     def make_turn(self):
@@ -8,14 +11,16 @@ class MyPlayer(ProbojPlayer):
         self.log(self.myself, self.myself.gold)
         # self.log(self.map)
         # self.log(self.map.tiles[0][0])
-        return [
-            MoveTurn(0, XY(0, 0)),
-            # MoveTurn(0, XY(0, 0)),
-            # MoveTurn(0, XY(0, 0)),
+
+        moves = [
             BuyTurn(ShipsEnum.Cln),
-            None,
-            12,
         ]
+
+        for ship in self.ships:
+            moves.append(random.choice([MoveTurn(ship.index, coord) for coord in ship.coords.nbhs()]))
+
+        return moves
+
 
 if __name__ == "__main__":
     p = MyPlayer()

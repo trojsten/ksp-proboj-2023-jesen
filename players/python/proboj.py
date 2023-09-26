@@ -1,5 +1,6 @@
 import json
 import sys
+from abc import ABC, abstractmethod
 
 from ships import *
 
@@ -8,25 +9,11 @@ _input = input
 
 def lepsiInput():
     d = _input()
-    print("citame:", d[:10], file=sys.stderr)
+    # print("citame:", d[:10], file=sys.stderr)
     return d
 
 
 input = lepsiInput
-
-@dataclass
-class XY:
-    x: int
-    y: int
-
-    def dist(self, other: "XY"):
-        return abs(self.x - other.x) + abs(self.y - other.y)
-
-    def __hash__(self):
-        return hash((self.x, self.y))
-
-    def __str__(self):
-        return f"({self.x} {self.y})"
 
 
 class Turn(ABC):
@@ -122,6 +109,7 @@ class Harbor:
     def __repr__(self):
         return "" if self.visible else "invisible" + f"Harbor({self.coords})"
 
+
 class TileEnum(enum.Enum):
     TILE_WATER = 0
     TILE_GROUND = 1
@@ -147,6 +135,7 @@ class Tile:
     def read_tile(cls, tile):
         return Tile(TileEnum(tile["type"]), tile["index"])
 
+
 @dataclass
 class Map:
     """
@@ -170,7 +159,8 @@ class Map:
         return Map(state_map["width"], state_map["height"], tiles)
 
     def __str__(self):
-        return f"map {self.width}x{self.height}\n" + '\n'.join(','.join(str(tile) for tile in line) for line in self.tiles)
+        return f"map {self.width}x{self.height}\n" + '\n'.join(
+            ','.join(str(tile) for tile in line) for line in self.tiles)
 
 
 class Player:
