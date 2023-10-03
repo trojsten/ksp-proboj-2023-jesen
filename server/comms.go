@@ -61,7 +61,7 @@ func handlePlayer(g *Game, p *Player) error {
 			err = fmt.Errorf("unkown command")
 		}
 		if err != nil {
-			g.runner.Log(fmt.Sprintf("(%s) player send NOT valid command (%q): %s", p.Name, line, err))
+			g.runner.Log(fmt.Sprintf("(%s) player send INVALID command (%q): %s", p.Name, line, err))
 		}
 	}
 	return nil

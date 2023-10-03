@@ -32,7 +32,7 @@ class MoveTurn(Turn):
         return f"MOVE {self.ship_id} {self.coords.x} {self.coords.y}"
 
     def __repr__(self):
-        return f"MOVE {self.ship_id} {self.coords.x} {self.coords.y}"
+        return str(self)
 
 
 class TradeTurn(Turn):
@@ -46,7 +46,7 @@ class TradeTurn(Turn):
         return f"TRADE {self.ship_id} {self.resource} {self.amount}"
 
     def __repr__(self):
-        return f"TRADE {self.ship_id} {self.resource} {self.amount}"
+        return str(self)
 
 
 class LootTurn(Turn):
@@ -58,7 +58,7 @@ class LootTurn(Turn):
         return f"LOOT {self.ship_id}"
 
     def __repr__(self):
-        return f"LOOT {self.ship_id}"
+        return str(self)
 
 
 class ShootTurn(Turn):
@@ -71,7 +71,7 @@ class ShootTurn(Turn):
         return f"SHOOT {self.ship_id} {self.target}"
 
     def __repr__(self):
-        return f"SHOOT {self.ship_id} {self.target}"
+        return str(self)
 
 
 class BuyTurn(Turn):
@@ -83,7 +83,7 @@ class BuyTurn(Turn):
         return f"BUY {self.ship.value}"
 
     def __repr__(self):
-        return f"BUY {self.ship.value}"
+        return str(self)
 
 
 class StoreTurn(Turn):
@@ -95,7 +95,7 @@ class StoreTurn(Turn):
         return f"STORE {self.amount}"
 
     def __repr__(self):
-        return f"STORE {self.amount}"
+        return str(self)
 
 
 @dataclass
