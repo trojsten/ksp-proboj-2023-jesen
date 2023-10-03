@@ -10,12 +10,12 @@ import (
 )
 
 type Game struct {
-	Map       Map
-	Players   []Player
-	Ships     map[int]*Ship
+	Map       Map           `json:"map"`
+	Players   []Player      `json:"players"`
+	Ships     map[int]*Ship `json:"ships"`
 	MaxShipId int
-	Harbors   []Harbor
-	Bases     []Base
+	Harbors   []Harbor `json:"harbors"`
+	Bases     []Base   `json:"bases"`
 	runner    client.Runner
 }
 

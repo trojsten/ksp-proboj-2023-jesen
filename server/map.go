@@ -15,9 +15,9 @@ type Tile struct {
 }
 
 type Base struct {
-	X           int
-	Y           int
-	PlayerIndex int
+	X           int `json:"x"`
+	Y           int `json:"y"`
+	PlayerIndex int `json:"player"`
 }
 
 type Harbor struct {

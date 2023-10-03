@@ -3,9 +3,9 @@ package main
 import "fmt"
 
 type Player struct {
-	Index int
-	Name  string
-	Gold  int
+	Index int    `json:"index"`
+	Name  string `json:"name"`
+	Gold  int    `json:"gold"`
 	game  *Game
 }
 
