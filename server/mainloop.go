@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/trojsten/ksp-proboj/client"
 	"math/rand"
 )
 
@@ -61,6 +63,14 @@ func (g *Game) Run() error {
 			}
 		}
 
+		data, err := json.Marshal(g)
+		if err != nil {
+			g.runner.Log(fmt.Sprintf("could not marshal JSON for observer: %s", err.Error()))
+		}
+		resp := g.runner.ToObserver(string(data))
+		if resp != client.Ok {
+			g.runner.Log(fmt.Sprintf("error while sending data to observer"))
+		}
 	}
 	return nil
 }
