@@ -15,11 +15,15 @@ type State struct {
 	Map     Map           `json:"map"`
 	Harbors []StateHarbor `json:"harbors"`
 	Ships   []StateShip   `json:"ships"`
+	Gold    int           `json:"gold"`
+	Index   int           `json:"index"`
 }
 
 func StateForPlayer(g *Game, p *Player) (state State) {
 	state.Map = g.Map
-
+	state.Gold = p.Gold
+	state.Index = p.Index
+	state.Ships = []StateShip{}
 	for _, harbor := range g.Harbors {
 		var stateHarbor StateHarbor
 

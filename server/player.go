@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Player struct {
 	Index int
 	Name  string
@@ -12,6 +14,7 @@ func NewPlayer(game *Game, idx int, name string) Player {
 		Index: idx,
 		Name:  name,
 		game:  game,
+		Gold:  NEW_PLAYER_GOLD,
 	}
 }
 
@@ -23,6 +26,20 @@ func (p *Player) Ships() []*Ship {
 		}
 	}
 	return playersShips
+}
+
+func (p *Player) Ship(g *Game, shipId int) (*Ship, error) {
+	ship := g.Ships[shipId]
+	if ship == nil {
+		return nil, fmt.Errorf("ship %d doesn't exists", shipId)
+	}
+	if ship.PlayerIndex != p.Index {
+		return nil, fmt.Errorf("try to command ship %d which dont belong to him", shipId)
+	}
+	if g.Ships[shipId].IsWreck {
+		return nil, fmt.Errorf("ship %d is already wreck", shipId)
+	}
+	return ship, nil
 }
 
 func (p *Player) Base() *Base {
