@@ -50,11 +50,9 @@ func (g *Game) LoadMap(filename string) error {
 
 			if red == 0 && green == 0 && blue == 255 {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_WATER, Index: -1}
-			}
-			if red == 0 && green == 255 && blue == 0 {
+			} else if red == 0 && green == 128 && blue == 0 {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_GROUND, Index: -1}
-			}
-			if red == 255 && green == 0 && blue == 0 {
+			} else if red == 255 && green == 0 && blue == 0 {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_HARBOR, Index: -1}
 				prod := []int{0, 0, 0, 1, -1}
 				g.Harbors = append(g.Harbors, Harbor{
@@ -83,8 +81,7 @@ func (g *Game) LoadMap(filename string) error {
 						Gold:      0,
 					},
 				})
-			}
-			if red == 255 && green == 255 && blue == 255 {
+			} else if red == 255 && green == 255 && blue == 255 {
 				if playerIdx >= len(playersOrder) {
 					continue
 				}
@@ -96,6 +93,8 @@ func (g *Game) LoadMap(filename string) error {
 					PlayerIndex: playersOrder[playerIdx],
 				})
 				playerIdx++
+			} else {
+				g.runner.Log(fmt.Sprintf("unkown color in map: %d %d %d", red, green, blue))
 			}
 		}
 	}
