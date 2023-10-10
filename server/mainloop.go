@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/trojsten/ksp-proboj/client"
 	"math/rand"
+
+	"github.com/trojsten/ksp-proboj/client"
 )
 
 func (g *Game) Run() error {
-	for round := 0; round < 10; round++ {
+	for round := 0; round < 100; round++ {
 		g.runner.Log(fmt.Sprintf("started round %d", round))
 		playerOrder := rand.Perm(len(g.Players))
 		for _, i := range playerOrder {
@@ -67,7 +68,7 @@ func (g *Game) Run() error {
 		if err != nil {
 			g.runner.Log(fmt.Sprintf("could not marshal JSON for observer: %s", err.Error()))
 		}
-		resp := g.runner.ToObserver(string(data))
+		resp := g.runner.ToObserver(string(data) + "\n")
 		if resp != client.Ok {
 			g.runner.Log(fmt.Sprintf("error while sending data to observer"))
 		}
