@@ -10,6 +10,7 @@ export default class Playback {
     playInterval: number | null = null;
     ships: Record<number, ShipClass> = {};
     playButton: HTMLButtonElement;
+    static turn: Turn;
     constructor(private data: Turn[], private slider: HTMLInputElement) {
         document.getElementById('forward')!.addEventListener('click', () => {
             this.next();
@@ -69,6 +70,7 @@ export default class Playback {
 
     renderTurn() {
         const turn = this.data[this.currentTurn];
+        Playback.turn = turn;
         this.slider.value = this.currentTurn.toString();
         const updated = new Set<number>();
         for (const ids of Object.keys(turn.ships)) {

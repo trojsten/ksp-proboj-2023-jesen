@@ -10,20 +10,25 @@ export function createMap(mapLayer: Konva.Layer, map: GameMap) {
     const images = [water, ground, harbor, base].map(createImage);
     console.log(map);
     
+    const konvaImages = images.map((image) => {
+        const img = new Konva.Image({
+            image: image,
+            width: tileSize,
+            height: tileSize
+        });
+        img.cache();
+        return img;
+    });
+
     for (let i = 0; i < map.width; i++) {
         for (let j = 0; j < map.height; j++) {
             const tile = map.tiles[i][j];
-            const image = images[tile.type];
             const x = i * tileSize;
             const y = j * tileSize;
-            const konvaImage = new Konva.Image({
-                image: image,
+            const konvaImage = konvaImages[tile.type].clone({
                 x: x,
                 y: y,
-                width: tileSize,
-                height: tileSize
             });
-            // konvaImage.cache();
             mapLayer.add(konvaImage);
         }
     }    
