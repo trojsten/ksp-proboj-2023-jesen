@@ -6,6 +6,7 @@ import Playback from './playback';
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <div id="shipStats"></div>
+    <div id="mapCanvas" style="display:none;"></div>
     <div id="canvas"></div>
     <div class="bottomPanel">
       <input type="file" id="fileInput" />
