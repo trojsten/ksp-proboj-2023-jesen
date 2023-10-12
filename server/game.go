@@ -56,8 +56,8 @@ func (g *Game) LoadMap(filename string) error {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_HARBOR, Index: -1}
 				prod := []int{0, 0, 0, 1, -1}
 				g.Harbors = append(g.Harbors, Harbor{
-					X: y,
-					Y: x,
+					X: x,
+					Y: y,
 					Production: Resources{
 						Wood:      prod[rand.Intn(len(prod))] * rand.Intn(5),
 						Stone:     prod[rand.Intn(len(prod))] * rand.Intn(5),
