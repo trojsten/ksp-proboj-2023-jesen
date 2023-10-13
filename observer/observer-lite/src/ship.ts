@@ -44,7 +44,12 @@ export default class ShipClass {
             duration: 0.1,
             x: newX * 20 + 10,
             y: newY * 20 + 10,
+        }).play();
+
+        new Konva.Tween({
+            node: this.ship,
             rotation: Math.atan2(delta.y, delta.x) * 180 / Math.PI + 180,
+            duration: 0.2,
         }).play();
     }
 

@@ -1,25 +1,15 @@
 import Konva from "konva";
 import harbor from "./assets/Harbor.png";
-import water from "./assets/Water.png";
 import base from "./assets/Base.png";
-import ground from "./assets/Ground.png";
 import { GameMap } from "./observer";
 
 export function createMap(mapLayer: Konva.Layer, map: GameMap) {
     const tileSize = 20;
-    const images = [water, ground, harbor, base].map(createImage);
     
     const grp = new Konva.Group({
     });
 
-    const konvaImages = images.map((image) => {
-        const img = new Konva.Image({
-            image: image,
-            width: tileSize,
-            height: tileSize
-        });
-        img.cache();
-        return img;
+    const baseGrp = new Konva.Group({
     });
 
     for (let i = 0; i < map.width; i++) {
@@ -29,16 +19,17 @@ export function createMap(mapLayer: Konva.Layer, map: GameMap) {
             const y = j * tileSize;
             const img = new Image();
 
-            if (tile.type === 1) {
+            if (tile.type === 1 || tile.type === 3) {
                 img.src = "./mapImages/ground" + getRandomInt(1, 4) + ".png";
-            } else if (tile.type === 0) {
+            } else  {
                 const dirX = [1, 1, 0,-1,-1,-1, 0, 1 ];
                 const dirY = [0, 1, 1, 1, 0,-1,-1,-1 ];
                 const dirName = ["R", "BR", "B", "BL", "L", "TL", "T", "TR"];
 
                 const dirs = [];
                 for (let k = 0; k < dirName.length; k++) {
-                    if (tryGetTile(i + dirX[k], j + dirY[k], map) === 1) {
+                    const tile = tryGetTile(i + dirX[k], j + dirY[k], map)
+                    if (tile === 1 || tile === 3) {
                         dirs.push(dirName[k]);
                     }
                 }
@@ -68,12 +59,7 @@ export function createMap(mapLayer: Konva.Layer, map: GameMap) {
                     
                     img.src = "./mapImages/water-" + dirs.join(',') + ".png";
                 }
-            } else if (tile.type === 2) {
-                img.src = harbor;
-            } else if (tile.type === 3) {
-                img.src = base;
             }
-
             const konvaImage = new Konva.Image({
                 x: x,
                 y: y,
@@ -83,35 +69,49 @@ export function createMap(mapLayer: Konva.Layer, map: GameMap) {
                 listening: false
             });
             grp.add(konvaImage);
+
+            if(tile.type > 1){
+                const img = new Image();
+                if (tile.type === 2) {
+                    img.src = harbor;
+                } else if (tile.type === 3) {
+                    img.src = base;
+                }
+
+                const konvaImage = new Konva.Image({
+                    x: x,
+                    y: y,
+                    image: img,
+                    width: tileSize,
+                    height: tileSize,
+                    listening: false
+                });
+                baseGrp.add(konvaImage);
+            }
         }
     }
 
     mapLayer.add(grp);
+    mapLayer.add(baseGrp);
 
-    grp.toDataURL({
-        x: 0,
-        y: 0,
-        width: map.width * tileSize,
-        height: map.height * tileSize,
-        callback: (dataUrl) => {
-            const image = new Image();
-            image.src = dataUrl;
+    // grp.toDataURL({
+    //     x: 0,
+    //     y: 0,
+    //     width: map.width * tileSize,
+    //     height: map.height * tileSize,
+    //     callback: (dataUrl) => {
+    //         const image = new Image();
+    //         image.src = dataUrl;
             
-            mapLayer.add(new Konva.Image({
-                image: image,
-                width: map.width * tileSize,
-                height: map.height * tileSize,
-            }))
-            mapLayer.draw();
-        }
-    })
+    //         mapLayer.add(new Konva.Image({
+    //             image: image,
+    //             width: map.width * tileSize,
+    //             height: map.height * tileSize,
+    //         }))
+    //         mapLayer.draw();
+    //     }
+    // })
     
-}
-
-function createImage(src: string) {
-    const image = new Image();
-    image.src = src;
-    return image;
 }
 
 function tryGetTile(i: number,j: number, map: GameMap) {

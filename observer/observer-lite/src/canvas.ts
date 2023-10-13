@@ -16,10 +16,10 @@ export function createCanvas(id: string, turns: Turn[]): Konva.Stage {
     imageSmoothingEnabled: false,
   })
   createMap(map, turns[0].map)
-  const scale = Math.min(window.innerHeight / (20*turns[0].map.height), window.innerWidth / (20*turns[0].map.width));
-  console.log(scale);
+  const minScale = Math.min(window.innerHeight / (20*turns[0].map.height), window.innerWidth / (20*turns[0].map.width));
+  console.log(minScale);
   
-  stage.scale({x: scale, y: scale})
+  stage.scale({x: minScale, y: minScale})
   stage.add(map)
   
   shipLayer = new Konva.Layer({
@@ -48,7 +48,7 @@ export function createCanvas(id: string, turns: Turn[]): Konva.Stage {
       direction = -direction;
     }
 
-    var newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    var newScale = clamp(direction > 0 ? oldScale * scaleBy : oldScale / scaleBy, minScale, 15);
 
     stage.scale({ x: newScale, y: newScale });
 
@@ -60,4 +60,8 @@ export function createCanvas(id: string, turns: Turn[]): Konva.Stage {
   });
 
   return stage;
+}
+
+function clamp(val: number, min: number, max: number) {
+  return Math.min(Math.max(val, min), max);
 }
