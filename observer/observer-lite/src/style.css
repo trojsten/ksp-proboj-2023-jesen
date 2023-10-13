@@ -81,3 +81,7 @@ body {
   width: 50%;
   margin:  0.5rem 0 ;
 }
+
+canvas {
+  image-rendering: pixelated;
+}

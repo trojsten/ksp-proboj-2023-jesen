@@ -12,7 +12,9 @@ export function createCanvas(id: string, turns: Turn[]): Konva.Stage {
     draggable: true,
     offsetX: -window.innerWidth / 2,
   })
-  const map = new Konva.Layer()
+  const map = new Konva.Layer({
+    imageSmoothingEnabled: false,
+  })
   createMap(map, turns[0].map)
   const scale = Math.min(window.innerHeight / (20*turns[0].map.height), window.innerWidth / (20*turns[0].map.width));
   console.log(scale);
@@ -20,7 +22,9 @@ export function createCanvas(id: string, turns: Turn[]): Konva.Stage {
   stage.scale({x: scale, y: scale})
   stage.add(map)
   
-  shipLayer = new Konva.Layer()
+  shipLayer = new Konva.Layer({
+    imageSmoothingEnabled: false,
+  })
   stage.add(shipLayer)
   const scaleBy = 1.1;
   stage.on('wheel', (e) => {
