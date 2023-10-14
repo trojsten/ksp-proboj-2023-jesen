@@ -15,6 +15,7 @@ export default class ShipClass {
             width: tileSize,
             height: tileSize,
             rotation: 0,
+            opacity: 0
         });
 
         konvaImage.add(new Konva.Image({
@@ -24,7 +25,7 @@ export default class ShipClass {
             width: tileSize,
             height: tileSize,
         }))
-        konvaImage.cache();
+        
         konvaImage.on('click', () => {
             ShipClass.ShowShipStats(this.data);
         })
@@ -39,18 +40,27 @@ export default class ShipClass {
         }
         this.data.x = newX;
         this.data.y = newY;
-        new Konva.Tween({
+        const tween = new Konva.Tween({
             node: this.ship,
             duration: 0.1,
             x: newX * 20 + 10,
             y: newY * 20 + 10,
-        }).play();
+        });
 
         new Konva.Tween({
             node: this.ship,
             rotation: Math.atan2(delta.y, delta.x) * 180 / Math.PI + 180,
             duration: 0.2,
         }).play();
+
+        const newTile = Playback.turn.map.tiles[newY][newX];
+        if(newTile.type == 2 || newTile.type == 3) {
+            tween._addAttr('opacity', 0);
+        } else {
+            tween._addAttr('opacity', 1);
+        }
+        
+        tween.play();
     }
 
     setWreck() {
@@ -66,7 +76,7 @@ export default class ShipClass {
         const stats = document.getElementById('shipStats')!;
         stats.innerHTML += `
             <div class="stats">
-                <button class="close">X</button>
+                <button class="close" id="closeBtn">X</button>
                 <h1>Ship ${ship.index} (${Playback.turn.players[ship.player_index].name})</h1>
                 <div class="resources">
                     <p>Gem: ${ship.resources.gem}</p>
@@ -81,7 +91,7 @@ export default class ShipClass {
                 </div>
             </div>
         `;
-        stats.getElementsByClassName('close')[0].addEventListener('click', () => {
+        document.getElementById('closeBtn')!.addEventListener('click', () => {
             stats.innerHTML = '';
         })
     }
