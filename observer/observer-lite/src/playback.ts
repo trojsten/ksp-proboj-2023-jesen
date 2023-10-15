@@ -1,5 +1,5 @@
 import { shipLayer } from "./canvas";
-import { Turn } from "./observer";
+import {GameMap, Turn} from "./observer";
 import ShipClass from "./ship";
 
 
@@ -11,6 +11,7 @@ export default class Playback {
     ships: Record<number, ShipClass> = {};
     playButton: HTMLButtonElement;
     static turn: Turn;
+    static map: GameMap;
     constructor(private data: Turn[], private slider: HTMLInputElement) {
         document.getElementById('forward')!.addEventListener('click', () => {
             this.next();
@@ -30,6 +31,7 @@ export default class Playback {
         slider.onchange = () => {
             this.seek(parseInt(slider.value));
         }
+        Playback.map = data[0].map;
     }
 
     seek(time: number) {

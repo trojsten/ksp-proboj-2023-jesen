@@ -53,7 +53,7 @@ export default class ShipClass {
             duration: 0.2,
         }).play();
 
-        const newTile = Playback.turn.map.tiles[newY][newX];
+        const newTile = Playback.map.tiles[newY][newX];
         if(newTile.type == 2 || newTile.type == 3) {
             tween._addAttr('opacity', 0);
         } else {

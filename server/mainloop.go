@@ -9,7 +9,7 @@ import (
 )
 
 func (g *Game) Run() error {
-	for round := 0; round < 100; round++ {
+	for round := 0; round < MAX_ROUNDS; round++ {
 		g.runner.Log(fmt.Sprintf("started round %d", round))
 		playerOrder := rand.Perm(len(g.Players))
 		for _, i := range playerOrder {
@@ -64,7 +64,19 @@ func (g *Game) Run() error {
 			}
 		}
 
-		data, err := json.Marshal(g)
+		var gameToMarshall = Game{
+			Map:       nil,
+			Players:   g.Players,
+			Ships:     g.Ships,
+			MaxShipId: g.MaxShipId,
+			Harbors:   g.Harbors,
+			Bases:     g.Bases,
+			runner:    g.runner,
+		}
+		if round == 0 {
+			gameToMarshall.Map = g.Map
+		}
+		data, err := json.Marshal(gameToMarshall)
 		if err != nil {
 			g.runner.Log(fmt.Sprintf("could not marshal JSON for observer: %s", err.Error()))
 		}

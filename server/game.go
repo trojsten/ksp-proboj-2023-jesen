@@ -10,7 +10,7 @@ import (
 )
 
 type Game struct {
-	Map       Map           `json:"map"`
+	Map       *Map          `json:"map"`
 	Players   []Player      `json:"players"`
 	Ships     map[int]*Ship `json:"ships"`
 	MaxShipId int
@@ -31,6 +31,7 @@ func (g *Game) LoadMap(filename string) error {
 		return err
 	}
 	size := im.Bounds().Size()
+	g.Map = &Map{}
 	g.Map.Width = size.X
 	g.Map.Height = size.Y
 
