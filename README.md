@@ -1,5 +1,11 @@
 # ksp-proboj-2023-jesen
 
+## Running info
+  - maps folder musi byt o jedno vyssie ako je folder repa
+  - na observer: `npm run build` a potom `npm run dev`
+  - build a move servera: `go build . && mv server ../srv`
+  - runner: `./runner config.json games.json `
+
 
 ## Pravidla
 Kazdy hrac ovlada flotilu lodi. Lode sa pohybuju po mape, kde je more(volno) a ostrovy(stena). Na ostrovoch su pristavy -- specialne more, kde moze byt viacero lodi naraz. Hrac ma zakladnu. Na zaciatku ma hrac zlatky a nejake resources (na spravenie lode). Kazdy pristav ma surovinu, ktoru vytvara a surovinu, ktoru spotrebuva a kapacitu na obe a rate vytvarania a spotreby. Existuje funkcia, ktora urci cenu suroviny podla naplnenosti skladu. 
