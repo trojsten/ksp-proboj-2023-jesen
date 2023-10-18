@@ -27,6 +27,7 @@ func (g *Game) Run() error {
 				markShipsAsWrecks(player)
 				continue
 			}
+			player.Score.updateCurrentGold(player.CurrentGold())
 		}
 
 		for _, harbor := range g.Harbors {

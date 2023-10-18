@@ -1,6 +1,8 @@
 package main
 
 type Score struct {
+	GoldEarned          int `json:"gold_earned"`
+	CurrentGold         int `json:"current_gold"`
 	Kills               int `json:"kills"`
 	SellsToHarbor       int `json:"sells_to_harbor"`
 	PurchasesFromHarbor int `json:"purchases_from_harbor"`
@@ -22,6 +24,17 @@ func (score Score) newPurchase() {
 	score.updateFinalScore()
 }
 
+func (score Score) newGoldEarned(amount int) {
+	score.GoldEarned += amount
+	score.updateFinalScore()
+}
+
+func (score Score) updateCurrentGold(amount int) {
+	score.CurrentGold = amount
+	score.updateFinalScore()
+}
+
 func (score Score) updateFinalScore() {
-	score.FinalScore = score.Kills + score.SellsToHarbor + score.PurchasesFromHarbor
+	// TODO real score formula
+	score.FinalScore = score.GoldEarned + score.CurrentGold + score.Kills + score.SellsToHarbor + score.PurchasesFromHarbor
 }

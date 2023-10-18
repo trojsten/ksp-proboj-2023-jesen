@@ -3,11 +3,12 @@ package main
 import "fmt"
 
 type Player struct {
-	Index int    `json:"index"`
-	Name  string `json:"name"`
-	Gold  int    `json:"gold"`
-	Score Score  `json:"score"`
-	game  *Game
+	Index      int    `json:"index"`
+	Name       string `json:"name"`
+	Gold       int    `json:"gold"`
+	Score      Score  `json:"score"`
+	Statistics Statistics
+	game       *Game
 }
 
 func NewPlayer(game *Game, idx int, name string) Player {
@@ -50,4 +51,12 @@ func (p *Player) Base() *Base {
 		}
 	}
 	return nil
+}
+
+func (p *Player) CurrentGold() int {
+	res := p.Gold
+	for _, ship := range p.Ships() {
+		res += ship.Resources.Gold
+	}
+	return res
 }
