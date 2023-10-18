@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/trojsten/ksp-proboj/client"
 	"strings"
+	"time"
 )
 
 func sendStateToPlayer(g *Game, p *Player) error {
@@ -14,24 +15,29 @@ func sendStateToPlayer(g *Game, p *Player) error {
 		return err
 	}
 
-	resp := g.runner.ToPlayer(p.Name, "", string(data))
+	resp := g.Runner.ToPlayer(p.Name, "", string(data))
 	if resp != client.Ok {
-		return fmt.Errorf("response from runner: %v", resp)
+		return fmt.Errorf("response from Runner: %v", resp)
 	}
 	return nil
 }
 
 func handlePlayer(g *Game, p *Player) error {
-	status, resp := g.runner.ReadPlayer(p.Name)
-
+	start := time.Now()
+	status, resp := g.Runner.ReadPlayer(p.Name)
+	end := time.Now()
 	if status != client.Ok {
-		return fmt.Errorf("(%s) response from runner: %v", p.Name, status)
+		return fmt.Errorf("(%s) response from Runner: %v", p.Name, status)
 	}
+
+	responseTime := end.Sub(start).Microseconds()
+	g.Runner.Log(fmt.Sprintf("(%s) player responded in %d us", p.Name, responseTime))
+	p.Statistics.addTimeOfResponse(responseTime)
 
 	var commandedShips = map[int]bool{}
 	for _, line := range strings.Split(resp, "\n") {
 		parts := strings.SplitN(line, " ", 2)
-		g.runner.Log(fmt.Sprintf("(%s) %s", p.Name, line))
+		g.Runner.Log(fmt.Sprintf("(%s) %s", p.Name, line))
 		command := parts[0]
 		args := ""
 		if len(parts) == 2 {
@@ -61,7 +67,7 @@ func handlePlayer(g *Game, p *Player) error {
 			err = fmt.Errorf("unkown command")
 		}
 		if err != nil {
-			g.runner.Log(fmt.Sprintf("(%s) player send INVALID command (%q): %s", p.Name, line, err))
+			g.Runner.Log(fmt.Sprintf("(%s) player send INVALID command (%q): %s", p.Name, line, err))
 		}
 	}
 	return nil

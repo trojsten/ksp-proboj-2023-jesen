@@ -17,6 +17,13 @@ func NewPlayer(game *Game, idx int, name string) Player {
 		Name:  name,
 		game:  game,
 		Gold:  NEW_PLAYER_GOLD,
+		Statistics: Statistics{
+			Kills:           map[int]int{},
+			Damage:          map[int]int{},
+			SellsByType:     map[int]int{},
+			PurchasesByType: map[int]int{},
+			TimeOfResponses: 0,
+		},
 	}
 }
 

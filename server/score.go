@@ -9,32 +9,32 @@ type Score struct {
 	FinalScore          int `json:"final_score"`
 }
 
-func (score Score) newKill() {
+func (score *Score) newKill() {
 	score.Kills += 1
 	score.updateFinalScore()
 }
 
-func (score Score) newSell() {
+func (score *Score) newSell() {
 	score.SellsToHarbor += 1
 	score.updateFinalScore()
 }
 
-func (score Score) newPurchase() {
+func (score *Score) newPurchase() {
 	score.PurchasesFromHarbor += 1
 	score.updateFinalScore()
 }
 
-func (score Score) newGoldEarned(amount int) {
+func (score *Score) newGoldEarned(amount int) {
 	score.GoldEarned += amount
 	score.updateFinalScore()
 }
 
-func (score Score) updateCurrentGold(amount int) {
+func (score *Score) updateCurrentGold(amount int) {
 	score.CurrentGold = amount
 	score.updateFinalScore()
 }
 
-func (score Score) updateFinalScore() {
+func (score *Score) updateFinalScore() {
 	// TODO real score formula
 	score.FinalScore = score.GoldEarned + score.CurrentGold + score.Kills + score.SellsToHarbor + score.PurchasesFromHarbor
 }

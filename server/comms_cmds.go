@@ -51,7 +51,7 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	commandedShips[shipId] = true
 	var resource = ship.Resources.Resource(ResourceType(resourceId))
 	if resource == nil {
-		g.runner.Log(fmt.Sprintf("player send commands to ship %d to trade resource %d, which is INVALID", shipId, resourceId))
+		g.Runner.Log(fmt.Sprintf("player send commands to ship %d to trade resource %d, which is INVALID", shipId, resourceId))
 		return nil
 	}
 
