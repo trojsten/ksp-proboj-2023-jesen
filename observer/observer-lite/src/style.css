@@ -1,0 +1,87 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.bottomPanel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+  padding: 0.25rem;
+}
+
+.slider {
+  position: relative;
+  width: 100%;
+  display: none;
+  background-color: #313131;
+}
+
+.stats {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin: 0.25rem;
+  background-color: #313131;
+  width: 18vw;
+  height: 30vh;
+  z-index: 30;
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+
+.stats > h1 {
+  text-align: center;
+}
+
+.stats .close {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  outline: none;
+  background-color: tomato;
+  border:none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.resources {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0.25rem;
+  height: 70%;
+}
+
+.resources p {
+  width: 50%;
+  margin:  0.5rem 0 ;
+}
+
+canvas {
+  image-rendering: pixelated;
+}

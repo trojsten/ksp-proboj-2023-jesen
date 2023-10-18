@@ -10,12 +10,12 @@ import (
 )
 
 type Game struct {
-	Map       Map
-	Players   []Player
-	Ships     map[int]*Ship
+	Map       *Map          `json:"map"`
+	Players   []Player      `json:"players"`
+	Ships     map[int]*Ship `json:"ships"`
 	MaxShipId int
-	Harbors   []Harbor
-	Bases     []Base
+	Harbors   []Harbor `json:"harbors"`
+	Bases     []Base   `json:"bases"`
 	runner    client.Runner
 }
 
@@ -31,6 +31,7 @@ func (g *Game) LoadMap(filename string) error {
 		return err
 	}
 	size := im.Bounds().Size()
+	g.Map = &Map{}
 	g.Map.Width = size.X
 	g.Map.Height = size.Y
 
@@ -50,16 +51,14 @@ func (g *Game) LoadMap(filename string) error {
 
 			if red == 0 && green == 0 && blue == 255 {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_WATER, Index: -1}
-			}
-			if red == 0 && green == 255 && blue == 0 {
+			} else if red == 0 && green == 128 && blue == 0 {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_GROUND, Index: -1}
-			}
-			if red == 255 && green == 0 && blue == 0 {
+			} else if red == 255 && green == 0 && blue == 0 {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_HARBOR, Index: -1}
 				prod := []int{0, 0, 0, 1, -1}
 				g.Harbors = append(g.Harbors, Harbor{
-					X: y,
-					Y: x,
+					X: x,
+					Y: y,
 					Production: Resources{
 						Wood:      prod[rand.Intn(len(prod))] * rand.Intn(5),
 						Stone:     prod[rand.Intn(len(prod))] * rand.Intn(5),
@@ -83,8 +82,7 @@ func (g *Game) LoadMap(filename string) error {
 						Gold:      0,
 					},
 				})
-			}
-			if red == 255 && green == 255 && blue == 255 {
+			} else if red == 255 && green == 255 && blue == 255 {
 				if playerIdx >= len(playersOrder) {
 					continue
 				}
@@ -96,6 +94,8 @@ func (g *Game) LoadMap(filename string) error {
 					PlayerIndex: playersOrder[playerIdx],
 				})
 				playerIdx++
+			} else {
+				g.runner.Log(fmt.Sprintf("unkown color in map: %d %d %d", red, green, blue))
 			}
 		}
 	}

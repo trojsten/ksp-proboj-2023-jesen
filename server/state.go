@@ -20,7 +20,7 @@ type State struct {
 }
 
 func StateForPlayer(g *Game, p *Player) (state State) {
-	state.Map = g.Map
+	state.Map = *g.Map
 	state.Gold = p.Gold
 	state.Index = p.Index
 	state.Ships = []StateShip{}
