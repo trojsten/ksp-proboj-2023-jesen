@@ -17,8 +17,15 @@ func move(g *Game, p *Player, args string, commandedShips map[int]bool) error {
 		return err
 	}
 	commandedShips[shipId] = true
+
 	if !IsReachableBfs(g, ship.X, ship.Y, x, y, ship.Type.Stats().MaxMoveRange) {
 		return fmt.Errorf("wanted to move ship %d out of its range", shipId)
+	}
+	if g.Map.Tiles[y][x].Type == TILE_WATER {
+		targetShip := ShipAt(g, x, y)
+		if targetShip != nil && !targetShip.IsWreck {
+			return fmt.Errorf("there is non wreck ship on coordinates where ship %d wanted to move", shipId)
+		}
 	}
 
 	ship.X = min(max(x, 0), g.Map.Width-1)

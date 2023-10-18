@@ -62,12 +62,7 @@ func Adjacent(x int, y int, g *Game) []XY {
 			continue
 		}
 
-		if m.Tiles[v.Y][v.X].Type != TILE_WATER {
-			continue
-		}
-
-		ship := ShipAt(g, v.X, v.Y)
-		if ship != nil && !ship.IsWreck {
+		if m.Tiles[v.Y][v.X].Type == TILE_GROUND {
 			continue
 		}
 
