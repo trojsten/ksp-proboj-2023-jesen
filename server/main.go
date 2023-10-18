@@ -33,6 +33,12 @@ func main() {
 		panic(err)
 	}
 	runner.Log("Game successfully ended")
-	// TODO scores
+
+	scores := map[string]int{}
+	for _, player := range game.Players {
+		scores[player.Name] = player.Score.FinalScore
+	}
+	runner.Scores(scores)
+
 	runner.End()
 }

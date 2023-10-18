@@ -69,11 +69,13 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) -= amount
 		g.Ships[shipId].Resources.Gold -= amount // TODO vzorec
+		p.Score.newPurchase()
 	} else { // we take give to harbor
 		amount = min(-1*amount, *g.Ships[shipId].Resources.Resource(ResourceType(resourceId)))
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) -= amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) += amount
 		g.Ships[shipId].Resources.Gold += amount // TODO vzorec
+		p.Score.newSell()
 	}
 	return nil
 }
@@ -138,6 +140,9 @@ func shoot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	distance := dist(ship.X, ship.Y, enemyShip.X, enemyShip.Y)
 	if distance <= ship.Type.Stats().Range {
 		enemyShip.Health -= g.Ships[shipId].Type.Stats().Damage
+		if enemyShip.Health < 0 {
+			p.Score.newKill()
+		}
 		g.Ships[targetShipId] = enemyShip
 	} else {
 		return fmt.Errorf("enemy ship with out of range (distance: %d, range: %d)", distance, ship.Type.Stats().Range)

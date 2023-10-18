@@ -6,6 +6,7 @@ type Player struct {
 	Index int    `json:"index"`
 	Name  string `json:"name"`
 	Gold  int    `json:"gold"`
+	Score Score  `json:"score"`
 	game  *Game
 }
 
