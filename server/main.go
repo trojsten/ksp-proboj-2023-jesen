@@ -15,7 +15,7 @@ func main() {
 	runner.Log(fmt.Sprintf("seed %d", seed))
 	players, config := runner.ReadConfig()
 
-	game := Game{runner: runner}
+	game := Game{Runner: runner}
 	for i, player := range players {
 		game.Players = append(game.Players, NewPlayer(&game, i, player))
 	}
@@ -33,6 +33,17 @@ func main() {
 		panic(err)
 	}
 	runner.Log("Game successfully ended")
-	// TODO scores
+
+	scores := map[string]int{}
+	for _, player := range game.Players {
+		scores[player.Name] = player.Score.FinalScore
+	}
+	runner.Scores(scores)
+
+	err = game.SaveStats()
+	if err != nil {
+		game.Runner.Log(fmt.Sprintf("error while saving stats: %s", err.Error()))
+	}
+
 	runner.End()
 }

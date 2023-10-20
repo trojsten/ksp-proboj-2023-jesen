@@ -10,23 +10,24 @@ import (
 
 func (g *Game) Run() error {
 	for round := 0; round < MAX_ROUNDS; round++ {
-		g.runner.Log(fmt.Sprintf("started round %d", round))
+		g.Runner.Log(fmt.Sprintf("started round %d", round))
 		playerOrder := rand.Perm(len(g.Players))
 		for _, i := range playerOrder {
 			player := &g.Players[i]
 			err := sendStateToPlayer(g, player)
 			if err != nil {
-				g.runner.Log(fmt.Sprintf("error while communicating with player %s: %v", player.Name, err))
+				g.Runner.Log(fmt.Sprintf("error while communicating with player %s: %v", player.Name, err))
 				markShipsAsWrecks(player)
 				continue
 			}
 
 			err = handlePlayer(g, player)
 			if err != nil {
-				g.runner.Log(fmt.Sprintf("error while communicating with player %s: %v", player.Name, err))
+				g.Runner.Log(fmt.Sprintf("error while communicating with player %s: %v", player.Name, err))
 				markShipsAsWrecks(player)
 				continue
 			}
+			player.Score.updateCurrentGold(player.CurrentGold())
 		}
 
 		for _, harbor := range g.Harbors {
@@ -71,18 +72,18 @@ func (g *Game) Run() error {
 			MaxShipId: g.MaxShipId,
 			Harbors:   g.Harbors,
 			Bases:     g.Bases,
-			runner:    g.runner,
+			Runner:    g.Runner,
 		}
 		if round == 0 {
 			gameToMarshall.Map = g.Map
 		}
 		data, err := json.Marshal(gameToMarshall)
 		if err != nil {
-			g.runner.Log(fmt.Sprintf("could not marshal JSON for observer: %s", err.Error()))
+			g.Runner.Log(fmt.Sprintf("could not marshal JSON for observer: %s", err.Error()))
 		}
-		resp := g.runner.ToObserver(string(data) + "\n")
+		resp := g.Runner.ToObserver(string(data) + "\n")
 		if resp != client.Ok {
-			g.runner.Log(fmt.Sprintf("error while sending data to observer"))
+			g.Runner.Log(fmt.Sprintf("error while sending data to observer"))
 		}
 	}
 	return nil

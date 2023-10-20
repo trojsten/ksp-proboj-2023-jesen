@@ -17,8 +17,15 @@ func move(g *Game, p *Player, args string, commandedShips map[int]bool) error {
 		return err
 	}
 	commandedShips[shipId] = true
+
 	if !IsReachableBfs(g, ship.X, ship.Y, x, y, ship.Type.Stats().MaxMoveRange) {
 		return fmt.Errorf("wanted to move ship %d out of its range", shipId)
+	}
+	if g.Map.Tiles[y][x].Type == TILE_WATER {
+		targetShip := ShipAt(g, x, y)
+		if targetShip != nil && !targetShip.IsWreck {
+			return fmt.Errorf("there is non wreck ship on coordinates where ship %d wanted to move", shipId)
+		}
 	}
 
 	ship.X = min(max(x, 0), g.Map.Width-1)
@@ -44,7 +51,7 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	commandedShips[shipId] = true
 	var resource = ship.Resources.Resource(ResourceType(resourceId))
 	if resource == nil {
-		g.runner.Log(fmt.Sprintf("player send commands to ship %d to trade resource %d, which is INVALID", shipId, resourceId))
+		g.Runner.Log(fmt.Sprintf("player send commands to ship %d to trade resource %d, which is INVALID", shipId, resourceId))
 		return nil
 	}
 
@@ -62,11 +69,16 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) -= amount
 		g.Ships[shipId].Resources.Gold -= amount // TODO vzorec
+		p.Score.newPurchase()
+		p.Statistics.newPurchase(resourceId, amount)
 	} else { // we take give to harbor
 		amount = min(-1*amount, *g.Ships[shipId].Resources.Resource(ResourceType(resourceId)))
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) -= amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) += amount
 		g.Ships[shipId].Resources.Gold += amount // TODO vzorec
+		p.Score.newSell()
+		p.Score.newGoldEarned(amount)
+		p.Statistics.newSell(resourceId, amount)
 	}
 	return nil
 }
@@ -101,6 +113,7 @@ func loot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 			Gold:      ship.Resources.Gold + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Gold)),
 		}
 		wreckShip.Resources = Resources{}
+		p.Score.newGoldEarned(int(ship.Type.Stats().Yield * float32(wreckShip.Resources.Gold)))
 	}
 
 	return nil
@@ -131,6 +144,11 @@ func shoot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	distance := dist(ship.X, ship.Y, enemyShip.X, enemyShip.Y)
 	if distance <= ship.Type.Stats().Range {
 		enemyShip.Health -= g.Ships[shipId].Type.Stats().Damage
+		if enemyShip.Health < 0 {
+			p.Score.newKill()
+			p.Statistics.newKill(enemyShip.PlayerIndex)
+		}
+		p.Statistics.addDamage(enemyShip.PlayerIndex, g.Ships[shipId].Type.Stats().Damage)
 		g.Ships[targetShipId] = enemyShip
 	} else {
 		return fmt.Errorf("enemy ship with out of range (distance: %d, range: %d)", distance, ship.Type.Stats().Range)

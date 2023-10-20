@@ -3,10 +3,12 @@ package main
 import "fmt"
 
 type Player struct {
-	Index int    `json:"index"`
-	Name  string `json:"name"`
-	Gold  int    `json:"gold"`
-	game  *Game
+	Index      int    `json:"index"`
+	Name       string `json:"name"`
+	Gold       int    `json:"gold"`
+	Score      Score  `json:"score"`
+	Statistics Statistics
+	game       *Game
 }
 
 func NewPlayer(game *Game, idx int, name string) Player {
@@ -15,6 +17,13 @@ func NewPlayer(game *Game, idx int, name string) Player {
 		Name:  name,
 		game:  game,
 		Gold:  NEW_PLAYER_GOLD,
+		Statistics: Statistics{
+			Kills:           map[int]int{},
+			Damage:          map[int]int{},
+			SellsByType:     map[int]int{},
+			PurchasesByType: map[int]int{},
+			TimeOfResponses: 0,
+		},
 	}
 }
 
@@ -49,4 +58,12 @@ func (p *Player) Base() *Base {
 		}
 	}
 	return nil
+}
+
+func (p *Player) CurrentGold() int {
+	res := p.Gold
+	for _, ship := range p.Ships() {
+		res += ship.Resources.Gold
+	}
+	return res
 }

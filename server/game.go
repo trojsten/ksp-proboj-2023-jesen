@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/trojsten/ksp-proboj/client"
 	"image/png"
@@ -16,7 +17,7 @@ type Game struct {
 	MaxShipId int
 	Harbors   []Harbor `json:"harbors"`
 	Bases     []Base   `json:"bases"`
-	runner    client.Runner
+	Runner    client.Runner
 }
 
 func (g *Game) LoadMap(filename string) error {
@@ -95,7 +96,7 @@ func (g *Game) LoadMap(filename string) error {
 				})
 				playerIdx++
 			} else {
-				g.runner.Log(fmt.Sprintf("unkown color in map: %d %d %d", red, green, blue))
+				g.Runner.Log(fmt.Sprintf("unkown color in map: %d %d %d", red, green, blue))
 			}
 		}
 	}
@@ -104,4 +105,25 @@ func (g *Game) LoadMap(filename string) error {
 	}
 
 	return nil
+}
+
+func (g *Game) SaveStats() error {
+	stats := map[string]Statistics{}
+	for _, player := range g.Players {
+		stats[player.Name] = player.Statistics
+	}
+
+	f, err := os.Create("stats.json")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	data, err := json.Marshal(stats)
+	if err != nil {
+		return err
+	}
+
+	_, err = f.Write(data)
+	return err
 }
