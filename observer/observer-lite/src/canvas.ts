@@ -15,16 +15,16 @@ export function createCanvas(id: string, turns: Turn[]): Konva.Stage {
   const map = new Konva.Layer({
     imageSmoothingEnabled: false,
   })
-  createMap(map, turns[0].map)
-  const minScale = Math.min(window.innerHeight / (20*turns[0].map.height), window.innerWidth / (20*turns[0].map.width));
-  console.log(minScale);
-  
-  stage.scale({x: minScale, y: minScale})
-  stage.add(map)
-  
   shipLayer = new Konva.Layer({
     imageSmoothingEnabled: false,
   })
+  createMap(map, shipLayer, turns[0].map);
+  const minScale = Math.min(window.innerHeight / (20 * turns[0].map.height), window.innerWidth / (20 * turns[0].map.width));
+  console.log(minScale);
+
+  stage.scale({ x: minScale, y: minScale })
+  stage.add(map)
+
   stage.add(shipLayer)
   const scaleBy = 1.1;
   stage.on('wheel', (e) => {
@@ -32,7 +32,7 @@ export function createCanvas(id: string, turns: Turn[]): Konva.Stage {
     e.evt.preventDefault();
 
     var oldScale = stage.scaleX();
-    var pointer = stage.getPointerPosition() || {x: 0, y: 0};
+    var pointer = stage.getPointerPosition() || { x: 0, y: 0 };
 
     var mousePointTo = {
       x: (pointer.x - stage.x()) / oldScale,

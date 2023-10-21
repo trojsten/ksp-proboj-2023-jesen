@@ -1,6 +1,8 @@
 import { shipLayer } from "./canvas";
-import {GameMap, Turn} from "./observer";
+import { leaderboard } from "./leaderboard";
+import { GameMap, Turn } from "./observer";
 import ShipClass from "./ship";
+import Stats from "./stats";
 
 
 export default class Playback {
@@ -10,9 +12,10 @@ export default class Playback {
     playInterval: number | null = null;
     ships: Record<number, ShipClass> = {};
     playButton: HTMLButtonElement;
+    stats: Stats;
     static turn: Turn;
     static map: GameMap;
-    constructor(private data: Turn[], private slider: HTMLInputElement) {
+    constructor(private data: Turn[], private setSlider: (value: number) => void, slider: HTMLInputElement) {
         document.getElementById('forward')!.addEventListener('click', () => {
             this.next();
         });
@@ -21,17 +24,21 @@ export default class Playback {
         });
         this.playButton = document.getElementById('play')! as HTMLButtonElement;
         this.playButton.addEventListener('click', () => {
-            if(this.playing) {
+            if (this.playing) {
                 this.stop();
             }
             else {
                 this.play();
             }
         });
+        setSlider(0);
         slider.onchange = () => {
+            console.log(slider.value);
+
             this.seek(parseInt(slider.value));
         }
         Playback.map = data[0].map;
+        this.stats = new Stats();
     }
 
     seek(time: number) {
@@ -40,13 +47,13 @@ export default class Playback {
     }
 
     next() {
-        if(this.currentTurn == this.data.length - 1) return;
+        if (this.currentTurn == this.data.length - 1) return;
         this.currentTurn++;
         this.renderTurn();
     }
 
     previous() {
-        if(this.currentTurn == 0) return;
+        if (this.currentTurn == 0) return;
         this.currentTurn--;
         this.renderTurn();
     }
@@ -55,7 +62,7 @@ export default class Playback {
         (this.playButton.childNodes[0] as HTMLSpanElement).innerHTML = 'pause';
         this.playing = true;
         this.playInterval = setInterval(() => {
-            if(this.currentTurn == this.data.length - 1) {
+            if (this.currentTurn == this.data.length - 1) {
                 this.stop();
             }
             this.next();
@@ -65,7 +72,7 @@ export default class Playback {
     stop() {
         (this.playButton.childNodes[0] as HTMLSpanElement).innerHTML = 'play_arrow';
         this.playing = false;
-        if(this.playInterval){
+        if (this.playInterval) {
             clearInterval(this.playInterval);
         }
     }
@@ -73,24 +80,26 @@ export default class Playback {
     renderTurn() {
         const turn = this.data[this.currentTurn];
         Playback.turn = turn;
-        this.slider.value = this.currentTurn.toString();
+        this.stats.Update(turn);
+        this.setSlider(this.currentTurn);
+        leaderboard(turn.players);
         const updated = new Set<number>();
         for (const ids of Object.keys(turn.ships)) {
             const id = parseInt(ids);
             const ship = turn.ships[id];
             console.log(ship);
             updated.add(id);
-            if(!this.ships[id]) {
+            if (!this.ships[id]) {
                 this.ships[id] = new ShipClass(ship, shipLayer, 20);
             }
             else {
                 this.ships[id].move(ship.x, ship.y);
             }
-        }       
+        }
 
         for (const id of Object.keys(this.ships)) {
             const ship = parseInt(id);
-            if(!updated.has(ship)) {
+            if (!updated.has(ship)) {
                 this.ships[ship].remove();
                 delete this.ships[ship];
             }
