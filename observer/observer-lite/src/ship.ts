@@ -1,7 +1,9 @@
 import Konva from 'konva';
 import ShipImage from './assets/Ship.png';
+
 import { Ship } from './observer';
 import Playback from './playback';
+import Stats from './stats';
 
 
 export default class ShipClass {
@@ -15,7 +17,8 @@ export default class ShipClass {
             width: tileSize,
             height: tileSize,
             rotation: 0,
-            opacity: 0
+            opacity: 0,
+            listening: false,
         });
 
         konvaImage.add(new Konva.Image({
@@ -25,9 +28,9 @@ export default class ShipClass {
             width: tileSize,
             height: tileSize,
         }))
-        
+
         konvaImage.on('click', () => {
-            ShipClass.ShowShipStats(this.data);
+            Stats.ShowShipStats(this.data);
         })
         shipLayer.add(konvaImage);
         this.ship = konvaImage;
@@ -54,12 +57,14 @@ export default class ShipClass {
         }).play();
 
         const newTile = Playback.map.tiles[newY][newX];
-        if(newTile.type == 2 || newTile.type == 3) {
+        if (newTile.type == 2 || newTile.type == 3) {
             tween._addAttr('opacity', 0);
+            this.ship.listening(false);
         } else {
             tween._addAttr('opacity', 1);
+            this.ship.listening(true);
         }
-        
+
         tween.play();
     }
 
@@ -72,27 +77,5 @@ export default class ShipClass {
         this.ship.remove();
     }
 
-    static ShowShipStats(ship: Ship) {
-        const stats = document.getElementById('shipStats')!;
-        stats.innerHTML += `
-            <div class="stats">
-                <button class="close" id="closeBtn">X</button>
-                <h1>Ship ${ship.index} (${Playback.turn.players[ship.player_index].name})</h1>
-                <div class="resources">
-                    <p>Gem: ${ship.resources.gem}</p>
-                    <p>Wood: ${ship.resources.wood}</p>
-                    <p>Iron: ${ship.resources.iron}</p>
-                    <p>Hide: ${ship.resources.hide}</p>
-                    <p>Stone: ${ship.resources.stone}</p>
-                    <p>Pineapple: ${ship.resources.pineapple}</p>
-                    <p>Wool: ${ship.resources.wool}</p>
-                    <p>Wheat: ${ship.resources.wheat}</p>
-                    <p>Gold: ${ship.resources.gold}</p>
-                </div>
-            </div>
-        `;
-        document.getElementById('closeBtn')!.addEventListener('click', () => {
-            stats.innerHTML = '';
-        })
-    }
+
 }

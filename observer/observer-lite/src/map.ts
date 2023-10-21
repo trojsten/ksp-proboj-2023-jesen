@@ -2,14 +2,14 @@ import Konva from "konva";
 import harbor from "./assets/Harbor.png";
 import base from "./assets/Base.png";
 import { GameMap } from "./observer";
+import Stats from "./stats";
+import Playback from "./playback";
 
-export function createMap(mapLayer: Konva.Layer, map: GameMap) {
+export function createMap(mapLayer: Konva.Layer, shipLayer: Konva.Layer, map: GameMap) {
     const tileSize = 20;
-    
-    const grp = new Konva.Group({
-    });
 
-    const baseGrp = new Konva.Group({
+    const grp = new Konva.Group({
+        listening: false
     });
 
     for (let i = 0; i < map.width; i++) {
@@ -21,9 +21,9 @@ export function createMap(mapLayer: Konva.Layer, map: GameMap) {
 
             if (tile.type === 1 || tile.type === 3) {
                 img.src = "./mapImages/ground" + getRandomInt(1, 4) + ".png";
-            } else  {
-                const dirX = [1, 1, 0,-1,-1,-1, 0, 1 ];
-                const dirY = [0, 1, 1, 1, 0,-1,-1,-1 ];
+            } else {
+                const dirX = [1, 1, 0, -1, -1, -1, 0, 1];
+                const dirY = [0, 1, 1, 1, 0, -1, -1, -1];
                 const dirName = ["R", "BR", "B", "BL", "L", "TL", "T", "TR"];
 
                 const dirs = [];
@@ -34,29 +34,28 @@ export function createMap(mapLayer: Konva.Layer, map: GameMap) {
                     }
                 }
 
-                if(dirs.includes("R")){
+                if (dirs.includes("R")) {
                     dirs.remove("BR");
                     dirs.remove("TR");
                 }
-                if(dirs.includes("L")){
+                if (dirs.includes("L")) {
                     dirs.remove("BL");
                     dirs.remove("TL");
                 }
-                if(dirs.includes("T")){
+                if (dirs.includes("T")) {
                     dirs.remove("TR");
                     dirs.remove("TL");
                 }
-                if(dirs.includes("B")){
+                if (dirs.includes("B")) {
                     dirs.remove("BR");
                     dirs.remove("BL");
                 }
-                
+
                 dirs.sort();
-                console.log(dirs);
                 if (dirs.length === 0) {
                     img.src = "./mapImages/water.png";
                 } else {
-                    
+
                     img.src = "./mapImages/water-" + dirs.join(',') + ".png";
                 }
             }
@@ -70,7 +69,7 @@ export function createMap(mapLayer: Konva.Layer, map: GameMap) {
             });
             grp.add(konvaImage);
 
-            if(tile.type > 1){
+            if (tile.type > 1) {
                 const img = new Image();
                 if (tile.type === 2) {
                     img.src = harbor;
@@ -83,16 +82,31 @@ export function createMap(mapLayer: Konva.Layer, map: GameMap) {
                     y: y,
                     image: img,
                     width: tileSize,
-                    height: tileSize,
-                    listening: false
+                    height: tileSize
                 });
-                baseGrp.add(konvaImage);
+
+                if (tile.type === 2) {
+                    konvaImage.on('click', () => {
+                        const harborStats = Playback.turn.harbors.find((harbor) => {
+                            return harbor.x === i && harbor.y === j;
+                        });
+                        Stats.showHarborStats(harborStats || null);
+                    });
+                }
+                if (tile.type === 3) {
+                    konvaImage.on('click', () => {
+                        const baseStats = Playback.turn.bases.find((base) => {
+                            return base.x === i && base.y === j;
+                        });
+                        Stats.showBaseStats(baseStats || null);
+                    });
+                }
+                shipLayer.add(konvaImage);
             }
         }
     }
 
     mapLayer.add(grp);
-    mapLayer.add(baseGrp);
 
     // grp.toDataURL({
     //     x: 0,
@@ -102,7 +116,7 @@ export function createMap(mapLayer: Konva.Layer, map: GameMap) {
     //     callback: (dataUrl) => {
     //         const image = new Image();
     //         image.src = dataUrl;
-            
+
     //         mapLayer.add(new Konva.Image({
     //             image: image,
     //             width: map.width * tileSize,
@@ -111,10 +125,10 @@ export function createMap(mapLayer: Konva.Layer, map: GameMap) {
     //         mapLayer.draw();
     //     }
     // })
-    
+
 }
 
-function tryGetTile(i: number,j: number, map: GameMap) {
+function tryGetTile(i: number, j: number, map: GameMap) {
     if (i < 0 || i >= map.width || j < 0 || j >= map.height) {
         return 0;
     }
@@ -128,7 +142,7 @@ function getRandomInt(min: number, max: number) {
 }
 
 Object.defineProperty(Array.prototype, "remove", {
-    value: function<T>(this: T[], item: T) {
+    value: function <T>(this: T[], item: T) {
         var index = this.indexOf(item);
         if (index !== -1) {
             this.splice(index, 1);
