@@ -30,8 +30,8 @@ func (g *Game) Run() error {
 			player.Score.updateCurrentGold(player.CurrentGold())
 		}
 
-		for _, harbor := range g.Harbors {
-			harbor.tick()
+		for i, _ := range g.Harbors {
+			g.Harbors[i].tick()
 		}
 
 		// apply damage to ships near harbours
@@ -44,7 +44,6 @@ func (g *Game) Run() error {
 				}
 			}
 		}
-
 		// apply damage to ships near bases
 		for _, base := range g.Bases {
 			for _, ship := range g.Ships {
