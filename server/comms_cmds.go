@@ -51,28 +51,34 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	commandedShips[shipId] = true
 	var resource = ship.Resources.Resource(ResourceType(resourceId))
 	if resource == nil {
-		g.Runner.Log(fmt.Sprintf("player send commands to ship %d to trade resource %d, which is INVALID", shipId, resourceId))
-		return nil
+		return fmt.Errorf("player send commands to ship %d to trade resource %d, which is INVALID", shipId, resourceId)
 	}
 
-	var harbor Harbor
+	var harbor *Harbor = nil
 
 	for _, h := range g.Harbors {
 		if h.X == g.Ships[shipId].X && h.Y == g.Ships[shipId].Y {
-			harbor = h
+			harbor = &h
 			break
 		}
 	}
+	if harbor == nil {
+		return fmt.Errorf("ship %d is not in the harbor", shipId)
+	}
 
 	if amount > 0 { // we take from harbor
+		g.Runner.Log(fmt.Sprintf("(%s) try to TAKE %d pieces. Harbor storage: %d", p.Name, amount, *harbor.Storage.Resource(ResourceType(resourceId))))
 		amount = min(amount, *harbor.Storage.Resource(ResourceType(resourceId)))
+		g.Runner.Log(fmt.Sprintf(", so taking %d\n", amount))
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) -= amount
-		g.Ships[shipId].Resources.Gold -= amount // TODO vzorec
+		g.Ships[shipId].Resources.Gold -= amount // TODO vzorec, overenie, či má loď dosť peňazí
 		p.Score.newPurchase()
 		p.Statistics.newPurchase(resourceId, amount)
-	} else { // we take give to harbor
+	} else { // we give to harbor
+		g.Runner.Log(fmt.Sprintf("(%s) try to GIVE %d pieces. Ship storage: %d", p.Name, -1*amount, *g.Ships[shipId].Resources.Resource(ResourceType(resourceId))))
 		amount = min(-1*amount, *g.Ships[shipId].Resources.Resource(ResourceType(resourceId)))
+		g.Runner.Log(fmt.Sprintf(", so giving %d\n", amount))
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) -= amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) += amount
 		g.Ships[shipId].Resources.Gold += amount // TODO vzorec
