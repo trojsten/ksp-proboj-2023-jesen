@@ -10,6 +10,11 @@ import (
 	"path"
 )
 
+type GameStats struct {
+	Game
+	ShipTypes []string `json:"ship_types"`
+}
+
 type Game struct {
 	Map       *Map          `json:"map"`
 	Players   []Player      `json:"players"`
@@ -57,7 +62,7 @@ func (g *Game) LoadMap(filename string) error {
 			} else if red == 255 && green == 0 && blue == 0 {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_HARBOR, Index: -1}
 				prod := []int{0, 0, 0, 1, -1}
-				g.Harbors = append(g.Harbors, Harbor{
+				h := Harbor{
 					X: x,
 					Y: y,
 					Production: Resources{
@@ -82,7 +87,16 @@ func (g *Game) LoadMap(filename string) error {
 						Pineapple: 0,
 						Gold:      0,
 					},
-				})
+				}
+				if h.Production.Wood < 1 && h.Production.Stone < 1 && h.Production.Iron < 1 &&
+					h.Production.Gem < 1 && h.Production.Wool < 1 && h.Production.Hide < 1 &&
+					h.Production.Wheat < 1 && h.Production.Pineapple < 1 {
+
+					r := ResourceType(rand.Intn(7))
+					*h.Production.Resource(r) = rand.Intn(4) + 1
+				}
+				g.Harbors = append(g.Harbors, h)
+
 			} else if red == 255 && green == 255 && blue == 255 {
 				if playerIdx >= len(playersOrder) {
 					continue
