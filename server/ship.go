@@ -2,6 +2,7 @@ package main
 
 type ShipType interface {
 	Stats() ShipStats
+	Name() string
 }
 
 type Ship struct {

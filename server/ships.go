@@ -26,6 +26,9 @@ func (c Cln) Stats() ShipStats {
 		Class:        SHIP_TRADE,
 	}
 }
+func (c Cln) Name() string {
+	return "Cln"
+}
 
 type Plt struct {
 }
@@ -41,6 +44,10 @@ func (c Plt) Stats() ShipStats {
 		Yield:        0.2,
 		Class:        SHIP_TRADE,
 	}
+}
+
+func (p Plt) Name() string {
+	return "Plt"
 }
 
 type SmallMerchantShip struct {
@@ -59,6 +66,10 @@ func (c SmallMerchantShip) Stats() ShipStats {
 	}
 }
 
+func (c SmallMerchantShip) Name() string {
+	return "SmallMerchantShip"
+}
+
 type LargeMerchantShip struct {
 }
 
@@ -73,6 +84,10 @@ func (c LargeMerchantShip) Stats() ShipStats {
 		Yield:        0.2,
 		Class:        SHIP_TRADE,
 	}
+}
+
+func (c LargeMerchantShip) Name() string {
+	return "LargeMerchantShip"
 }
 
 type SomalianPirateShip struct {
@@ -91,6 +106,10 @@ func (c SomalianPirateShip) Stats() ShipStats {
 	}
 }
 
+func (c SomalianPirateShip) Name() string {
+	return "SomalianPirateShip"
+}
+
 type BlackPearl struct {
 }
 
@@ -105,6 +124,10 @@ func (c BlackPearl) Stats() ShipStats {
 		Yield:        0.5,
 		Class:        SHIP_ATTACK,
 	}
+}
+
+func (c BlackPearl) Name() string {
+	return "BlackPearl"
 }
 
 type SniperAttackShip struct {
@@ -123,6 +146,10 @@ func (c SniperAttackShip) Stats() ShipStats {
 	}
 }
 
+func (c SniperAttackShip) Name() string {
+	return "SniperAttackShip"
+}
+
 type LooterScooter struct {
 }
 
@@ -137,4 +164,8 @@ func (c LooterScooter) Stats() ShipStats {
 		Yield:        0.8,
 		Class:        SHIP_LOOT,
 	}
+}
+
+func (c LooterScooter) Name() string {
+	return "LooterScooter"
 }

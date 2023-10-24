@@ -31,6 +31,7 @@ func (g *Game) Run() error {
 		}
 
 		for i, _ := range g.Harbors {
+			// g.Runner.Log(fmt.Sprintf("product %d %d %d %d %d %d %d %d %d", harbor.Production.Wood, harbor.Production.Stone, harbor.Production.Iron, harbor.Production.Gem, harbor.Production.Wool, harbor.Production.Hide, harbor.Production.Wheat, harbor.Production.Pineapple, harbor.Production.Gold))
 			g.Harbors[i].tick()
 		}
 
@@ -64,15 +65,23 @@ func (g *Game) Run() error {
 			}
 		}
 
-		var gameToMarshall = Game{
-			Map:       nil,
-			Players:   g.Players,
-			Ships:     g.Ships,
-			MaxShipId: g.MaxShipId,
-			Harbors:   g.Harbors,
-			Bases:     g.Bases,
-			Runner:    g.Runner,
+		var gameToMarshall = GameStats{
+			Game: Game{
+				Map:       nil,
+				Players:   g.Players,
+				Ships:     g.Ships,
+				MaxShipId: g.MaxShipId,
+				Harbors:   g.Harbors,
+				Bases:     g.Bases,
+				Runner:    g.Runner,
+			},
+			ShipTypes: []string{},
 		}
+		for _, ship := range g.Ships {
+			stateShip := StateShip{Ship: *ship}
+			gameToMarshall.ShipTypes = append(gameToMarshall.ShipTypes, stateShip.Type.Name())
+		}
+
 		if round == 0 {
 			gameToMarshall.Map = g.Map
 		}
