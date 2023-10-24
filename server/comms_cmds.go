@@ -120,6 +120,8 @@ func loot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		}
 		wreckShip.Resources = Resources{}
 		p.Score.newGoldEarned(int(ship.Type.Stats().Yield * float32(wreckShip.Resources.Gold)))
+	} else {
+		return fmt.Errorf("ship %d try to loot and is not on cell where is wreck", shipId)
 	}
 
 	return nil
