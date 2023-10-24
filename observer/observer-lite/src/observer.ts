@@ -1,11 +1,14 @@
 import pako from 'pako';
 
+export type ShipType = "Cln" | "Plt" | "SmallMerchantShip" | "LargeMerchantShip" | "SomalianPirateShip" | "BlackPearl" | "SniperAttackShip" | "LooterScooter";
+
 export interface Turn {
     players: Player[];
     ships: Record<number, Ship>;
     bases: Base[];
     harbors: Harbor[];
     map: GameMap;
+    ship_types: ShipType[];
 }
 
 export interface Player {
@@ -24,6 +27,17 @@ export interface Score {
     final_score: number;
 }
 
+export const shipTypeHealth = {
+    Cln: 10,
+    Plt: 25,
+    SmallMerchantShip: 15,
+    LargeMerchantShip: 50,
+    SomalianPirateShip: 10,
+    BlackPearl: 50,
+    SniperAttackShip: 15,
+    LooterScooter: 5,
+}
+
 export interface Ship {
     type: "Ship";
     index: number;
@@ -32,6 +46,7 @@ export interface Ship {
     y: number;
     resources: Resources;
     is_wreck: boolean;
+    health: number;
 }
 
 export interface Base {

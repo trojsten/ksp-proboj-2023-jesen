@@ -1,4 +1,4 @@
-import { Base, Harbor, Ship, Turn } from "./observer";
+import { Base, Harbor, Ship, Turn, shipTypeHealth } from "./observer";
 import Playback from "./playback";
 
 
@@ -18,12 +18,19 @@ export default class Stats {
         }
 
         Stats.currentShown = ship;
+        console.log(Playback.turn);
+
+        const shipType = Playback.turn.ship_types[ship.index];
         Stats.stats.innerHTML = `
             <div class="stats">
                 <button class="close" id="closeBtn">
                     <span class="material-icons-round">close</span>
                 </button>
-                <h1>Ship ${ship.index} (${Playback.turn.players[ship.player_index].name})</h1>
+                <h1>${shipType} ${ship.index} (${Playback.turn.players[ship.player_index].name})</h1>
+                <div class="health">
+                    <div class="bar" style="width:${ship.health / shipTypeHealth[shipType] * 100}%;"></div>
+                    <p>${ship.health} / ${shipTypeHealth[shipType]}</p>
+                </div>
                 <div class="resources">
                     <p>Gem: ${ship.resources.gem}</p>
                     <p>Wood: ${ship.resources.wood}</p>
@@ -117,12 +124,17 @@ export default class Stats {
     }
 
     Update(turn: Turn) {
-        if (Stats.currentShown?.type === 'Ship') {
-            Stats.ShowShipStats(turn.ships[Stats.currentShown.index]);
+
+        if ((Stats.currentShown as Ship)?.is_wreck != undefined) {
+            Stats.ShowShipStats(turn.ships[(Stats.currentShown as Ship).index]);
         }
-        else if (Stats.currentShown?.type === 'Harbor') {
+        else if ((Stats.currentShown as Harbor)?.storage != undefined) {
             const harbor = turn.harbors.find(h => h.x === Stats.currentShown!.x && h.y === Stats.currentShown!.y);
             Stats.showHarborStats(harbor!);
+        }
+        else if ((Stats.currentShown as Base)?.player != undefined) {
+            const base = turn.bases.find(b => b.x === Stats.currentShown!.x && b.y === Stats.currentShown!.y);
+            Stats.showBaseStats(base!);
         }
     }
 

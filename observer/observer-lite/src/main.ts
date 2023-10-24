@@ -42,8 +42,11 @@ fileInput.addEventListener('change', async () => {
 })
 
 function setSlider(value: number) {
-  slider.value = value.toString();
-  sliderText.innerHTML = `${value} / ${slider.max}`;
+  slider.value = (value + 1).toString();
+  sliderText.innerHTML = `${value + 1} / ${slider.max}`;
+  const v = (value + 1) / parseInt(slider.max) * 100;
+  slider.style.background = 'linear-gradient(to right, cornflowerblue 0%, cornflowerblue ' + v + '%, #616161 ' + v + '%, #616161 100%)';
+  console.log(slider.style.background);
 }
 
 const urlParams = new URLSearchParams(window.location.search);

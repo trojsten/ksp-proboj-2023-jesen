@@ -23,18 +23,30 @@ export default class Playback {
             this.previous();
         });
         this.playButton = document.getElementById('play')! as HTMLButtonElement;
-        this.playButton.addEventListener('click', () => {
-            if (this.playing) {
-                this.stop();
+        this.playButton.addEventListener('click', this.togglePlay.bind(this));
+        console.log(data[0]);
+        window.addEventListener('keydown', (e) => {
+            if (e.key == ' ') {
+                this.togglePlay();
             }
-            else {
-                this.play();
+            else if (e.key == 'ArrowRight') {
+                this.next();
+            }
+            else if (e.key == 'ArrowLeft') {
+                this.previous();
+            }
+            else if (e.key == 'Home') {
+                this.seek(0);
+            }
+            else if (e.key == 'End') {
+                this.seek(this.data.length - 1);
             }
         });
         setSlider(0);
         slider.onchange = () => {
-            console.log(slider.value);
-
+            const v = parseInt(slider.value) / parseInt(slider.max) * 100;
+            console.log(v);
+            slider.style.background = 'linear-gradient(to right, #cornflowerblue 0%, #cornflowerblue ' + v + '%, #616161 ' + v + '%, #616161 100%)';
             this.seek(parseInt(slider.value));
         }
         Playback.map = data[0].map;
@@ -44,6 +56,16 @@ export default class Playback {
     seek(time: number) {
         this.currentTurn = time;
         this.renderTurn();
+    }
+
+
+    togglePlay() {
+        if (this.playing) {
+            this.stop();
+        }
+        else {
+            this.play();
+        }
     }
 
     next() {
