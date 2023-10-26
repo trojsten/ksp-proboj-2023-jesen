@@ -1,7 +1,7 @@
 # ksp-proboj-2023-jesen
 
 ## Running info
-  - maps folder musi byt o jedno vyssie ako je folder repa
+  - maps folder sa musi nachadzat v tom istom priecnku ako je binarka serveru
   - na observer: pred buildom treba doinstalovat package `npm install -f package.json` a potom `npm run build` a potom `npm run dev`
   - build a move servera: `go build . && mv server ../srv`
   - runner: `./runner config.json games.json `
