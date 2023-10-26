@@ -1,6 +1,6 @@
-import { shipLayer } from "./canvas";
-import { leaderboard } from "./leaderboard";
-import { GameMap, Turn } from "./observer";
+import {shipLayer} from "./canvas";
+import {leaderboard} from "./leaderboard";
+import {GameMap, Turn} from "./observer";
 import ShipClass from "./ship";
 import Stats from "./stats";
 
@@ -15,6 +15,7 @@ export default class Playback {
     stats: Stats;
     static turn: Turn;
     static map: GameMap;
+
     constructor(private data: Turn[], private setSlider: (value: number) => void, slider: HTMLInputElement) {
         document.getElementById('forward')!.addEventListener('click', () => {
             this.next();
@@ -23,18 +24,26 @@ export default class Playback {
             this.previous();
         });
         this.playButton = document.getElementById('play')! as HTMLButtonElement;
-        this.playButton.addEventListener('click', () => {
-            if (this.playing) {
-                this.stop();
-            }
-            else {
-                this.play();
+        this.playButton.addEventListener('click', this.togglePlay.bind(this));
+        console.log(data[0]);
+        window.addEventListener('keydown', (e) => {
+            if (e.key == ' ') {
+                this.togglePlay();
+            } else if (e.key == 'ArrowRight') {
+                this.next();
+            } else if (e.key == 'ArrowLeft') {
+                this.previous();
+            } else if (e.key == 'Home') {
+                this.seek(0);
+            } else if (e.key == 'End') {
+                this.seek(this.data.length - 1);
             }
         });
         setSlider(0);
         slider.onchange = () => {
-            console.log(slider.value);
-
+            const v = parseInt(slider.value) / parseInt(slider.max) * 100;
+            console.log(v);
+            slider.style.background = 'linear-gradient(to right, #cornflowerblue 0%, #cornflowerblue ' + v + '%, #616161 ' + v + '%, #616161 100%)';
             this.seek(parseInt(slider.value));
         }
         Playback.map = data[0].map;
@@ -44,6 +53,15 @@ export default class Playback {
     seek(time: number) {
         this.currentTurn = time;
         this.renderTurn();
+    }
+
+
+    togglePlay() {
+        if (this.playing) {
+            this.stop();
+        } else {
+            this.play();
+        }
     }
 
     next() {
@@ -91,8 +109,7 @@ export default class Playback {
             updated.add(id);
             if (!this.ships[id]) {
                 this.ships[id] = new ShipClass(ship, shipLayer, 20);
-            }
-            else {
+            } else {
                 this.ships[id].move(ship.x, ship.y);
             }
         }
