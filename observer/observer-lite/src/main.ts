@@ -1,6 +1,6 @@
 import './style.css'
-import { createCanvas } from './canvas'
-import { loadGame } from './observer'
+import {createCanvas} from './canvas'
+import {loadGame} from './observer'
 import Playback from './playback';
 import 'material-icons/iconfont/material-icons.css';
 
@@ -32,29 +32,32 @@ const slider = turnSlider.querySelector<HTMLInputElement>('input')!;
 const sliderText = turnSlider.querySelector<HTMLParagraphElement>('p')!;
 
 fileInput.addEventListener('change', async () => {
-  const game = await loadGame(fileInput.files![0])
-  createCanvas('canvas', game);
-  turnSlider.style.display = 'flex';
-  slider.max = game.length.toString();
-  setSlider(0);
-  new Playback(game, setSlider, slider);
-  fileInput.remove();
-})
-
-function setSlider(value: number) {
-  slider.value = value.toString();
-  sliderText.innerHTML = `${value} / ${slider.max}`;
-}
-
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('file')) {
-  fetch(urlParams.get('file')!).then(async (response) => {
-    turnSlider.style.display = 'flex';
-    const game = await loadGame(await response.blob());
+    const game = await loadGame(fileInput.files![0])
     createCanvas('canvas', game);
+    turnSlider.style.display = 'flex';
     slider.max = game.length.toString();
     setSlider(0);
     new Playback(game, setSlider, slider);
     fileInput.remove();
-  })
+})
+
+function setSlider(value: number) {
+    slider.value = (value + 1).toString();
+    sliderText.innerHTML = `${value + 1} / ${slider.max}`;
+    const v = (value + 1) / parseInt(slider.max) * 100;
+    slider.style.background = 'linear-gradient(to right, cornflowerblue 0%, cornflowerblue ' + v + '%, #616161 ' + v + '%, #616161 100%)';
+    console.log(slider.style.background);
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('file')) {
+    fetch(urlParams.get('file')!).then(async (response) => {
+        turnSlider.style.display = 'flex';
+        const game = await loadGame(await response.blob());
+        createCanvas('canvas', game);
+        slider.max = game.length.toString();
+        setSlider(0);
+        new Playback(game, setSlider, slider);
+        fileInput.remove();
+    })
 }
