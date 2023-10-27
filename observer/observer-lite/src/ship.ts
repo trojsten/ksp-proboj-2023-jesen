@@ -1,16 +1,14 @@
 import Konva from 'konva';
-import ShipImage from './assets/Ship.png';
-
-import { Ship } from './observer';
+import { Ship, ShipType } from './observer';
 import Playback from './playback';
 import Stats from './stats';
 
 
 export default class ShipClass {
     ship: Konva.Group;
-    constructor(private data: Ship, shipLayer: Konva.Layer, tileSize: number) {
+    constructor(private data: Ship, shipLayer: Konva.Layer, tileSize: number, type: ShipType) {
         const image = new Image();
-        image.src = ShipImage;
+        image.src = `/Ships/${type}.png`;
         const konvaImage = new Konva.Group({
             y: data.y * tileSize + tileSize / 2,
             x: data.x * tileSize + tileSize / 2,
@@ -52,7 +50,7 @@ export default class ShipClass {
 
         new Konva.Tween({
             node: this.ship,
-            rotation: Math.atan2(delta.y, delta.x) * 180 / Math.PI + 180,
+            rotation: Math.atan2(delta.y, delta.x) * 180 / Math.PI,
             duration: 0.2,
         }).play();
 

@@ -46,7 +46,6 @@ export default class Playback {
         slider.onchange = () => {
             const v = parseInt(slider.value) / parseInt(slider.max) * 100;
             console.log(v);
-            slider.style.background = 'linear-gradient(to right, #cornflowerblue 0%, #cornflowerblue ' + v + '%, #616161 ' + v + '%, #616161 100%)';
             this.seek(parseInt(slider.value));
         }
         Playback.map = data[0].map;
@@ -112,7 +111,7 @@ export default class Playback {
             console.log(ship);
             updated.add(id);
             if (!this.ships[id]) {
-                this.ships[id] = new ShipClass(ship, shipLayer, 20);
+                this.ships[id] = new ShipClass(ship, shipLayer, 20, turn.ship_types[ship.index]);
             }
             else {
                 this.ships[id].move(ship.x, ship.y);
