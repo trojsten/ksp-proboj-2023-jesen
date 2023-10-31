@@ -34,6 +34,10 @@ func move(g *Game, p *Player, args string, commandedShips map[int]bool) error {
 	return nil
 }
 
+func price(resourceType ResourceType, amount int) int {
+	return 100/(amount+3) + BASE_PRICE[resourceType]
+}
+
 func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	var shipId, resourceId, amount int
 	_, err := fmt.Sscanf(line, "%d %d %d", &shipId, &resourceId, &amount)
@@ -50,7 +54,7 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	}
 	commandedShips[shipId] = true
 	var resource = ship.Resources.Resource(ResourceType(resourceId))
-	if resource == nil {
+	if resource == nil || resourceId == int(RESOURCE_GOLD) {
 		return fmt.Errorf("player send commands to ship %d to trade resource %d, which is INVALID", shipId, resourceId)
 	}
 
@@ -72,7 +76,11 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		g.Runner.Log(fmt.Sprintf(", so taking %d\n", amount))
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) -= amount
-		g.Ships[shipId].Resources.Gold -= amount // TODO vzorec, overenie, či má loď dosť peňazí
+		price := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
+		if price > g.Ships[shipId].Resources.Gold {
+			return fmt.Errorf("ship %d don't have enough gold to trade", shipId)
+		}
+		g.Ships[shipId].Resources.Gold -= price
 		p.Score.newPurchase()
 		p.Statistics.newPurchase(resourceId, amount)
 	} else { // we give to harbor
@@ -81,7 +89,8 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		g.Runner.Log(fmt.Sprintf(", so giving %d\n", amount))
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) -= amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) += amount
-		g.Ships[shipId].Resources.Gold += amount // TODO vzorec
+		price := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
+		g.Ships[shipId].Resources.Gold += price
 		p.Score.newSell()
 		p.Score.newGoldEarned(amount)
 		p.Statistics.newSell(resourceId, amount)

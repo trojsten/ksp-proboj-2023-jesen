@@ -61,19 +61,20 @@ func (g *Game) LoadMap(filename string) error {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_GROUND, Index: -1}
 			} else if red == 255 && green == 0 && blue == 0 {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_HARBOR, Index: -1}
-				prod := []int{0, 0, 0, 1, -1}
+				prod_likely := []int{0, 1, 1, 1, -1, -1, -1}
+				prod_unlikely := []int{0, 0, 0, 1, -1}
 				h := Harbor{
 					X: x,
 					Y: y,
 					Production: Resources{
-						Wood:      prod[rand.Intn(len(prod))] * rand.Intn(5),
-						Stone:     prod[rand.Intn(len(prod))] * rand.Intn(5),
-						Iron:      prod[rand.Intn(len(prod))] * rand.Intn(5),
-						Gem:       prod[rand.Intn(len(prod))] * rand.Intn(5),
-						Wool:      prod[rand.Intn(len(prod))] * rand.Intn(5),
-						Hide:      prod[rand.Intn(len(prod))] * rand.Intn(5),
-						Wheat:     prod[rand.Intn(len(prod))] * rand.Intn(5),
-						Pineapple: prod[rand.Intn(len(prod))] * rand.Intn(5),
+						Wood:      prod_likely[rand.Intn(len(prod_likely))] * (BASE_PRODUCTION[0] + rand.Intn(5)),
+						Stone:     prod_likely[rand.Intn(len(prod_likely))] * (BASE_PRODUCTION[1] + rand.Intn(5)),
+						Iron:      prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[2] + rand.Intn(5)),
+						Gem:       prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[3] + rand.Intn(5)),
+						Wool:      prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[4] + rand.Intn(5)),
+						Hide:      prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[5] + rand.Intn(5)),
+						Wheat:     prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[6] + rand.Intn(5)),
+						Pineapple: prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[7] + rand.Intn(5)),
 						Gold:      0,
 					},
 					Storage: Resources{
