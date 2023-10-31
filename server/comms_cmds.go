@@ -74,12 +74,15 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		g.Runner.Log(fmt.Sprintf("(%s) try to TAKE %d pieces. Harbor storage: %d", p.Name, amount, *harbor.Storage.Resource(ResourceType(resourceId))))
 		amount = min(amount, *harbor.Storage.Resource(ResourceType(resourceId)))
 		g.Runner.Log(fmt.Sprintf(", so taking %d\n", amount))
-		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
-		*harbor.Storage.Resource(ResourceType(resourceId)) -= amount
 		price := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
 		if price > g.Ships[shipId].Resources.Gold {
 			return fmt.Errorf("ship %d don't have enough gold to trade", shipId)
 		}
+		if g.Ships[shipId].Resources.countResources()+amount > g.Ships[shipId].Type.Stats().MaxCargo {
+			return fmt.Errorf("ship %d don't have enough cargo space to make a trade", shipId)
+		}
+		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
+		*harbor.Storage.Resource(ResourceType(resourceId)) -= amount
 		g.Ships[shipId].Resources.Gold -= price
 		p.Score.newPurchase()
 		p.Statistics.newPurchase(resourceId, amount)
@@ -115,7 +118,7 @@ func loot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	commandedShips[shipId] = true
 
 	wreckShip := ShipAt(g, g.Ships[shipId].X, g.Ships[shipId].Y)
-	if wreckShip != nil && wreckShip.IsWreck {
+	if wreckShip != nil && wreckShip.IsWreck { // TODO check, ci je v lodi dost miesta
 		ship.Resources = Resources{
 			Wood:      ship.Resources.Wood + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Wood)),
 			Stone:     ship.Resources.Stone + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Stone)),
