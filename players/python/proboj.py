@@ -23,7 +23,6 @@ class Turn(ABC):
 
 
 class MoveTurn(Turn):
-
     def __init__(self, ship_id: int, coords: XY):
         self.ship_id = ship_id
         self.coords = coords
@@ -36,7 +35,6 @@ class MoveTurn(Turn):
 
 
 class TradeTurn(Turn):
-
     def __init__(self, ship_id: int, resource: ResourceEnum, amount: int):
         self.ship_id = ship_id
         self.resource = resource
@@ -50,7 +48,6 @@ class TradeTurn(Turn):
 
 
 class LootTurn(Turn):
-
     def __init__(self, ship_id: int):
         self.ship_id = ship_id
 
@@ -62,7 +59,6 @@ class LootTurn(Turn):
 
 
 class ShootTurn(Turn):
-
     def __init__(self, ship_id: int, target: int):
         self.ship_id = ship_id
         self.target = target
@@ -75,7 +71,6 @@ class ShootTurn(Turn):
 
 
 class BuyTurn(Turn):
-
     def __init__(self, ship: ShipsEnum):
         self.ship = ship
 
@@ -87,7 +82,6 @@ class BuyTurn(Turn):
 
 
 class StoreTurn(Turn):
-
     def __init__(self, amount: int):
         self.amount = amount
 
@@ -117,7 +111,12 @@ class Harbor:
     def read_harbors(cls, state_harbors: dict) -> List["Harbor"]:
         harbors = []
         for h in state_harbors:
-            harbor = Harbor(XY(h["x"], h["y"]), Resources(h["production"]), Resources(h["storage"]), h["visible"])
+            harbor = Harbor(
+                XY(h["x"], h["y"]),
+                Resources(h["production"]),
+                Resources(h["storage"]),
+                h["visible"],
+            )
             harbors.append(harbor)
         return harbors
 
@@ -147,7 +146,11 @@ class Tile:
     index: int
 
     def __str__(self):
-        return f"(Tile({self.type.name}, player:{self.index})" if self.index != -1 else self.type.name[5:]
+        return (
+            f"(Tile({self.type.name}, player:{self.index})"
+            if self.index != -1
+            else self.type.name[5:]
+        )
 
     @classmethod
     def read_tile(cls, tile):
@@ -177,8 +180,12 @@ class Map:
         return Map(state_map["width"], state_map["height"], tiles)
 
     def __str__(self):
-        return f"map {self.width}x{self.height}\n" + '\n'.join(
-            ','.join(str(tile) for tile in line) for line in self.tiles)
+        return f"map {self.width}x{self.height}\n" + "\n".join(
+            ",".join(str(tile) for tile in line) for line in self.tiles
+        )
+
+    def tile_type_at(self, pos: XY) -> "Tile":
+        return self.tiles[pos.y][pos.x].type
 
 
 class Player:
@@ -232,9 +239,9 @@ class ProbojPlayer:
         Načíta vstup pre hráča
         """
         state = json.loads(input())
-        self.map = Map.read_map(state['map'])
-        self.harbors = Harbor.read_harbors(state['harbors'])
-        self.ships = Ship.read_ships(state['ships'])
+        self.map = Map.read_map(state["map"])
+        self.harbors = Harbor.read_harbors(state["harbors"])
+        self.ships = Ship.read_ships(state["ships"])
         self._read_myself(state["index"], state["gold"])
         input()
         # input()
@@ -245,7 +252,7 @@ class ProbojPlayer:
         """
         for turn in turns:
             print(turn)
-        print('.')
+        print(".")
 
     def make_turn(self) -> List[Turn]:
         """

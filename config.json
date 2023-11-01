@@ -1,0 +1,10 @@
+{
+	"server": "./srv",
+	"game_root": ".",
+	"players": {
+		"first": "./players/python/player.py",
+		"second": "./players/python/player.py"
+	},
+	"timeout": 0.3
+}
+	
