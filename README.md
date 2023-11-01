@@ -42,7 +42,7 @@ Lode sa daju v baseke vylepsovat - statny sa prenasobia nejakym cislom.
 |Wood|          1|       10|
 |Stone|         2|        5|
 |Iron|          5|        2|
-|Fancy rock|   10|        1|
+|Gem|   10|        1|
 |Wool|          3|        3|
 |Hide|          5|        2|
 |Wheat|         2|        5|
