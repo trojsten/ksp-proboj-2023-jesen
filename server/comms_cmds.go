@@ -119,17 +119,33 @@ func loot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 
 	wreckShip := ShipAt(g, g.Ships[shipId].X, g.Ships[shipId].Y)
 	if wreckShip != nil && wreckShip.IsWreck { // TODO check, ci je v lodi dost miesta
-		ship.Resources = Resources{
-			Wood:      ship.Resources.Wood + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Wood)),
-			Stone:     ship.Resources.Stone + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Stone)),
-			Iron:      ship.Resources.Iron + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Iron)),
-			Gem:       ship.Resources.Gem + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Gem)),
-			Wool:      ship.Resources.Wool + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Wool)),
-			Hide:      ship.Resources.Hide + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Hide)),
-			Wheat:     ship.Resources.Wheat + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Wheat)),
-			Pineapple: ship.Resources.Pineapple + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Pineapple)),
-			Gold:      ship.Resources.Gold + int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Gold)),
-		}
+		remainingSpace := ship.Type.Stats().MaxCargo - ship.Resources.countResources()
+		ship.Resources.Gold += min(int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Gold)), remainingSpace)
+
+		remainingSpace = ship.Type.Stats().MaxCargo - ship.Resources.countResources()
+		ship.Resources.Gem += min(int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Gem)), remainingSpace)
+
+		remainingSpace = ship.Type.Stats().MaxCargo - ship.Resources.countResources()
+		ship.Resources.Iron += min(int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Iron)), remainingSpace)
+
+		remainingSpace = ship.Type.Stats().MaxCargo - ship.Resources.countResources()
+		ship.Resources.Hide += min(int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Hide)), remainingSpace)
+
+		remainingSpace = ship.Type.Stats().MaxCargo - ship.Resources.countResources()
+		ship.Resources.Wool += min(int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Wool)), remainingSpace)
+
+		remainingSpace = ship.Type.Stats().MaxCargo - ship.Resources.countResources()
+		ship.Resources.Pineapple += min(int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Pineapple)), remainingSpace)
+
+		remainingSpace = ship.Type.Stats().MaxCargo - ship.Resources.countResources()
+		ship.Resources.Wheat += min(int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Wheat)), remainingSpace)
+
+		remainingSpace = ship.Type.Stats().MaxCargo - ship.Resources.countResources()
+		ship.Resources.Stone += min(int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Stone)), remainingSpace)
+
+		remainingSpace = ship.Type.Stats().MaxCargo - ship.Resources.countResources()
+		ship.Resources.Wood += min(int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Wood)), remainingSpace)
+
 		wreckShip.Resources = Resources{}
 		p.Score.newGoldEarned(int(ship.Type.Stats().Yield * float32(wreckShip.Resources.Gold)))
 	} else {
