@@ -112,11 +112,11 @@ def is_land(colored_map, x, y):
 
 
 width, height = map_x, map_y  # Adjust the dimensions as needed
-scale = 40.0  # Adjust the scale for Perlin noise (smaller scale for more islands)
+scale = 30.0  # Adjust the scale for Perlin noise (smaller scale for more islands)
 octaves = 2
-persistence = 0.6
+persistence = 0.4
 lacunarity = 2.5
-seed = np.random.randint(0, 100)
+seed = np.random.randint(0, 250)
 
 world_map, island_centers = generate_perlin_noise(
     width, height, scale, octaves, persistence, lacunarity, seed
