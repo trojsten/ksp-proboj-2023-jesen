@@ -19,8 +19,10 @@ type State struct {
 	Index   int           `json:"index"`
 }
 
-func StateForPlayer(g *Game, p *Player) (state State) {
-	state.Map = *g.Map
+func StateForPlayer(g *Game, p *Player, sendMap bool) (state State) {
+	if sendMap {
+		state.Map = *g.Map
+	}
 	state.Gold = p.Gold
 	state.Index = p.Index
 	state.Ships = []StateShip{}

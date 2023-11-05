@@ -1,19 +1,12 @@
-import json
 import sys
+try:
+    import ujson as json
+except ImportError:
+    print("fallback to default json", file=sys.stderr)
+    import json
 from abc import ABC, abstractmethod
 
 from ships import *
-
-_input = input
-
-
-def lepsiInput():
-    d = _input()
-    # print("citame:", d[:10], file=sys.stderr)
-    return d
-
-
-input = lepsiInput
 
 
 class Turn(ABC):
@@ -238,8 +231,11 @@ class ProbojPlayer:
         """
         Načíta vstup pre hráča
         """
-        state = json.loads(input())
-        self.map = Map.read_map(state["map"])
+        inp = input()
+        print("size of json", len(inp), file=sys.stderr, flush=True)
+        state = json.loads(inp)
+        if state["map"] is not None and state["map"]["tiles"] is not None:
+            self.map = Map.read_map(state["map"])
         self.harbors = Harbor.read_harbors(state["harbors"])
         self.ships = Ship.read_ships(state["ships"])
         self._read_myself(state["index"], state["gold"])

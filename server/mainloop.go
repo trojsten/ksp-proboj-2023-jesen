@@ -14,7 +14,7 @@ func (g *Game) Run() error {
 		playerOrder := rand.Perm(len(g.Players))
 		for _, i := range playerOrder {
 			player := &g.Players[i]
-			err := sendStateToPlayer(g, player)
+			err := sendStateToPlayer(g, player, round == 0)
 			if err != nil {
 				g.Runner.Log(fmt.Sprintf("error while communicating with player %s: %v", player.Name, err))
 				markShipsAsWrecks(player)

@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-func sendStateToPlayer(g *Game, p *Player) error {
-	state := StateForPlayer(g, p)
+func sendStateToPlayer(g *Game, p *Player, sendMap bool) error {
+	state := StateForPlayer(g, p, sendMap)
 	data, err := json.Marshal(state)
 	if err != nil {
 		return err

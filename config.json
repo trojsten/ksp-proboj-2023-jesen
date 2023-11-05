@@ -5,6 +5,6 @@
 		"first": "./players/python/player.py",
 		"second": "./players/python/player.py"
 	},
-	"timeout": 0.3
+	"timeout": 0.3,
+	"disable_gzip":true
 }
-	
