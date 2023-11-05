@@ -41,6 +41,7 @@ func (g *Game) Run() error {
 				if ship.Type.Stats().Class == SHIP_ATTACK {
 					if dist(harbor.X, harbor.Y, ship.X, ship.Y) < HARBOUR_DAMAGE_RADIUS {
 						ship.Health -= HARBOUR_DAMAGE
+						g.Runner.Log(fmt.Sprintf("attack ship %d was near harbour, so applying HARBOUR_DAMAGE", ship.Id))
 					}
 				}
 			}
@@ -51,8 +52,18 @@ func (g *Game) Run() error {
 				if ship.PlayerIndex != base.PlayerIndex {
 					if dist(base.X, base.Y, ship.X, ship.Y) < BASE_DAMAGE_RADIUS {
 						ship.Health -= BASE_DAMAGE
+						g.Runner.Log(fmt.Sprintf("ship %d from player \"%s\" was near base of player \"%s\", so applying BASE_DAMAGE", ship.Id, g.Players[ship.PlayerIndex].Name, g.Players[base.PlayerIndex].Name))
 					}
 				}
+			}
+		}
+
+		// heal ships on harbors and bases
+		for _, ship := range g.Ships {
+			tileType := g.Map.Tiles[ship.Y][ship.X].Type
+			if tileType == TILE_HARBOR || tileType == TILE_BASE {
+				ship.Health = min(ship.Health+HARBOR_BASE_HEAL, ship.Type.Stats().MaxHealth)
+				g.Runner.Log(fmt.Sprintf("ship %d was on base or harbour so applying HARBOR_BASE_HEAL", ship.Id))
 			}
 		}
 

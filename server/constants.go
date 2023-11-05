@@ -8,6 +8,8 @@ const HARBOUR_DAMAGE = 1
 const BASE_DAMAGE_RADIUS = 4
 const BASE_DAMAGE = 1
 
+const HARBOR_BASE_HEAL = 1
+
 const SHIP_SEE_RANGE = 3
 const NEW_PLAYER_GOLD = 50
 
