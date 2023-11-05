@@ -19,8 +19,8 @@ func (c Cln) Stats() ShipStats {
 		MaxHealth:    10,
 		Damage:       1,
 		Range:        1,
-		MaxMoveRange: 1,
-		MaxCargo:     5,
+		MaxMoveRange: 2,
+		MaxCargo:     10,
 		Price:        10,
 		Yield:        0.2,
 		Class:        SHIP_TRADE,
@@ -35,12 +35,12 @@ type Plt struct {
 
 func (c Plt) Stats() ShipStats {
 	return ShipStats{
-		MaxHealth:    25,
+		MaxHealth:    15,
 		Damage:       1,
-		Range:        1,
-		MaxMoveRange: 2,
-		MaxCargo:     20,
-		Price:        50,
+		Range:        2,
+		MaxMoveRange: 1,
+		MaxCargo:     50,
+		Price:        30,
 		Yield:        0.2,
 		Class:        SHIP_TRADE,
 	}
@@ -55,12 +55,12 @@ type SmallMerchantShip struct {
 
 func (c SmallMerchantShip) Stats() ShipStats {
 	return ShipStats{
-		MaxHealth:    15,
+		MaxHealth:    30,
 		Damage:       1,
-		Range:        1,
+		Range:        3,
 		MaxMoveRange: 3,
-		MaxCargo:     10,
-		Price:        60,
+		MaxCargo:     50,
+		Price:        100,
 		Yield:        0.2,
 		Class:        SHIP_TRADE,
 	}
@@ -76,11 +76,11 @@ type LargeMerchantShip struct {
 func (c LargeMerchantShip) Stats() ShipStats {
 	return ShipStats{
 		MaxHealth:    50,
-		Damage:       1,
-		Range:        1,
-		MaxMoveRange: 1,
-		MaxCargo:     50,
-		Price:        100,
+		Damage:       2,
+		Range:        4,
+		MaxMoveRange: 2,
+		MaxCargo:     100,
+		Price:        200,
 		Yield:        0.2,
 		Class:        SHIP_TRADE,
 	}
@@ -97,10 +97,10 @@ func (c SomalianPirateShip) Stats() ShipStats {
 	return ShipStats{
 		MaxHealth:    10,
 		Damage:       3,
-		Range:        1,
-		MaxMoveRange: 2,
-		MaxCargo:     10,
-		Price:        10,
+		Range:        2,
+		MaxMoveRange: 3,
+		MaxCargo:     5,
+		Price:        15,
 		Yield:        0.5,
 		Class:        SHIP_ATTACK,
 	}
@@ -117,8 +117,8 @@ func (c BlackPearl) Stats() ShipStats {
 	return ShipStats{
 		MaxHealth:    50,
 		Damage:       5,
-		Range:        1,
-		MaxMoveRange: 4,
+		Range:        4,
+		MaxMoveRange: 2,
 		MaxCargo:     30,
 		Price:        50,
 		Yield:        0.5,
@@ -135,12 +135,12 @@ type SniperAttackShip struct {
 
 func (c SniperAttackShip) Stats() ShipStats {
 	return ShipStats{
-		MaxHealth:    15,
-		Damage:       10,
-		Range:        5,
-		MaxMoveRange: 2,
-		MaxCargo:     5,
-		Price:        50,
+		MaxHealth:    5,
+		Damage:       8,
+		Range:        3,
+		MaxMoveRange: 1,
+		MaxCargo:     10,
+		Price:        30,
 		Yield:        0.5,
 		Class:        SHIP_ATTACK,
 	}
@@ -156,11 +156,11 @@ type LooterScooter struct {
 func (c LooterScooter) Stats() ShipStats {
 	return ShipStats{
 		MaxHealth:    5,
-		Damage:       1,
-		Range:        1,
+		Damage:       0,
+		Range:        5,
 		MaxMoveRange: 4,
-		MaxCargo:     20,
-		Price:        30,
+		MaxCargo:     30,
+		Price:        50,
 		Yield:        0.8,
 		Class:        SHIP_LOOT,
 	}
