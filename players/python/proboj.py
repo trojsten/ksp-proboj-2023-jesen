@@ -41,11 +41,12 @@ class TradeTurn(Turn):
 
 
 class LootTurn(Turn):
-    def __init__(self, ship_id: int):
+    def __init__(self, ship_id: int, target: int):
         self.ship_id = ship_id
+        self.target = target
 
     def __str__(self):
-        return f"LOOT {self.ship_id}"
+        return f"LOOT {self.ship_id} {self.target}"
 
     def __repr__(self):
         return str(self)

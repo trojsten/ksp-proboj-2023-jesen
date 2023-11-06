@@ -102,8 +102,8 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 }
 
 func loot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
-	var shipId int
-	_, err := fmt.Sscanf(line, "%d", &shipId)
+	var shipId, targetShipId int
+	_, err := fmt.Sscanf(line, "%d %d", &shipId, &targetShipId)
 	if err != nil {
 		return fmt.Errorf("sscanf of command LOOT failed: %w", err)
 	}
@@ -117,8 +117,8 @@ func loot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	}
 	commandedShips[shipId] = true
 
-	wreckShip := ShipAt(g, g.Ships[shipId].X, g.Ships[shipId].Y)
-	if wreckShip != nil && wreckShip.IsWreck { // TODO check, ci je v lodi dost miesta
+	wreckShip := g.Ships[targetShipId]
+	if wreckShip != nil && wreckShip.IsWreck {
 		remainingSpace := ship.Type.Stats().MaxCargo - ship.Resources.countResources()
 		ship.Resources.Gold += min(int(ship.Type.Stats().Yield*float32(wreckShip.Resources.Gold)), remainingSpace)
 
@@ -149,7 +149,7 @@ func loot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		wreckShip.Resources = Resources{}
 		p.Score.newGoldEarned(int(ship.Type.Stats().Yield * float32(wreckShip.Resources.Gold)))
 	} else {
-		return fmt.Errorf("ship %d try to loot and is not on cell where is wreck", shipId)
+		return fmt.Errorf("ship %d try to loot ship %d which not exist or is not wreck", shipId, targetShipId)
 	}
 
 	return nil

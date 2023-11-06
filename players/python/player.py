@@ -14,7 +14,8 @@ class MyPlayer(ProbojPlayer):
 
         moves = [
             BuyTurn(ShipsEnum.Cln),
-            ShootTurn(0, 1),
+            # ShootTurn(0, 1),
+            LootTurn(0, 1),
         ]
 
         for ship in self.ships:
