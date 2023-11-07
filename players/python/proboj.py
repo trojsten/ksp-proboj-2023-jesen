@@ -208,6 +208,7 @@ class Map:
     width: int
     height: int
     tiles: List[List[Tile]]
+    directions: Tuple[Tuple[int]] = ((1, 0), (-1, 0), (0, 1), (0, -1))
 
     @classmethod
     def read_map(cls, state_map) -> "Map":
@@ -226,6 +227,17 @@ class Map:
     def tile_type_at(self, pos: XY) -> "TileEnum":
         return self.tiles[pos.y][pos.x].type
 
+    def neighbours(self, pos: XY) -> List[XY]:
+        """
+        :return pole políčok s ktorými `pos` susedí
+        """
+        out = []
+        for dx, dy in self.directions:
+            new_x, new_y = pos.x + dx, pos.y + dy
+            if 0 <= new_x < self.height and 0 <= new_y < self.width:
+                if self.tiles[new_y][new_x].type != TileEnum.TILE_GROUND:
+                    out.append(XY(new_x, new_y))
+        return out
 
 class Player:
     """
@@ -259,11 +271,17 @@ class ProbojPlayer:
         self.myself: Player
         self._myself: int
 
-    def mine_ships(self):
+    def mine_ships(self) -> List[Ship]:
         """
         :return: pole lodí, ktoré patria tebe
         """
         return [i for i in self.ships if i.mine]
+    
+    def is_occupied_by_ship(self, coord: XY) -> bool:
+        for i in self.mine_ships():
+            if coord == i.coords:
+                return True
+        return False
 
     @staticmethod
     def log(*args):
@@ -320,20 +338,7 @@ class ProbojPlayer:
 
 
 class Utils:
-    directions: Tuple[Tuple[int]] = ((1, 0), (-1, 0), (0, 1), (0, -1))
 
-    @classmethod
-    def neighbours(cls, pos: XY, mapa: Map) -> List[XY]:
-        """
-        :return pole políčok s ktorými `pos` susedí
-        """
-        out = []
-        for dx, dy in cls.directions:
-            new_x, new_y = pos.x + dx, pos.y + dy
-            if 0 <= new_x < mapa.height and 0 <= new_y < mapa.width:
-                if mapa.tiles[new_y][new_x].type != TileEnum.TILE_GROUND:
-                    out.append(XY(new_x, new_y))
-        return out
 
     @classmethod
     def bfs_path(cls, start: XY, goal: XY, mapa: Map) -> List[XY] | None:
@@ -354,7 +359,7 @@ class Utils:
                 path.reverse()
                 return path
 
-            for node in cls.neighbours(curr, mapa):
+            for node in mapa.neighbours(curr):
                 if node not in parent:
                     q.append(node)
                     parent[node] = curr

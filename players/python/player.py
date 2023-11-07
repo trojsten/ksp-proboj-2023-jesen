@@ -10,6 +10,7 @@ class MyPlayer(ProbojPlayer):
         self.log(self.ships)
         self.log(self.myself, self.myself.gold)
         # self.log(self.map)
+        self.log(self.is_occupied_by_ship(XY(0,0)))
 
         moves = [
             BuyTurn(ShipsEnum.Cln),
@@ -18,7 +19,7 @@ class MyPlayer(ProbojPlayer):
 
         for ship in self.mine_ships():
             options = []
-            for coord in Utils.neighbours(ship.coords, self.map):
+            for coord in self.map.neighbours(ship.coords):
                 options.append(MoveTurn(ship.index, coord))
             moves.append(random.choice(options))
 

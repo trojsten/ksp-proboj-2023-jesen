@@ -8,14 +8,14 @@ import (
 	"time"
 )
 
-func sendStateToPlayer(g *Game, p *Player, sendMap bool) error {
+func sendStateToPlayer(g *Game, p *Player, sendMap bool, round int, maxRounds int) error {
 	state := StateForPlayer(g, p, sendMap)
 	data, err := json.Marshal(state)
 	if err != nil {
 		return err
 	}
 
-	resp := g.Runner.ToPlayer(p.Name, "", string(data))
+	resp := g.Runner.ToPlayer(p.Name, fmt.Sprintf("ROUND %d/%d", round, maxRounds), string(data))
 	if resp != client.Ok {
 		return fmt.Errorf("response from Runner: %v", resp)
 	}
