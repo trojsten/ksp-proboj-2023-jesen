@@ -226,36 +226,42 @@ func buy(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 }
 
 func store(g *Game, p *Player, line string, commandedShips map[int]bool) error {
-	var amount int
-	_, err := fmt.Sscanf(line, "%d", &amount)
+	var shipId, amount int
+	_, err := fmt.Sscanf(line, "%d %d", &shipId, &amount)
 	if err != nil {
 		return fmt.Errorf("sscanf of command STORE failed: %w", err)
 	}
 
+	_, exist := commandedShips[shipId]
+	if exist {
+		return fmt.Errorf("multiple commands to ship %d. ignoring", shipId)
+	}
+	ship, err := p.Ship(g, shipId)
+	if err != nil {
+		return err
+	}
+	commandedShips[shipId] = true
+
 	base := p.Base()
 
 	if base != nil {
-		for i := range p.Ships() {
-			if p.Ships()[i].X == base.X && p.Ships()[i].Y == base.Y {
-				ship, err := p.Ship(g, p.Ships()[i].Id)
-				if err != nil {
-					return err
-				}
-				commandedShips[ship.Id] = true
-
-				if amount > 0 {
-					g.Runner.Log(fmt.Sprintf("(%s) try to STORE %d golds. Ship storage: %d", p.Name, amount, p.Ships()[i].Resources.Gold))
-					var goldToStore = min(amount, p.Ships()[i].Resources.Gold)
-					p.Gold += goldToStore
-					p.Ships()[i].Resources.Gold -= goldToStore
-				} else {
-					g.Runner.Log(fmt.Sprintf("(%s) try to WITHDRAW %d golds. Ship storage: %d", p.Name, -1*amount, p.Gold))
-					var goldToRemove = min(-1*amount, p.Gold)
-					p.Ships()[i].Resources.Gold += goldToRemove
-					p.Gold -= goldToRemove
-				}
+		if ship.X == base.X && ship.Y == base.Y {
+			if amount > 0 {
+				g.Runner.Log(fmt.Sprintf("(%s) try to STORE %d golds. Ship storage: %d", p.Name, amount, p.Ships()[shipId].Resources.Gold))
+				var goldToStore = min(amount, p.Ships()[shipId].Resources.Gold)
+				p.Gold += goldToStore
+				p.Ships()[shipId].Resources.Gold -= goldToStore
+			} else {
+				g.Runner.Log(fmt.Sprintf("(%s) try to WITHDRAW %d golds. Ship storage: %d", p.Name, -1*amount, p.Gold))
+				var goldToRemove = min(-1*amount, p.Gold)
+				p.Ships()[shipId].Resources.Gold += goldToRemove
+				p.Gold -= goldToRemove
 			}
+		} else {
+			return fmt.Errorf("ship %d is not in base", shipId)
 		}
+	} else {
+		return fmt.Errorf("that should not be possible. Can't find base belonging to player %d. Please contact organizers", p.Index)
 	}
 	return nil
 }

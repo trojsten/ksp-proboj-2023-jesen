@@ -113,17 +113,19 @@ class BuyTurn(Turn):
 
 
 class StoreTurn(Turn):
-    def __init__(self, amount: int):
+    def __init__(self, ship_id: int, amount: int):
         """
         Trieda, ktorou dávame príkaz na uloženie/vybratie zlata zo základne.
         Musíme mať loď v základni.
 
+        :param ship_id idčko lode, ktorej dávame príkaz
         :param amount množstvo zlata, ktoré chceme uložiť/vybrať. Kladné ak ukladáma do základné, záporné ak vyberáme.
         """
         self.amount = amount
+        self.ship_id = ship_id
 
     def __str__(self):
-        return f"STORE {self.amount}"
+        return f"STORE {self.ship_id} {self.amount}"
 
     def __repr__(self):
         return str(self)

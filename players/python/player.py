@@ -13,6 +13,7 @@ class MyPlayer(ProbojPlayer):
 
         moves = [
             BuyTurn(ShipsEnum.Cln),
+            StoreTurn(0, 1)
         ]
 
         for ship in self.mine_ships():
