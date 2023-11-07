@@ -31,7 +31,6 @@ func (g *Game) Run() error {
 		}
 
 		for i, _ := range g.Harbors {
-			// g.Runner.Log(fmt.Sprintf("product %d %d %d %d %d %d %d %d %d", harbor.Production.Wood, harbor.Production.Stone, harbor.Production.Iron, harbor.Production.Gem, harbor.Production.Wool, harbor.Production.Hide, harbor.Production.Wheat, harbor.Production.Pineapple, harbor.Production.Gold))
 			g.Harbors[i].tick()
 		}
 
@@ -68,11 +67,13 @@ func (g *Game) Run() error {
 		}
 
 		// remove ships
-		for i, ship := range g.Ships {
-			if ship.IsWreck && ship.Resources.empty() {
-				delete(g.Ships, i)
-			} else if ship.Health <= 0 {
+		for i, _ := range g.Ships {
+			if g.Ships[i].Health <= 0 && !g.Ships[i].IsWreck {
 				g.Ships[i].IsWreck = true
+				g.Ships[i].Health = 0
+			}
+			if g.Ships[i].IsWreck && g.Ships[i].Resources.empty() || g.Ships[i].IsWreck && g.Ships[i].Health <= WRECK_REMOVE_DAMAGE {
+				delete(g.Ships, i)
 			}
 		}
 
