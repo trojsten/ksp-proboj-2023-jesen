@@ -10,16 +10,16 @@ class MyPlayer(ProbojPlayer):
         self.log(self.ships)
         self.log(self.myself, self.myself.gold)
         # self.log(self.map)
-        # self.log(self.map.tiles[0][0])
 
         moves = [
             BuyTurn(ShipsEnum.Cln),
-            # ShootTurn(0, 1),
-            LootTurn(0, 1),
         ]
 
-        for ship in self.ships:
-            moves.append(random.choice([MoveTurn(ship.index, coord) for coord in ship.coords.nbhs()]))
+        for ship in self.mine_ships():
+            options = []
+            for coord in Utils.neighbours(ship.coords, self.map):
+                options.append(MoveTurn(ship.index, coord))
+            moves.append(random.choice(options))
 
         self.log(moves)
 

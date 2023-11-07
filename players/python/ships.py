@@ -20,10 +20,6 @@ class XY:
     def __repr__(self):
         return f"({self.x} {self.y})"
 
-    def nbhs(self):
-        ns = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        return [XY(self.x + dx, self.y + dy) for dx, dy in ns]
-
 
 class ResourceEnum(enum.Enum):
     Wood = 0

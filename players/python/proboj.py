@@ -1,10 +1,13 @@
 import sys
+from typing import Tuple
+
 try:
     import ujson as json
 except ImportError:
     print("fallback to default json", file=sys.stderr)
     import json
 from abc import ABC, abstractmethod
+from collections import deque
 
 from ships import *
 
@@ -17,6 +20,12 @@ class Turn(ABC):
 
 class MoveTurn(Turn):
     def __init__(self, ship_id: int, coords: XY):
+        """
+        Trieda, ktorou dávame lodi príkaz k presunu na súradnice.
+
+        :param ship_id idčko lode, ktorej dávame príkaz
+        :param coords kam sa má loď pohnúť
+        """
         self.ship_id = ship_id
         self.coords = coords
 
@@ -29,6 +38,14 @@ class MoveTurn(Turn):
 
 class TradeTurn(Turn):
     def __init__(self, ship_id: int, resource: ResourceEnum, amount: int):
+        """
+        Trieda, ktorou dávame lodi príkaz k obchodovaniu s prístavom.
+        Loď musí byť na rovnakých súradniciach ako prístav.
+
+        :param ship_id idčko lode, ktorej dávame príkaz
+        :param resource akú surovinu máme predávať/nakupovať
+        :param amount koľko suroviny ideme predávať/nakupovať. Kladné ak ideme nakupovať z prístavu, záporné ak predávame do prístavu
+        """
         self.ship_id = ship_id
         self.resource = resource
         self.amount = amount
@@ -42,6 +59,13 @@ class TradeTurn(Turn):
 
 class LootTurn(Turn):
     def __init__(self, ship_id: int, target: int):
+        """
+        Trieda, ktorou dávame lodi príkaz na ťaženie surovín z vraku lode.
+        Loď musí byť na rovnakých súradniciach ako vrak.
+
+        :param ship_id idčko lode, ktorej dávame príkaz
+        :param target idčko lode, z ktorej chceme ťažiť suroviny
+        """
         self.ship_id = ship_id
         self.target = target
 
@@ -54,6 +78,13 @@ class LootTurn(Turn):
 
 class ShootTurn(Turn):
     def __init__(self, ship_id: int, target: int):
+        """
+        Trieda, ktorou dávame lodi príkaz na strieľanie na inú loď.
+        Loď musí mať dostrel na túto loď.
+
+        :param ship_id idčko lode, ktorej dávame príkaz
+        :param target idčko lode, na ktorú chceme strieľať.
+        """
         self.ship_id = ship_id
         self.target = target
 
@@ -66,6 +97,12 @@ class ShootTurn(Turn):
 
 class BuyTurn(Turn):
     def __init__(self, ship: ShipsEnum):
+        """
+        Trieda, ktorou dávame príkaz na nákup novej lode.
+        Na tento nákup musí mať hráč peniaze v základni (nestačí na lodiach).
+
+        :param ship druh lode, ktorú chceme kúpiť
+        """
         self.ship = ship
 
     def __str__(self):
@@ -77,6 +114,12 @@ class BuyTurn(Turn):
 
 class StoreTurn(Turn):
     def __init__(self, amount: int):
+        """
+        Trieda, ktorou dávame príkaz na uloženie/vybratie zlata zo základne.
+        Musíme mať loď v základni.
+
+        :param amount množstvo zlata, ktoré chceme uložiť/vybrať. Kladné ak ukladáma do základné, záporné ak vyberáme.
+        """
         self.amount = amount
 
     def __str__(self):
@@ -90,7 +133,7 @@ class StoreTurn(Turn):
 class Harbor:
     """
     Trieda, ktorá reprezentuje prístav v hre.
-    * XY - poloha prístavu
+    * coords - poloha prístavu
     * production - koľko surovín prístav vygeneruje každý ťah.
     * storage - koľko surovín má prístav na sklade.
     * visible - či vidíš informácie o tomto prístave. Ak `False`, sú tam 0, alebo náhodné čísla.
@@ -178,7 +221,7 @@ class Map:
             ",".join(str(tile) for tile in line) for line in self.tiles
         )
 
-    def tile_type_at(self, pos: XY) -> "Tile":
+    def tile_type_at(self, pos: XY) -> "TileEnum":
         return self.tiles[pos.y][pos.x].type
 
 
@@ -213,6 +256,12 @@ class ProbojPlayer:
         self.ships: List[Ship]
         self.myself: Player
         self._myself: int
+
+    def mine_ships(self):
+        """
+        :return: pole lodí, ktoré patria tebe
+        """
+        return [i for i in self.ships if i.mine]
 
     @staticmethod
     def log(*args):
@@ -266,3 +315,44 @@ class ProbojPlayer:
             self._read_turn()
             turns = self.make_turn()
             self._send_turns(turns)
+
+
+class Utils:
+    directions: Tuple[Tuple[int]] = ((1, 0), (-1, 0), (0, 1), (0, -1))
+
+    @classmethod
+    def neighbours(cls, pos: XY, mapa: Map) -> List[XY]:
+        """
+        :return pole políčok s ktorými `pos` susedí
+        """
+        out = []
+        for dx, dy in cls.directions:
+            new_x, new_y = pos.x + dx, pos.y + dy
+            if 0 <= new_x < mapa.height and 0 <= new_y < mapa.width:
+                if mapa.tiles[new_y][new_x].type != TileEnum.TILE_GROUND:
+                    out.append(XY(new_x, new_y))
+        return out
+
+    @classmethod
+    def bfs_path(cls, start: XY, goal: XY, mapa: Map) -> List[XY] | None:
+        """
+        :return pole políčok, cez ktoré treba ísť, alebo `None`, ak sa nedá dosiahnuť
+        """
+        q = deque()
+        q.append(start)
+        parent = {start: None}
+
+        while q:
+            curr = q.popleft()
+            if curr == goal:
+                path = []
+                while curr != start:
+                    path.append(curr)
+                    curr = parent[curr]
+                path.reverse()
+                return path
+
+            for node in cls.neighbours(curr, mapa):
+                if node not in parent:
+                    q.append(node)
+                    parent[node] = curr
