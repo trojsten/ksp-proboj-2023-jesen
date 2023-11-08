@@ -26,11 +26,16 @@ export default class Stats {
                 <button class="close" id="closeBtn">
                     <span class="material-icons-round">close</span>
                 </button>
-                <h1>${shipType} ${ship.index} (${Playback.turn.players[ship.player_index].name})</h1>
-                <div class="health">
-                    <div class="bar" style="width:${ship.health / shipTypeHealth[shipType] * 100}%;"></div>
-                    <p>${ship.health} / ${shipTypeHealth[shipType]}</p>
-                </div>
+                ${ship.is_wreck ? `
+                    <h1>Wreck</h1>
+                    ` : `
+                        <h1>${shipType} ${ship.index} (${Playback.turn.players[ship.player_index].name})</h1>
+                        <div class="health">
+                            <div class="bar" style="width:${ship.health / shipTypeHealth[shipType] * 100}%;"></div>
+                            <p>${ship.health} / ${shipTypeHealth[shipType]}</p>
+                        </div>
+                    `
+            }
                 <div class="resources">
                     <p>Gem: ${ship.resources.gem}</p>
                     <p>Wood: ${ship.resources.wood}</p>

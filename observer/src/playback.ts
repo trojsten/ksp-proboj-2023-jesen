@@ -115,6 +115,10 @@ export default class Playback {
             }
             else {
                 this.ships[id].move(ship.x, ship.y);
+                this.ships[id].setHealth(ship.health);
+                if (ship.is_wreck) {
+                    this.ships[id].setWreck();
+                }
             }
         }
 

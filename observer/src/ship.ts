@@ -35,6 +35,7 @@ export default class ShipClass {
     }
 
     move(newX: number, newY: number) {
+        if (this.data.is_wreck) return;
         const delta = {
             x: newX - this.data.x,
             y: newY - this.data.y,
@@ -68,7 +69,11 @@ export default class ShipClass {
 
     setWreck() {
         this.data.is_wreck = true;
-        this.ship.opacity(0.5);
+        this.ship.opacity(0.2);
+    }
+
+    setHealth(health: number) {
+        this.data.health = health;
     }
 
     remove() {
