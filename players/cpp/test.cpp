@@ -13,7 +13,7 @@ int main(){
 				turns.push_back(MoveTurn(i.index,i.coords + XY(1,0)));
 			}
 		}
-		turns.push_back(BuyTurn(Plt));
+		turns.push_back(BuyTurn(ShipsEnum::Cln));
 		for(auto i : turns){
 			cout<<i<<"\n";
 			cerr<<i<<"\n";
