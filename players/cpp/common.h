@@ -1,125 +1,175 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include<bits/stdc++.h>
-#include "RSJparser.tcc"
+#include "json.hpp"
 
-namespace
-{
 using namespace std;
+using json = nlohmann::json;
 enum TileEnum{TILE_WATER, TILE_GROUND, TILE_HARBOR, TILE_BASE};
 enum ResourceEnum{Wood, Stone, Iron, Gem, Wool, Hide, Wheat, Pineapple, Gold};
+enum ShipsEnum{Cln,Plt,SmallMerchantShip,LargeMerchantShip,SomalianPirateShip,BlackPearl,SniperAttackShip,LooterScooter};
+enum ShipClass{SHIP_TRADE = 0,SHIP_ATTACK = 1,SHIP_LOOT = 1};
+enum class TurnType : int{MOVE, TRADE, LOOT, SHOOT, BUY, STORE};
+
+unordered_map<string,int> strToResource{
+	{"wood" , 0},
+	{"stone", 1},
+	{"iron", 2},
+	{"gem", 3},
+	{"wool", 4},
+	{"hide", 5},
+	{"wheat", 6},
+	{"pineapple", 7},
+	{"gold", 8}
+};
+
+ostream& operator<<(ostream &os,const TurnType &t){
+	vector<string> mapping{
+		"MOVE",
+		"TRADE",
+		"LOOT",
+		"SHOOT",
+		"BUY",
+		"STORE"
+	};
+	os << mapping[static_cast<int>(t)];
+	return os;
+}
 
 struct XY{
 	int x,y;
 	XY(int _x,int _y) : x(_x),y(_y){}
 	XY(){}
-	XY operator-(XY &other){return XY(this->x - other.x,this->y - other.y);}
-	XY operator+(XY &other){return XY(this->x + other.x,this->y + other.y);}
-	string repr(){return to_string(x) + " " + to_string(y);}
+	XY(json &j){
+		j.at("x").get_to(x);
+		j.at("y").get_to(y);
+	}
+	XY operator-(XY other){return XY(this->x - other.x,this->y - other.y);}
+	XY operator+(XY other){return XY(this->x + other.x,this->y + other.y);}
 	friend ostream& operator<<(ostream &os,const XY &a){os << a.x << " " << a.y; return os;};
 };
 
 struct Turn{
-	virtual string repr(){return "";}
-	friend ostream& operator<<(ostream &os,Turn &a){
-		os << a.repr();
+	TurnType type;
+	int ship_id;
+	XY coords;
+	int target,amount;
+	int resource;
+	int ship_to_buy;
+	friend ostream& operator<<(ostream &os,const Turn &t){;
+		os << t.type << " ";
+		switch(t.type){
+			case TurnType::MOVE:
+				os << t.ship_id << " " << t.coords;
+				break;
+			case TurnType::TRADE:
+				os << t.ship_id << " " << t.resource;
+				break;
+			case TurnType::LOOT:
+			case TurnType::SHOOT:
+				os << t.ship_id << " " << t.target;
+				break;
+			case TurnType::BUY:
+				os << t.ship_to_buy;
+				break;
+			case TurnType::STORE:
+				os << t.ship_id << " " << t.amount;
+				break;
+		}
 		return os;
 	}
 };
 
 struct MoveTurn : Turn{
-	int ship_id;
-	XY coords;
-	MoveTurn(int ship_id,XY coords) : ship_id(ship_id),coords(coords){};
-	virtual string repr(){
-		return "MOVE " + to_string(ship_id) + " " + coords.repr();
+	MoveTurn(int ship_id,XY coords) : Turn{TurnType::MOVE,ship_id,coords}{
 	}
 };
 
 struct TradeTurn : Turn{
-	int ship_id,amount;
-	ResourceEnum resource;
-	TradeTurn(int ship_id,ResourceEnum resource,int amount) : ship_id(ship_id),resource(resource),amount(amount){};
-	virtual string repr(){
-		return "TRADE " + to_string(ship_id) + " " + to_string(resource) + " " + to_string(amount);
+	TradeTurn(int ship_id,ResourceEnum resource,int amount) : Turn{TurnType::TRADE,ship_id}{
+		this->resource = static_cast<int>(resource);
+		this->amount = amount;
 	}
 };
 
 struct LootTurn : Turn{
-	int ship_id,target;
-	LootTurn(int ship_id,int target) : ship_id(ship_id),target(target){};
-	virtual string repr(){
-		return "LOOT " + to_string(ship_id) + " " + to_string(target);
+	LootTurn(int ship_id,int target) : Turn{TurnType::LOOT,ship_id}{
+		this->target = target;
 	}
 };
 
 struct ShootTurn : Turn{
-	int ship_id,target;
-	ShootTurn(int ship_id,int target) : ship_id(ship_id),target(target){};
-	virtual string repr(){
-		return "SHOOT " + to_string(ship_id) + " " + to_string(target);
+	ShootTurn(int ship_id,int target) : Turn{TurnType::SHOOT,ship_id}{
+		this->target = target;
 	}
 };
 
-//TODO
 struct BuyTurn : Turn{
-	int ship_id;
-	BuyTurn(int ship_id) : ship_id(ship_id){};
-	virtual string repr(){
-		return "";
+	BuyTurn(ShipsEnum ship_to_buy) : Turn{TurnType::BUY}{
+		this->ship_to_buy = static_cast<int>(ship_to_buy);
 	}
 };
 
 struct StoreTurn : Turn{
-	int ship_id,amount;
-	StoreTurn(int ship_id,int amount) : ship_id(ship_id),amount(amount){};
-	virtual string repr(){
-		return "STORE " + to_string(ship_id) + " " + to_string(amount);
+	StoreTurn(int ship_id,int amount) : Turn{TurnType::STORE,ship_id}{
+		this->amount = amount;
+	}
+};
+
+struct Resources{
+	vector<int> resources = vector<int>(strToResource.size(),0);
+	Resources(){}
+	Resources(json j){
+		for(auto &[key,value] : j.get<unordered_map<string,int>>()){
+			resources[strToResource[key]] = value;
+		}
+	}
+	int& operator[](TileEnum key){
+		return resources[static_cast<int>(key)];
 	}
 };
 
 struct Harbor{
 	XY coords;
-	unordered_map<string,int> production, storage;
+	Resources production, storage;
 	bool visible;
-	Harbor(RSJobject harbor_dict){
-		coords = XY(harbor_dict["x"].as<int>(),harbor_dict["y"].as<int>());
-		//TODO mapa enum -> int
-		production = harbor_dict["production"].as_map<int>();
-		storage = harbor_dict["storage"].as_map<int>();
-		visible = harbor_dict["visible"].as<bool>();
+	Harbor(json harbor_dict){
+		coords = XY(harbor_dict["x"].get<int>(),harbor_dict["y"].get<int>());
+		production = Resources(harbor_dict["production"]);
+		storage = Resources(harbor_dict["storage"]);
+		visible = harbor_dict["visible"].get<bool>();
 	}
 };
 
-vector<Harbor> load_harbors(RSJresource harbors){
-	vector<Harbor> ret;
-	for(auto har : harbors.as_array()){
-		ret.push_back(Harbor(har.as_object()));
+template<class T>
+vector<T> load(const json &j){
+	vector<T> ret;
+	for(auto item : j.items()){
+		ret.push_back(T(item.value()));
 	}
 	return ret;
 }
 
 struct Tile{
-	TileEnum type;
+	int type;
 	int index;
-	Tile(RSJresource r) : type(static_cast<TileEnum>(r["type"].as<int>())),index(r["index"].as<int>()){}
+	Tile(int type, int index) : type(static_cast<int>(type)),index(index){}
 	Tile(){}
 	friend ostream& operator<<(ostream &os,const Tile &a){os << "Tile(" << a.type << "," << a.index << ")";return os;}
 };
+
+void from_json(const json& j,Tile &t){
+	t = Tile(j["type"],j["index"]);
+}
 
 struct Map{
 	int width,height;
 	vector<vector<Tile>> tiles;
 	Map(){}
-	Map(RSJresource r){
-		width = r["width"].as<int>();
-		height = r["height"].as<int>();
-		for(auto row : r["tiles"].as_array()){
-			tiles.push_back({});
-			for(auto cell : row.as_array()){
-				tiles.back().push_back(Tile(cell));
-			}
-		}
+	Map(json r){
+		width = r["width"].get<int>();
+		height = r["height"].get<int>();
+		tiles = r["tiles"].get<vector<vector<Tile>>>();
 	}
 
 	bool inside(XY coords){
@@ -155,26 +205,60 @@ struct Map{
 	}
 };
 
+struct ShipStats{
+	int max_health,damage,range,max_move_range,max_cargo,price;
+	float yield_frac;
+	ShipClass ship_class;
+	ShipStats(){}
+	ShipStats(const json &j){
+		j["max_health"].get_to(max_health);
+		j["damage"].get_to(damage);
+		j["range"].get_to(range);
+		j["max_move_range"].get_to(max_move_range);
+		j["max_cargo"].get_to(max_cargo);
+		j["price"].get_to(price);
+		j["yield_frac"].get_to(yield_frac);
+		ship_class = static_cast<ShipClass>(j["ship_class"].get<int>());
+	}
+};
+
+struct Ship{
+	int index,player_index,health;
+	XY coords;
+	bool is_wreck,mine;
+	Resources resources;
+	ShipStats stats;
+	Ship(){}
+	Ship(const json &j){
+		j["index"].get_to(index);
+		j["player_index"].get_to(player_index);
+		coords = XY(j["x"].get<int>(),j["y"].get<int>());
+		j["health"].get_to(health);
+		j["is_wreck"].get_to(is_wreck);
+		resources = Resources(j["resources"]);
+		stats = ShipStats(j["stats"]);
+	}
+};
+
+
 struct World{
 	vector<Harbor> harbors;
-	//vector<Ship> ships;
+	vector<Ship> ships;
 	Map mapa;
 	World(){cerr<<"New world"<<endl;};
 	int gold,index;
 	friend istream& operator>>(istream& is,World& world){
 		string inp;is>>inp;
-		RSJresource json(inp);
-		world.harbors = load_harbors(json["harbors"]);
-		cerr<<"loaded something"<<endl;
-		if(false && json["map"]["tiles"].as_str() != "null")
-			world.mapa = Map(json["map"]);
-		else{
+		json data = json::parse(inp);
+		world.harbors = load<Harbor>(data["harbors"]);
+		world.ships = load<Ship>(data["ships"]);
+		if(!data["map"]["tiles"].is_null())
+			world.mapa = Map(data["map"]);
+		else
 			cerr<<"Mapa je null"<<endl;
-		}
-		world.gold = json["gold"].as<int>();
-		world.index = json["index"].as<int>();
+		world.gold = data["gold"].get<int>();
+		world.index = data["index"].get<int>();
 		return is;
 	}
-};
 };
 #endif
