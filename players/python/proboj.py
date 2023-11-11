@@ -184,12 +184,16 @@ class Tile:
     type: TileEnum
     index: int
 
-    def __str__(self):
+    def __repr__(self):
         return (
             f"(Tile({self.type.name}, player:{self.index})"
             if self.index != -1
             else self.type.name[5:]
         )
+
+    def __str__(self):
+        tiles = ['~', 'O', 'H', 'B']
+        return tiles[self.type.value]
 
     @classmethod
     def read_tile(cls, tile):
@@ -221,7 +225,12 @@ class Map:
 
     def __str__(self):
         return f"map {self.width}x{self.height}\n" + "\n".join(
-            ",".join(str(tile) for tile in line) for line in self.tiles
+            "".join(str(tile) for tile in line) for line in self.tiles
+        )
+
+    def __repr__(self):
+        return f"map {self.width}x{self.height}\n" + "\n".join(
+            ",".join(repr(tile) for tile in line) for line in self.tiles
         )
 
     def tile_type_at(self, pos: XY) -> "TileEnum":

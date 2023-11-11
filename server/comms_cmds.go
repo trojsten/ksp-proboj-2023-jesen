@@ -74,7 +74,8 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		g.Runner.Log(fmt.Sprintf("(%s) try to TAKE %d pieces. Harbor storage: %d", p.Name, amount, *harbor.Storage.Resource(ResourceType(resourceId))))
 		amount = min(amount, *harbor.Storage.Resource(ResourceType(resourceId)))
 		g.Runner.Log(fmt.Sprintf(", so taking %d\n", amount))
-		price := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
+		unitPrice := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
+		price := unitPrice * amount
 		if price > g.Ships[shipId].Resources.Gold {
 			return fmt.Errorf("ship %d don't have enough gold to trade", shipId)
 		}
@@ -92,7 +93,8 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		g.Runner.Log(fmt.Sprintf(", so giving %d\n", amount))
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) -= amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) += amount
-		price := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
+		unitPrice := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
+		price := unitPrice * amount
 		g.Ships[shipId].Resources.Gold += price
 		p.Score.newSell()
 		p.Score.newGoldEarned(amount)

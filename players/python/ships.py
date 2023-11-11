@@ -1,4 +1,5 @@
 import enum
+import sys
 from dataclasses import dataclass
 from typing import List
 
@@ -37,7 +38,17 @@ class Resources:
 
     def __init__(self, resources: dict[str: int]):
         assert len(resources) == len(ResourceEnum)
-        self.resources = list(resources.values())
+        self.resources = [
+            resources['wood'],
+            resources['stone'],
+            resources['iron'],
+            resources['gem'],
+            resources['wool'],
+            resources['hide'],
+            resources['wheat'],
+            resources['pineapple'],
+            resources['gold'],
+        ]
 
     def __getitem__(self, key: ResourceEnum):
         return self.resources[key.value]

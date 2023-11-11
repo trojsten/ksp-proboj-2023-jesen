@@ -22,7 +22,7 @@ class MyPlayer(ProbojPlayer):
             for coord in self.map.neighbours(ship.coords):
                 options.append(MoveTurn(ship.index, coord))
             moves.append(random.choice(options))
-
+            
         self.log(moves)
 
         return moves
