@@ -8,7 +8,7 @@ using json = nlohmann::json;
 enum class TileEnum : int {TILE_WATER, TILE_GROUND, TILE_HARBOR, TILE_BASE};
 enum class ResourceEnum : int {Wood, Stone, Iron, Gem, Wool, Hide, Wheat, Pineapple, Gold};
 enum class ShipsEnum : int {Cln,Plt,SmallMerchantShip,LargeMerchantShip,SomalianPirateShip,BlackPearl,SniperAttackShip,LooterScooter};
-enum ShipClass{SHIP_TRADE = 0,SHIP_ATTACK = 1,SHIP_LOOT = 1};
+enum class ShipClass : int {SHIP_TRADE = 0,SHIP_ATTACK = 1,SHIP_LOOT = 1};
 enum class TurnType : int {MOVE, TRADE, LOOT, SHOOT, BUY, STORE};
 
 unordered_map<string,int> strToResource{
