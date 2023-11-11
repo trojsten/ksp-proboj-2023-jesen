@@ -5,11 +5,11 @@
 
 using namespace std;
 using json = nlohmann::json;
-enum TileEnum{TILE_WATER, TILE_GROUND, TILE_HARBOR, TILE_BASE};
-enum ResourceEnum{Wood, Stone, Iron, Gem, Wool, Hide, Wheat, Pineapple, Gold};
-enum ShipsEnum{Cln,Plt,SmallMerchantShip,LargeMerchantShip,SomalianPirateShip,BlackPearl,SniperAttackShip,LooterScooter};
+enum class TileEnum : int {TILE_WATER, TILE_GROUND, TILE_HARBOR, TILE_BASE};
+enum class ResourceEnum : int {Wood, Stone, Iron, Gem, Wool, Hide, Wheat, Pineapple, Gold};
+enum class ShipsEnum : int {Cln,Plt,SmallMerchantShip,LargeMerchantShip,SomalianPirateShip,BlackPearl,SniperAttackShip,LooterScooter};
 enum ShipClass{SHIP_TRADE = 0,SHIP_ATTACK = 1,SHIP_LOOT = 1};
-enum class TurnType : int{MOVE, TRADE, LOOT, SHOOT, BUY, STORE};
+enum class TurnType : int {MOVE, TRADE, LOOT, SHOOT, BUY, STORE};
 
 unordered_map<string,int> strToResource{
 	{"wood" , 0},
@@ -151,11 +151,11 @@ vector<T> load(const json &j){
 }
 
 struct Tile{
-	int type;
+	TileEnum type;
 	int index;
-	Tile(int type, int index) : type(static_cast<int>(type)),index(index){}
+	Tile(int type, int index) : type(static_cast<TileEnum>(type)),index(index){}
 	Tile(){}
-	friend ostream& operator<<(ostream &os,const Tile &a){os << "Tile(" << a.type << "," << a.index << ")";return os;}
+	friend ostream& operator<<(ostream &os,const Tile &a){os << "Tile(" << static_cast<int>(a.type) << "," << a.index << ")";return os;}
 };
 
 void from_json(const json& j,Tile &t){
@@ -177,7 +177,7 @@ struct Map{
 	}
 
 	bool can_move(XY coords){
-		return inside(coords) && tiles[coords.y][coords.x].type == TILE_WATER;
+		return inside(coords) && tiles[coords.y][coords.x].type == TileEnum::TILE_WATER;
 	}
 
 	friend ostream& operator<<(ostream &os,const Map &a){
@@ -185,16 +185,16 @@ struct Map{
 		for(auto i : a.tiles){
 			for(auto j : i){
 				switch(j.type){
-					case TILE_WATER:
+					case TileEnum::TILE_WATER:
 						os << "~";
 						break;
-					case TILE_GROUND:
+					case TileEnum::TILE_GROUND:
 						os << "O";
 						break;
-					case TILE_HARBOR:
+					case TileEnum::TILE_HARBOR:
 						os << "H";
 						break;
-					case TILE_BASE:
+					case TileEnum::TILE_BASE:
 						os << "X";
 						break;
 				}
