@@ -38,15 +38,20 @@ ostream& operator<<(ostream &os,const TurnType &t){
 
 struct XY{
 	int x,y;
-	XY(int _x,int _y) : x(_x),y(_y){}
 	XY(){}
+	XY(int _x,int _y) : x(_x),y(_y){}
+	XY(pair<int,int> xy) : x(xy.first),y(xy.second){}
 	XY(json &j){
 		j.at("x").get_to(x);
 		j.at("y").get_to(y);
 	}
 	XY operator-(XY other){return XY(this->x - other.x,this->y - other.y);}
 	XY operator+(XY other){return XY(this->x + other.x,this->y + other.y);}
+	bool operator==(XY other){return this->x == other.x && this->y == other.y;}
 	friend ostream& operator<<(ostream &os,const XY &a){os << a.x << " " << a.y; return os;};
+	operator pair<int,int>(){
+		return {x,y};
+	}
 };
 
 struct Turn{
@@ -63,7 +68,7 @@ struct Turn{
 				os << t.ship_id << " " << t.coords;
 				break;
 			case TurnType::TRADE:
-				os << t.ship_id << " " << t.resource;
+				os << t.ship_id << " " << t.resource << " " << t.amount;
 				break;
 			case TurnType::LOOT:
 			case TurnType::SHOOT:
@@ -124,7 +129,7 @@ struct Resources{
 			resources[strToResource[key]] = value;
 		}
 	}
-	int& operator[](TileEnum key){
+	int& operator[](ResourceEnum key){
 		return resources[static_cast<int>(key)];
 	}
 };
@@ -177,9 +182,10 @@ struct Map{
 	}
 
 	bool can_move(XY coords){
-		return inside(coords) && tiles[coords.y][coords.x].type == TileEnum::TILE_WATER;
+		return inside(coords) && tiles[coords.y][coords.x].type != TileEnum::TILE_GROUND;
 	}
 
+	Tile& operator[](XY coords){return tiles[coords.y][coords.x];}
 	friend ostream& operator<<(ostream &os,const Map &a){
 		os << "Map " << a.width << " " << a.height << endl;
 		for(auto i : a.tiles){

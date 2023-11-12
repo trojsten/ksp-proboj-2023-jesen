@@ -1,4 +1,4 @@
 [
-{"gamefolder":"game",
- "players":["first", "second"],
+{"gamefolder":"hra",
+ "players":[ "tester"],
  "args":"mapa.png"}]
