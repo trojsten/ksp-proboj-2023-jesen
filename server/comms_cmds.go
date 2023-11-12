@@ -79,7 +79,7 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		if price > g.Ships[shipId].Resources.Gold {
 			return fmt.Errorf("ship %d don't have enough gold to trade", shipId)
 		}
-		if g.Ships[shipId].Resources.countResources()+amount > g.Ships[shipId].Type.Stats().MaxCargo {
+		if g.Ships[shipId].Resources.countResources()+amount-price > g.Ships[shipId].Type.Stats().MaxCargo {
 			return fmt.Errorf("ship %d don't have enough cargo space to make a trade", shipId)
 		}
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
