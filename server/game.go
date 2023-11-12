@@ -12,7 +12,7 @@ import (
 
 type GameStats struct {
 	Game
-	ShipTypes []string `json:"ship_types"`
+	ShipTypes map[int]string `json:"ship_types"`
 }
 
 type Game struct {

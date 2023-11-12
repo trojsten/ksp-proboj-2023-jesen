@@ -87,11 +87,11 @@ func (g *Game) Run() error {
 				Bases:     g.Bases,
 				Runner:    g.Runner,
 			},
-			ShipTypes: []string{},
+			ShipTypes: map[int]string{},
 		}
 		for _, ship := range g.Ships {
 			stateShip := StateShip{Ship: *ship}
-			gameToMarshall.ShipTypes = append(gameToMarshall.ShipTypes, stateShip.Type.Name())
+			gameToMarshall.ShipTypes[ship.Id] = stateShip.Type.Name()
 		}
 
 		if round == 0 {
