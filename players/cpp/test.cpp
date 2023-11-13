@@ -28,6 +28,7 @@ int main(){
 		}
 		for(auto i : world.ships){
 			if(i.mine){
+				cerr << "SHIP ID " << i.index << " POSITION " << i.coords << endl;
 				cerr << "SHIP CAPACITY " << i.stats.max_cargo << endl;
 				cerr << i.resources.resources << endl;
 				if(i.resources[ResourceEnum::Gold] == 0)

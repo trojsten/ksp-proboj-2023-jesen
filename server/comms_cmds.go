@@ -82,6 +82,9 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		if g.Ships[shipId].Resources.countResources()+amount-price > g.Ships[shipId].Type.Stats().MaxCargo {
 			return fmt.Errorf("ship %d don't have enough cargo space to make a trade", shipId)
 		}
+		if *harbor.Storage.Resource(ResourceType(resourceId)) == 0 {
+			return fmt.Errorf("harbor does not have resource in stock",)
+		}
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) -= amount
 		g.Ships[shipId].Resources.Gold -= price
@@ -250,14 +253,14 @@ func store(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		if ship.X == base.X && ship.Y == base.Y {
 			if amount > 0 {
 				g.Runner.Log(fmt.Sprintf("(%s) try to STORE %d golds. Ship storage: %d", p.Name, amount, p.Ships()[shipId].Resources.Gold))
-				var goldToStore = min(amount, p.Ships()[shipId].Resources.Gold)
+				var goldToStore = min(amount, g.Ships[shipId].Resources.Gold)
 				p.Gold += goldToStore
-				p.Ships()[shipId].Resources.Gold -= goldToStore
+				g.Ships[shipId].Resources.Gold -= goldToStore
 			} else {
 				var emptySpaceInShip = p.Ships()[shipId].Type.Stats().MaxCargo - p.Ships()[shipId].Resources.countResources()
 				g.Runner.Log(fmt.Sprintf("(%s) try to WITHDRAW %d golds. Player gold: %d. Space in ship: %d", p.Name, -1*amount, p.Gold, emptySpaceInShip))
 				var goldToRemove = min(min(-1*amount, p.Gold), emptySpaceInShip)
-				p.Ships()[shipId].Resources.Gold += goldToRemove
+				g.Ships[shipId].Resources.Gold += goldToRemove
 				p.Gold -= goldToRemove
 			}
 		} else {
