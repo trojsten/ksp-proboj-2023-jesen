@@ -82,8 +82,8 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		if g.Ships[shipId].Resources.countResources()+amount-price > g.Ships[shipId].Type.Stats().MaxCargo {
 			return fmt.Errorf("ship %d don't have enough cargo space to make a trade", shipId)
 		}
-		if *harbor.Storage.Resource(ResourceType(resourceId)) == 0 {
-			return fmt.Errorf("harbor does not have resource in stock",)
+		if amount == 0 {
+			return fmt.Errorf("result amount for trade is 0, so not trading")
 		}
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) -= amount
@@ -94,6 +94,9 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		g.Runner.Log(fmt.Sprintf("(%s) try to GIVE %d pieces. Ship storage: %d", p.Name, -1*amount, *g.Ships[shipId].Resources.Resource(ResourceType(resourceId))))
 		amount = min(-1*amount, *g.Ships[shipId].Resources.Resource(ResourceType(resourceId)))
 		g.Runner.Log(fmt.Sprintf(", so giving %d\n", amount))
+		if amount == 0 {
+			return fmt.Errorf("result amount for trade is 0, so not trading")
+		}
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) -= amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) += amount
 		unitPrice := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
