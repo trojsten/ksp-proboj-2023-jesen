@@ -49,6 +49,7 @@ struct XY{
 	XY operator+(XY other){return XY(this->x + other.x,this->y + other.y);}
 	bool operator==(XY other){return this->x == other.x && this->y == other.y;}
 	friend ostream& operator<<(ostream &os,const XY &a){os << a.x << " " << a.y; return os;};
+	friend int dist(const XY a,const XY b){return abs(a.x - b.x) + abs(a.y - b.y);}
 	operator pair<int,int>(){
 		return {x,y};
 	}
@@ -131,6 +132,10 @@ struct Resources{
 	}
 	int& operator[](ResourceEnum key){
 		return resources[static_cast<int>(key)];
+	}
+	// TODO
+	friend ostream& operator<<(ostream& os,const Resources &r){
+		return os;
 	}
 };
 
@@ -241,8 +246,15 @@ struct Ship{
 		coords = XY(j["x"].get<int>(),j["y"].get<int>());
 		j["health"].get_to(health);
 		j["is_wreck"].get_to(is_wreck);
+		j["mine"].get_to(mine);
 		resources = Resources(j["resources"]);
 		stats = ShipStats(j["stats"]);
+	}
+	bool can_attack(XY target){
+		return stats.range >= dist(coords,target);
+	}
+	bool can_see(XY target){
+		return stats.range*3 >= dist(coords,target);
 	}
 };
 
@@ -251,8 +263,16 @@ struct World{
 	vector<Harbor> harbors;
 	vector<Ship> ships;
 	Map mapa;
-	World(){cerr<<"New world"<<endl;};
 	int gold,index;
+	World(){cerr<<"New world"<<endl;};
+	vector<Ship> my_ships(){
+		vector<Ship> out;
+		for(Ship i : ships){
+			if(i.mine)
+				out.push_back(i);
+		}
+		return out;
+	}
 	friend istream& operator>>(istream& is,World& world){
 		string inp;is>>inp;
 		json data = json::parse(inp);

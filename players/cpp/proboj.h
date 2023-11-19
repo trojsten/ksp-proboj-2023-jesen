@@ -113,11 +113,10 @@ std::vector<POINT> recreate_path(POINT end,std::map<POINT,std::pair<int,POINT>> 
     return out;
 }
 
-POINT move_to(POINT start,POINT end, bool (*condition)(POINT,POINT),std::vector<POINT> &transitions = SMERY){
+POINT move_to(POINT start,POINT end, bool (*condition)(POINT,POINT),int range = 1,std::vector<POINT> &transitions = SMERY){
     std::map<POINT,std::pair<int,POINT>> dist;
     bfs(start,condition,dist,transitions);
     std::vector<POINT> path = recreate_path(end,dist);
-    if(path.size() > 1) return path[1];
-    else return start;
+	return path[std::min((int)path.size()-1,range)];
 }
 #endif
