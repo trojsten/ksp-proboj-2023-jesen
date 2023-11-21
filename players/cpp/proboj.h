@@ -43,7 +43,11 @@ std::ostream& operator<< (std::ostream &os,const std::vector<T>&v){
 std::vector<POINT> SMERY{{0,1},{0,-1},{1,0},{-1,0}};
 std::vector<POINT> ADJ{{1,1},{-1,1},{1,-1},{-1,-1},{0,1},{0,-1},{1,0},{-1,0}};
 
-//vector of starting points, reachable condition, distance map with parents, transitions
+/// @brief Zráta vzdialenosti od viacero bodov
+/// @param start vector štartovacích bodov
+/// @param condition funkcia, ktorá vráti true ak sa dá pohnúť z bodu a do bodu b
+/// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
+/// @param transitions povolené smery pohybu
 void bfs(std::vector<POINT> &start, bool (*condition)(POINT,POINT), std::map<POINT,std::pair<int,POINT>> &dist,std::vector<POINT> &transitions = SMERY){
     std::queue<POINT> q;
     for(auto i : start){
@@ -65,6 +69,11 @@ void bfs(std::vector<POINT> &start, bool (*condition)(POINT,POINT), std::map<POI
     }
 }
 
+/// @brief Zráta vzdialenosti od jedného bodu
+/// @param start štartovací bod
+/// @param condition funkcia, ktorá vráti true ak sa dá pohnúť z bodu a do bodu b
+/// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
+/// @param transitions povolené smery pohybu
 void bfs(POINT start, bool (*condition)(POINT,POINT), std::map<POINT,std::pair<int,POINT>> &dist,std::vector<POINT> &transitions = SMERY){
     std::vector<POINT> tmp{start};
     bfs(tmp,condition,dist,transitions);
@@ -97,10 +106,19 @@ void dijkstra(POINT start,int (*cost)(POINT,POINT),std::map<POINT,std::pair<int,
     std::vector<POINT> tmp{start};
     dijkstra(tmp,cost,dist,transitions);
 }
+
+/// @brief Zráta vzdialenosti medzi dvoma bodmi
+/// @param a prvý bod
+/// @param b druhý bod
+/// @return vzdialenosť medzi a a b
 int dist(POINT a,POINT b){
     return std::abs(a.first - b.first) + std::abs(a.second - b.second);
 }
 
+/// @brief Vypočíta cestu z destinácie a mapy vzdialeností
+/// @param end koncový bod
+/// @param dist mapa vzdialeností
+/// @return vector bodov na ceste
 std::vector<POINT> recreate_path(POINT end,std::map<POINT,std::pair<int,POINT>> &dist){
     std::vector<POINT> out;
     POINT cur = end;
@@ -113,6 +131,14 @@ std::vector<POINT> recreate_path(POINT end,std::map<POINT,std::pair<int,POINT>> 
     return out;
 }
 
+
+/// @brief Posuň sa smerom na bod end
+/// @param start začiatočný bod
+/// @param end destinácia
+/// @param condition funkcia, ktorá vráti true ak sa dá pohnúť z bodu a do bodu b
+/// @param range range lode, alebo o akú vzdialenosť sa viem posunúť naraz
+/// @param transitions povolené smery pohybu
+/// @return bod, kam sa mám posunúť tento ťah
 POINT move_to(POINT start,POINT end, bool (*condition)(POINT,POINT),int range = 1,std::vector<POINT> &transitions = SMERY){
     std::map<POINT,std::pair<int,POINT>> dist;
     bfs(start,condition,dist,transitions);

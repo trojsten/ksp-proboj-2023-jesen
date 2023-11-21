@@ -36,6 +36,7 @@ ostream& operator<<(ostream &os,const TurnType &t){
 	return os;
 }
 
+/// @brief Class reprezentujúca pozíciu s užitočnými operáciami (sčitovanie, odčitovanie, vypisovanie)
 struct XY{
 	int x,y;
 	XY(){}
@@ -87,11 +88,18 @@ struct Turn{
 };
 
 struct MoveTurn : Turn{
+	/// @brief Posunie loď
+	/// @param ship_id id lode, ktorú chceme posunúť
+	/// @param coords pozícia, na ktorú chceme loď posunúť (musí byť v dosahu)
 	MoveTurn(int ship_id,XY coords) : Turn{TurnType::MOVE,ship_id,coords}{
 	}
 };
 
 struct TradeTurn : Turn{
+	/// @brief Obchodovanie
+	/// @param ship_id id lode, ktorá obchoduje (musí byť v prístave)
+	/// @param resource typ suroviny na obchodovanie
+	/// @param amount množstvo suroviny na obchodovanie. Ak je záporné, tak predávame, ak kladné, tak kupujeme
 	TradeTurn(int ship_id,ResourceEnum resource,int amount) : Turn{TurnType::TRADE,ship_id}{
 		this->resource = static_cast<int>(resource);
 		this->amount = amount;
@@ -99,24 +107,35 @@ struct TradeTurn : Turn{
 };
 
 struct LootTurn : Turn{
+	/// @brief Lootime vrak
+	/// @param ship_id id mojej lode, ktorá lootí
+	/// @param target id vraku na lootenie
 	LootTurn(int ship_id,int target) : Turn{TurnType::LOOT,ship_id}{
 		this->target = target;
 	}
 };
 
 struct ShootTurn : Turn{
+	/// @brief Strieľame na loď
+	/// @param ship_id id mojej lode, ktorá strieľa
+	/// @param target id 
 	ShootTurn(int ship_id,int target) : Turn{TurnType::SHOOT,ship_id}{
 		this->target = target;
 	}
 };
 
 struct BuyTurn : Turn{
+	/// @brief Kúpime loď
+	/// @param ship_to_buy typ lode, ktorú chceme kúpiť
 	BuyTurn(ShipsEnum ship_to_buy) : Turn{TurnType::BUY}{
 		this->ship_to_buy = static_cast<int>(ship_to_buy);
 	}
 };
 
 struct StoreTurn : Turn{
+	/// @brief Uložíme zlato do základne (musíme byť vo svojej základni)
+	/// @param ship_id id lode, z ktorej berieme zlato
+	/// @param amount počet zlatiek, ktoré berieme, ak záporný, tak berieme zo základne, inak ukladáme do základne
 	StoreTurn(int ship_id,int amount) : Turn{TurnType::STORE,ship_id}{
 		this->amount = amount;
 	}
@@ -186,6 +205,9 @@ struct Map{
 		return coords.x >= 0 && coords.x < width && coords.y >= 0 && coords.y < height;
 	}
 
+	/// @brief Viem sa pohnút na pozíciu coords?
+	/// @param coords pozícia na overenie
+	/// @return true ak viem ísť na pozíciu coords
 	bool can_move(XY coords){
 		return inside(coords) && tiles[coords.y][coords.x].type != TileEnum::TILE_GROUND;
 	}
@@ -250,9 +272,17 @@ struct Ship{
 		resources = Resources(j["resources"]);
 		stats = ShipStats(j["stats"]);
 	}
+
+	/// @brief je loď v dosahu tejto lode?
+	/// @param target pozícia na overenie
+	/// @return true ak vieme z tejto lode strieľať na target
 	bool can_attack(XY target){
 		return stats.range >= dist(coords,target);
 	}
+
+	/// @brief vidíme na pozíciu target?
+	/// @param target pozícia na overenie
+	/// @return true ak vidíme, čo je na pozícii target
 	bool can_see(XY target){
 		return stats.range*3 >= dist(coords,target);
 	}
@@ -265,6 +295,9 @@ struct World{
 	Map mapa;
 	int gold,index;
 	World(){cerr<<"New world"<<endl;};
+
+	/// @brief Získa všetky moje lode
+	/// @return vector lodí, ktoré sú moje, teda ich viem ovládať
 	vector<Ship> my_ships(){
 		vector<Ship> out;
 		for(Ship i : ships){
