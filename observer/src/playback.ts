@@ -27,6 +27,8 @@ export default class Playback {
         console.log(data[0]);
         window.addEventListener('keydown', (e) => {
             if (e.key == ' ') {
+                e.preventDefault();
+                
                 this.togglePlay();
             }
             else if (e.key == 'ArrowRight') {
@@ -58,7 +60,7 @@ export default class Playback {
     }
 
 
-    togglePlay() {
+    togglePlay() {        
         if (this.playing) {
             this.stop();
         }
