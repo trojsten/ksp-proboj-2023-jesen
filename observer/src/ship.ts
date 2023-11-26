@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { Ship, ShipType } from './observer';
+import { Resources, Ship, ShipType } from './observer';
 import Playback from './playback';
 import Stats from './stats';
 
@@ -80,5 +80,7 @@ export default class ShipClass {
         this.ship.remove();
     }
 
-
+    setResources(resources: Resources) {
+        this.data.resources = resources;
+    }
 }

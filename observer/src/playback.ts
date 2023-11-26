@@ -110,7 +110,6 @@ export default class Playback {
         for (const ids of Object.keys(turn.ships)) {
             const id = parseInt(ids);
             const ship = turn.ships[id];
-            console.log(ship);
             updated.add(id);
             if (!this.ships[id]) {
                 this.ships[id] = new ShipClass(ship, shipLayer, 20, turn.ship_types[ship.index]);
@@ -118,6 +117,7 @@ export default class Playback {
             else {
                 this.ships[id].move(ship.x, ship.y);
                 this.ships[id].setHealth(ship.health);
+                this.ships[id].setResources(ship.resources);
                 if (ship.is_wreck) {
                     this.ships[id].setWreck();
                 }
