@@ -51,7 +51,7 @@ int main(){
 			else if(i.can_attack(ship_by_id(target).coords)){
 				turns.push_back(ShootTurn(i.index,target));
 			}else{
-				turns.push_back(MoveTurn(i.index,move_to(i.coords,ship_by_id(target).coords,condition,i.stats.max_move_range)));
+				turns.push_back(MoveTurn(i.index,move_to(i.coords,world.ships[target].coords,condition,i.stats.max_move_range)));
 			}
 		}
 		if(world.my_ships().size() < 2)
