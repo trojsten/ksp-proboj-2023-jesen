@@ -18,7 +18,6 @@ export default class Stats {
         }
 
         Stats.currentShown = ship;
-        console.log(Playback.turn);
 
         const shipType = Playback.turn.ship_types[ship.index];
         Stats.stats.innerHTML = `
@@ -51,6 +50,7 @@ export default class Stats {
         `;
         document.getElementById('closeBtn')!.addEventListener('click', () => {
             Stats.stats.innerHTML = '';
+            Stats.currentShown = null;
         })
     }
 
@@ -94,6 +94,7 @@ export default class Stats {
 
         document.getElementById('closeBtn')!.addEventListener('click', () => {
             Stats.stats.innerHTML = '';
+            Stats.currentShown = null;
         })
     }
 
@@ -173,6 +174,7 @@ export default class Stats {
 
         document.getElementById('closeBtn')!.addEventListener('click', () => {
             Stats.stats.innerHTML = '';
+            Stats.currentShown = null;
         })
     }
 

@@ -6,9 +6,10 @@ import Stats from './stats';
 
 export default class ShipClass {
     ship: Konva.Group;
+    mouseOver = false;
     constructor(private data: Ship, shipLayer: Konva.Layer, tileSize: number, type: ShipType) {
         const image = new Image();
-        image.src = `/Ships/${type}.png`;
+        image.src = `./Ships/${type}.png`;
         const konvaImage = new Konva.Group({
             y: data.y * tileSize + tileSize / 2,
             x: data.x * tileSize + tileSize / 2,
@@ -19,7 +20,21 @@ export default class ShipClass {
             listening: false,
         });
 
-        konvaImage.add(new Konva.Image({
+        konvaImage.on('mouseenter', () => {
+            this.mouseOver = true;
+            konvaImage.find('#circle')[0].opacity(1);
+        });
+        konvaImage.on('mouseleave', () => {
+            this.mouseOver = false;
+            konvaImage.find('#circle')[0].opacity(0.2);
+        });
+
+        konvaImage.add(new Konva.Circle({
+            radius: 0.8 * tileSize / 2,
+            fill: 'black',
+            opacity: 0.2,
+            id: 'circle',
+        }), new Konva.Image({
             image: image,
             x: -tileSize / 2,
             y: -tileSize / 2,
@@ -30,6 +45,14 @@ export default class ShipClass {
         konvaImage.on('click', () => {
             Stats.ShowShipStats(this.data);
         })
+        new Konva.Animation(() => {
+            if ((Stats.currentShown as Ship)?.index == this.data.index) {
+                konvaImage.find('#circle')[0].opacity(1);
+            }
+            else if ((Stats.currentShown == null || (Stats.currentShown as Ship).index != this.data.index) && !this.mouseOver) {
+                konvaImage.find('#circle')[0].opacity(0.2);
+            }
+        }).start();
         shipLayer.add(konvaImage);
         this.ship = konvaImage;
     }
@@ -82,5 +105,9 @@ export default class ShipClass {
 
     setResources(resources: Resources) {
         this.data.resources = resources;
+    }
+
+    deselect() {    
+        this.ship.find('#circle')[0].opacity(0.2);
     }
 }

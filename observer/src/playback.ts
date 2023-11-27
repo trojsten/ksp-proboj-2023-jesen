@@ -15,7 +15,7 @@ export default class Playback {
     stats: Stats;
     static turn: Turn;
     static map: GameMap;
-    constructor(private data: Turn[], private setSlider: (value: number) => void, slider: HTMLInputElement) {
+    constructor(private data: Turn[], private setSlider: (value: number) => void, slider: HTMLInputElement, private backUrl: string | null) {
         document.getElementById('forward')!.addEventListener('click', () => {
             this.next();
         });
@@ -86,6 +86,9 @@ export default class Playback {
         this.playing = true;
         this.playInterval = setInterval(() => {
             if (this.currentTurn == this.data.length - 1) {
+                if (this.backUrl) {
+                    location.replace(this.backUrl);
+                }
                 this.stop();
             }
             this.next();
