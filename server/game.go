@@ -7,7 +7,6 @@ import (
 	"image/png"
 	"math/rand"
 	"os"
-	"path"
 )
 
 type GameStats struct {
@@ -26,7 +25,7 @@ type Game struct {
 }
 
 func (g *Game) LoadMap(filename string) error {
-	f, err := os.OpenFile(path.Join("../maps", filename), os.O_RDONLY, os.ModePerm)
+	f, err := os.OpenFile(filename, os.O_RDONLY, os.ModePerm)
 	if err != nil {
 		return err
 	}
