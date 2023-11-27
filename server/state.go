@@ -40,6 +40,7 @@ func StateForPlayer(g *Game, p *Player, sendMap bool) (state State) {
 		stateHarbor.Visible = harborVisible
 		if !harborVisible {
 			stateHarbor.Storage = Resources{}
+			stateHarbor.Production = Resources{}
 		}
 
 		state.Harbors = append(state.Harbors, stateHarbor)
