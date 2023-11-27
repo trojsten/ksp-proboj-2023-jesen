@@ -87,7 +87,7 @@ func (r *Resources) Resource(id ResourceType) *int {
 }
 
 func (r *Resources) countResources() int {
-	return r.Wood + r.Stone + r.Iron + r.Gem + r.Wool + r.Hide + r.Wheat + r.Pineapple + r.Gold
+	return r.Wood + r.Stone + r.Iron + r.Gem + r.Wool + r.Hide + r.Wheat + r.Pineapple
 }
 
 func (r *Resources) empty() bool {
