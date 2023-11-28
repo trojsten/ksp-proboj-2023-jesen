@@ -71,7 +71,7 @@ typov a majú rôzne štastiky:
 + **Damage**: počet životov, ktorá loď uberá pri strielaní.
 + **Range**: vzdialenosť, na ktorú loď dovidí.
 + **MaxMoveRange**: maximálna vzdialenosť, ktorú može loď prejsť v jednom ťahu.
-+ **MaxCargo**: kapacita nákladného priestori.
++ **MaxCargo**: kapacita nákladného priestoru.
 + **Price**: koľko zlata za loď zaplatím.
 + **Yield**: aké percento surovín je pri lootovaní loď schopná extrahovať.
 + **Class**: akého typu je loď.
@@ -89,18 +89,21 @@ typov a majú rôzne štastiky:
 
 ### Suroviny
 
-| Name      | Base price  | Prod rate |
-|-----------|-------------|-----------|
-| Wood      | 1           | 10        |
-| Stone     | 2           | 5         |
-| Iron      | 5           | 2         |
-| Gem       | 10          | 1         |
-| Wool      | 3           | 3         |
-| Hide      | 5           | 2         |
-| Wheat     | 2           | 5         |
-| Pineapple | 3           | 3         |
-| ----      | ----------- | --------- |
-| Gold      | 1           | 0         |
+Suroviny, ktoré nájdeme v prístavoch majú rôznu vzácnosť. Ich cena sa však mení podľa dopytu a produkcie.
+Mení sa podľa tohto vzorca: **VZOREC**
+
+| Name      | Base price |
+|-----------|------------|
+| Wood      | 1          |
+| Stone     | 2          |
+| Wheat     | 2          |
+| Pineapple | 3          |
+| Wool      | 3          |
+| Iron      | 5          |
+| Hide      | 5          |
+| Gem       | 10         |
+|           |            |
+| Gold      | 1          |
 
 ## Hodnotenie
 
