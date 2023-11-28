@@ -3,6 +3,7 @@
 #include<bits/stdc++.h>
 #include "json.hpp"
 
+namespace common{
 using namespace std;
 using json = nlohmann::json;
 enum class TileEnum : int {TILE_WATER, TILE_GROUND, TILE_HARBOR, TILE_BASE};
@@ -36,7 +37,7 @@ ostream& operator<<(ostream &os,const TurnType &t){
 	return os;
 }
 
-/// @brief Class reprezentujúca pozíciu s užitočnými operáciami (sčitovanie, odčitovanie, vypisovanie)
+// @brief Class reprezentujúca pozíciu s užitočnými operáciami (sčitovanie, odčitovanie, vypisovanie)
 struct XY{
 	int x,y;
 	XY(){}
@@ -48,12 +49,11 @@ struct XY{
 	}
 	XY operator-(XY other){return XY(this->x - other.x,this->y - other.y);}
 	XY operator+(XY other){return XY(this->x + other.x,this->y + other.y);}
-	bool operator==(XY other){return this->x == other.x && this->y == other.y;}
+	bool operator==(const XY other)const {return this->x == other.x && this->y == other.y;}
+	bool operator!=(const XY other)const {return this->x != other.x || this->y != other.y;}
+	friend bool operator<(const XY a,const XY b){return a.x != b.x ? a.x < b.x : a.y < b.y;}
 	friend ostream& operator<<(ostream &os,const XY &a){os << a.x << " " << a.y; return os;};
 	friend int dist(const XY a,const XY b){return abs(a.x - b.x) + abs(a.y - b.y);}
-	operator pair<int,int>(){
-		return {x,y};
-	}
 };
 
 struct Turn{
@@ -132,6 +132,7 @@ struct BuyTurn : Turn{
 	}
 };
 
+
 struct StoreTurn : Turn{
 	/// @brief Uložíme zlato do základne (musíme byť vo svojej základni)
 	/// @param ship_id id lode, z ktorej berieme zlato
@@ -152,8 +153,22 @@ struct Resources{
 	int& operator[](ResourceEnum key){
 		return resources[static_cast<int>(key)];
 	}
-	// TODO
 	friend ostream& operator<<(ostream& os,const Resources &r){
+		vector<string> mapping{
+			"wood",
+			"stone",
+			"iron",
+			"gem",
+			"wool",
+			"hide",
+			"wheat",
+			"pineapple",
+			"gold"
+		};
+		os << "Resources:\n";
+		for(int i = 0;i<r.resources.size();i++){
+			os << "\t" << mapping[i] << " : " << r.resources[i] << "\n";
+		}
 		return os;
 	}
 };
@@ -168,6 +183,13 @@ struct Harbor{
 		storage = Resources(harbor_dict["storage"]);
 		visible = harbor_dict["visible"].get<bool>();
 	}
+	/// @brief Za akú cenu kúpim/predám jednu jednotku suroviny?
+	/// @param surovina
+	/// @return cena jednej jednotky suroviny
+	int resource_cost(ResourceEnum what){
+		// TODO
+		return 0;
+	}
 };
 
 template<class T>
@@ -178,6 +200,7 @@ vector<T> load(const json &j){
 	}
 	return ret;
 }
+
 
 struct Tile{
 	TileEnum type;
@@ -201,6 +224,9 @@ struct Map{
 		tiles = r["tiles"].get<vector<vector<Tile>>>();
 	}
 
+	/// @brief Sú súradnice vnútry hracej plochy?
+	/// @param coords pozícia na overenie
+	/// @return true ak je pozícia vnútry plochy
 	bool inside(XY coords){
 		return coords.x >= 0 && coords.x < width && coords.y >= 0 && coords.y < height;
 	}
@@ -213,6 +239,7 @@ struct Map{
 	}
 
 	Tile& operator[](XY coords){return tiles[coords.y][coords.x];}
+	vector<Tile>& operator[](int y){return tiles[y];}
 	friend ostream& operator<<(ostream &os,const Map &a){
 		os << "Map " << a.width << " " << a.height << endl;
 		for(auto i : a.tiles){
@@ -288,11 +315,13 @@ struct Ship{
 	}
 };
 
-
+// @brief Class reprezentujúca stav hry
 struct World{
 	vector<Harbor> harbors;
 	vector<Ship> ships;
+	/// @brief Class reprezentujúca mapu. Indexovať viete normálne mapa[y][x] alebo pomocou XY
 	Map mapa;
+	XY my_base = {-1,-1};
 	int gold,index;
 	World(){cerr<<"New world"<<endl;};
 
@@ -306,18 +335,40 @@ struct World{
 		}
 		return out;
 	}
+	/// @brief Získa referenciu na loď s daným id
+	/// @param id id hľdanej lode
+	/// @param s loď, do ktorej sa uloží výsledok
+	/// @retval `true` loď existuje
+	/// @retval `false` loď neexistuje
+	bool ship_by_id(int id,Ship &s){
+		for(Ship ship : ships){
+			if(ship.index == id){
+				s = ship;
+				return true;
+			}
+		}
+		return false;
+	}
 	friend istream& operator>>(istream& is,World& world){
 		string inp;is>>inp;
 		json data = json::parse(inp);
 		world.harbors = load<Harbor>(data["harbors"]);
 		world.ships = load<Ship>(data["ships"]);
-		if(!data["map"]["tiles"].is_null())
+		if(!data["map"]["tiles"].is_null()){
 			world.mapa = Map(data["map"]);
-		else
-			cerr<<"Mapa je null"<<endl;
+			for(int i = 0;i<world.mapa.height;i++){
+				for(int j = 0;j<world.mapa.width;j++){
+					Tile tile = world.mapa[j][i];
+					if(tile.type == TileEnum::TILE_BASE && tile.index == world.index)
+						world.my_base = {i,j};
+				}
+			}
+		}
 		world.gold = data["gold"].get<int>();
 		world.index = data["index"].get<int>();
 		return is;
 	}
 };
+}
+using namespace common;
 #endif

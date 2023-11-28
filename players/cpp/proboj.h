@@ -1,12 +1,9 @@
 #ifndef PROBOJ_H
 #define PROBOJ_H
 #include<bits/stdc++.h>
-#define POINT std::pair<int,int>
+#include "common.h"
 
-POINT operator+(POINT &a,POINT &b){
-    return {a.first + b.first,a.second + b.second};
-}
-
+// hack, aby sa dalo zistit, ci je struktura iterovatelna
 namespace detail
 {
     // To allow ADL with custom begin/end
@@ -30,6 +27,7 @@ namespace detail
 template <typename T>
 using is_iterable = decltype(detail::is_iterable_impl<T>(0));
 
+// pomocou tohto vieme vypisat lubovolnu iterovatelnu strukturu
 template<typename T>
 std::ostream& operator<< (std::ostream &os,const std::vector<T>&v){
     for(int i = 0;i < v.size();i++){
@@ -40,16 +38,29 @@ std::ostream& operator<< (std::ostream &os,const std::vector<T>&v){
     return os;
 }
 
-std::vector<POINT> SMERY{{0,1},{0,-1},{1,0},{-1,0}};
-std::vector<POINT> ADJ{{1,1},{-1,1},{1,-1},{-1,-1},{0,1},{0,-1},{1,0},{-1,0}};
+// hashovanie pairov a XY
+namespace std {
+	template<typename L,typename R>
+	struct hash<pair<L,R>>{
+		auto operator() (const pair<L,R> &m){ return 231095*m.first + m.second;}
+	};
+
+    template <>
+    struct hash<XY> {
+        auto operator() (const XY& m) const { return hash<pair<int,int>>()({m.x,m.y}); }
+    };
+}
+
+std::vector<XY> SMERY{{0,1},{0,-1},{1,0},{-1,0}};
+std::vector<XY> ADJ{{1,1},{-1,1},{1,-1},{-1,-1},{0,1},{0,-1},{1,0},{-1,0}};
 
 /// @brief Zráta vzdialenosti od viacero bodov
 /// @param start vector štartovacích bodov
 /// @param condition funkcia, ktorá vráti true ak sa dá pohnúť z bodu a do bodu b
 /// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
 /// @param transitions povolené smery pohybu
-void bfs(std::vector<POINT> &start, bool (*condition)(POINT,POINT), std::map<POINT,std::pair<int,POINT>> &dist,std::vector<POINT> &transitions = SMERY){
-    std::queue<POINT> q;
+void bfs(std::vector<XY> &start, bool (*condition)(XY,XY), std::unordered_map<XY,std::pair<int,XY>> &dist,std::vector<XY> &transitions = SMERY){
+    std::queue<XY> q;
     for(auto i : start){
         q.push(i);
         if(dist.find(i) == dist.end()){
@@ -59,7 +70,7 @@ void bfs(std::vector<POINT> &start, bool (*condition)(POINT,POINT), std::map<POI
         }
     }
     while(!q.empty()){
-        POINT nv = q.front();q.pop();
+        XY nv = q.front();q.pop();
         for(auto i : transitions){
             if(condition(nv,nv + i) && dist.find(nv + i) == dist.end()){
                 q.push(nv+i);
@@ -71,16 +82,21 @@ void bfs(std::vector<POINT> &start, bool (*condition)(POINT,POINT), std::map<POI
 
 /// @brief Zráta vzdialenosti od jedného bodu
 /// @param start štartovací bod
-/// @param condition funkcia, ktorá vráti true ak sa dá pohnúť z bodu a do bodu b
+/// @param condition funkcia, ktorá vráti true ak sa dá pohnúť z bodu A do bodu B
 /// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
-/// @param transitions povolené smery pohybu
-void bfs(POINT start, bool (*condition)(POINT,POINT), std::map<POINT,std::pair<int,POINT>> &dist,std::vector<POINT> &transitions = SMERY){
-    std::vector<POINT> tmp{start};
+/// @param transitions povolené smery pohybu (default susedné hranou)
+void bfs(XY start, bool (*condition)(XY,XY), std::unordered_map<XY,std::pair<int,XY>> &dist,std::vector<XY> &transitions = SMERY){
+    std::vector<XY> tmp{start};
     bfs(tmp,condition,dist,transitions);
 }
 
-void dijkstra(std::vector<POINT> &start,int (*cost)(POINT,POINT),std::map<POINT,std::pair<int,POINT>> &dist,std::vector<POINT> &transitions = SMERY){
-    std::priority_queue<std::pair<int,POINT>> q;
+/// @brief Zráta najkratšiu cestu z ľubovoľnej štartovnej pozície do ostatných pozícií
+/// @param start vector štartovacích bodov
+/// @param cost funkcia, ktorá vráti cenu pohybu z bodu A do bodu B
+/// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
+/// @param transitions povolené smery pohybu (default susedné hranou)
+void dijkstra(std::vector<XY> &start,int (*cost)(XY,XY),std::unordered_map<XY,std::pair<int,XY>> &dist,std::vector<XY> &transitions = SMERY){
+    std::priority_queue<std::pair<int,XY>> q;
     for(auto i : start){
         if(dist.find(i) == dist.end()){
             dist[i] = {0,i};
@@ -91,7 +107,7 @@ void dijkstra(std::vector<POINT> &start,int (*cost)(POINT,POINT),std::map<POINT,
         }
     }
     while(!q.empty()){
-        std::pair<int,POINT> nv = q.top();q.pop();
+        std::pair<int,XY> nv = q.top();q.pop();
         if(dist.find(nv.second) != dist.end()) continue;
         for(auto i : transitions){
             if(cost(nv.second,nv.second + i) != INT_MAX && dist.find(nv.second + i) == dist.end()){
@@ -102,26 +118,25 @@ void dijkstra(std::vector<POINT> &start,int (*cost)(POINT,POINT),std::map<POINT,
     }
 }
 
-void dijkstra(POINT start,int (*cost)(POINT,POINT),std::map<POINT,std::pair<int,POINT>> &dist,std::vector<POINT> &transitions = SMERY){
-    std::vector<POINT> tmp{start};
+/// @brief Zráta najkratšiu cestu z štartovnej pozície do ostatných pozícií
+/// @param start štartovný bod
+/// @param cost funkcia, ktorá vráti cenu pohybu z bodu A do bodu B
+/// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
+/// @param transitions povolené smery pohybu (default susedné hranou)
+void dijkstra(XY start,int (*cost)(XY,XY),std::unordered_map<XY,std::pair<int,XY>> &dist,std::vector<XY> &transitions = SMERY){
+    std::vector<XY> tmp{start};
     dijkstra(tmp,cost,dist,transitions);
 }
 
-/// @brief Zráta vzdialenosti medzi dvoma bodmi
-/// @param a prvý bod
-/// @param b druhý bod
-/// @return vzdialenosť medzi a a b
-int dist(POINT a,POINT b){
-    return std::abs(a.first - b.first) + std::abs(a.second - b.second);
-}
-
 /// @brief Vypočíta cestu z destinácie a mapy vzdialeností
-/// @param end koncový bod
+/// @param destination koncový bod
 /// @param dist mapa vzdialeností
-/// @return vector bodov na ceste
-std::vector<POINT> recreate_path(POINT end,std::map<POINT,std::pair<int,POINT>> &dist){
-    std::vector<POINT> out;
-    POINT cur = end;
+/// @return vector bodov na ceste (od start do end)
+std::vector<XY> recreate_path(XY destination,std::unordered_map<XY,std::pair<int,XY>> &dist){
+    std::vector<XY> out;
+    XY cur = destination;
+    if(dist.find(destination) == dist.end())
+        return {};
     while(dist[cur].second != cur){
         out.push_back(cur);
         cur = dist[cur].second;
@@ -133,16 +148,19 @@ std::vector<POINT> recreate_path(POINT end,std::map<POINT,std::pair<int,POINT>> 
 
 
 /// @brief Posuň sa smerom na bod end
-/// @param start začiatočný bod
-/// @param end destinácia
+/// @param ship loď, ktorou pohybujem
+/// @param destination cieľ
 /// @param condition funkcia, ktorá vráti true ak sa dá pohnúť z bodu a do bodu b
-/// @param range range lode, alebo o akú vzdialenosť sa viem posunúť naraz
-/// @param transitions povolené smery pohybu
+/// @param transitions povolené smery pohybu (default susedné hranou)
 /// @return bod, kam sa mám posunúť tento ťah
-POINT move_to(POINT start,POINT end, bool (*condition)(POINT,POINT),int range = 1,std::vector<POINT> &transitions = SMERY){
-    std::map<POINT,std::pair<int,POINT>> dist;
+XY move_to(Ship &ship,XY destination, bool (*condition)(XY,XY),std::vector<XY> &transitions = SMERY){
+    XY start = ship.coords;
+    int range = ship.stats.max_move_range;
+    std::unordered_map<XY,std::pair<int,XY>> dist;
     bfs(start,condition,dist,transitions);
-    std::vector<POINT> path = recreate_path(end,dist);
+    if(dist.find(destination) == dist.end())
+        return ship.coords;
+    std::vector<XY> path = recreate_path(destination,dist);
 	return path[std::min((int)path.size()-1,range)];
 }
 #endif
