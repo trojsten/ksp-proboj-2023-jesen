@@ -38,6 +38,12 @@ std::ostream& operator<< (std::ostream &os,const std::vector<T>&v){
     return os;
 }
 
+template<typename L,typename R>
+std::ostream& operator<< (std::ostream &os,const std::pair<L,R> &p){
+    os << "(" << p.first << "," << p.second<<")";
+    return os;
+}
+
 // hashovanie pairov a XY
 namespace std {
 	template<typename L,typename R>
@@ -92,7 +98,7 @@ void bfs(XY start, bool (*condition)(XY,XY), std::unordered_map<XY,std::pair<int
 
 /// @brief Zráta najkratšiu cestu z ľubovoľnej štartovnej pozície do ostatných pozícií
 /// @param start vector štartovacích bodov
-/// @param cost funkcia, ktorá vráti cenu pohybu z bodu A do bodu B
+/// @param cost funkcia, ktorá vráti cenu pohybu z bodu A do bodu B (INT_MAX ak sa nedá pohnúť)
 /// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
 /// @param transitions povolené smery pohybu (default susedné hranou)
 void dijkstra(std::vector<XY> &start,int (*cost)(XY,XY),std::unordered_map<XY,std::pair<int,XY>> &dist,std::vector<XY> &transitions = SMERY){

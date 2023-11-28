@@ -37,7 +37,7 @@ ostream& operator<<(ostream &os,const TurnType &t){
 	return os;
 }
 
-// @brief Class reprezentujúca pozíciu s užitočnými operáciami (sčitovanie, odčitovanie, vypisovanie)
+/// @brief Class reprezentujúca pozíciu s užitočnými operáciami (sčitovanie, odčitovanie, vypisovanie)
 struct XY{
 	int x,y;
 	XY(){}
@@ -315,7 +315,7 @@ struct Ship{
 	}
 };
 
-// @brief Class reprezentujúca stav hry
+/// @brief Class reprezentujúca stav hry
 struct World{
 	vector<Harbor> harbors;
 	vector<Ship> ships;

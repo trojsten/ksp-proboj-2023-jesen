@@ -28,8 +28,8 @@ int main(){
 			turns.push_back(BuyTurn(ShipsEnum::Cln));
 		for(auto i : turns){
 			cout<<i<<"\n";
-			cerr<<i<<"\n";
 		}
+		cerr << turns << endl;
 		cout << "." << endl;
 	}
 }
