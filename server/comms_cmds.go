@@ -35,7 +35,7 @@ func move(g *Game, p *Player, args string, commandedShips map[int]bool) error {
 }
 
 func price(resourceType ResourceType, amount int) int {
-	return 100/(amount+3) + BASE_PRICE[resourceType]
+	return min(100/(amount+3)+1, 4) * BASE_PRICE[resourceType]
 }
 
 func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
