@@ -167,6 +167,9 @@ class Harbor:
 
 
 class TileEnum(enum.Enum):
+    """
+    Enum, ktorý hovorí o type políčka.
+    """
     TILE_WATER = 0
     TILE_GROUND = 1
     TILE_HARBOR = 2
@@ -234,6 +237,10 @@ class Map:
         )
 
     def tile_type_at(self, pos: XY) -> "TileEnum":
+        """
+        :param pos súradnice
+        :return typ políčka na súradniciach `pos`
+        """
         return self.tiles[pos.y][pos.x].type
 
     def neighbours(self, pos: XY) -> List[XY]:
@@ -287,6 +294,10 @@ class ProbojPlayer:
         return [i for i in self.ships if i.mine]
     
     def is_occupied_by_ship(self, coord: XY) -> bool:
+        """
+        :param coord o akom políčku zisťujeme informáciu
+        :return či je políčko `coord` obsadené loďou
+        """
         for i in self.mine_ships():
             if coord == i.coords:
                 return True
@@ -295,7 +306,7 @@ class ProbojPlayer:
     @staticmethod
     def log(*args):
         """
-        Vypíše dáta do logu. Syntax je rovnaká ako print().
+        Vypíše dáta do logu. Syntax je rovnaká ako `print()`.
         """
         print(*args, file=sys.stderr, flush=True)
 

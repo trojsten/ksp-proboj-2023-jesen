@@ -5,12 +5,15 @@ from proboj import *
 
 
 class MyPlayer(ProbojPlayer):
-    def make_turn(self):
+    def make_turn(self) -> List[Turn]:
+        """
+        Sem patrí váš kod. Táto metóda by mala vrátiť pole vašich ťahov.
+        """
         self.log(self.harbors)
         self.log(self.ships)
         self.log(self.myself, self.myself.gold)
         # self.log(self.map)
-        self.log(self.is_occupied_by_ship(XY(0,0)))
+        self.log(self.is_occupied_by_ship(XY(0, 0)))
 
         moves = [
             BuyTurn(ShipsEnum.Cln),

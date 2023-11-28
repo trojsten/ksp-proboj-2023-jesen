@@ -6,10 +6,20 @@ from typing import List
 
 @dataclass
 class XY:
+    """
+    Trieda, ktorá reprezentuje súradnicu.
+    :attr x súradnica
+    :attr y súradnica
+    """
     x: int
     y: int
 
     def dist(self, other: "XY"):
+        """
+        Vypočíta vzdielanosť k inej súradnici
+        :param other druhá súradnica
+        :return vzdialenosť
+        """
         return abs(self.x - other.x) + abs(self.y - other.y)
 
     def __hash__(self):
@@ -91,6 +101,17 @@ class ShipsEnum(enum.Enum):
 
 @dataclass
 class Ship:
+    """
+    Trieda, ktorá reprezentuje loď.
+    :attr index idčko lode
+    :attr player_index komu loď patrí
+    :attr coords kde sa loď nachádza
+    :attr healt koľko má života
+    :attr is_wreck či je to vrak
+    :attr resources aké resourcies má loď. Ak ju nevidíš, tak nulové.
+    :attr resources aké stats má loď. Ak ju nevidíš, tak nulové.
+    :attr mine či je loď tvoja
+    """
     index: int
     player_index: int
     coords: XY
