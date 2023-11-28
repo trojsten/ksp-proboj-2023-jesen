@@ -14,13 +14,13 @@ func (score *Score) newKill() {
 	score.updateFinalScore()
 }
 
-func (score *Score) newSell() {
-	score.SellsToHarbor += 1
+func (score *Score) newSell(amount int) {
+	score.SellsToHarbor += amount
 	score.updateFinalScore()
 }
 
-func (score *Score) newPurchase() {
-	score.PurchasesFromHarbor += 1
+func (score *Score) newPurchase(amount int) {
+	score.PurchasesFromHarbor += amount
 	score.updateFinalScore()
 }
 
@@ -36,5 +36,5 @@ func (score *Score) updateCurrentGold(amount int) {
 
 func (score *Score) updateFinalScore() {
 	// TODO real score formula
-	score.FinalScore = score.GoldEarned + score.CurrentGold + score.Kills + score.SellsToHarbor + score.PurchasesFromHarbor
+	score.FinalScore = score.GoldEarned + score.CurrentGold + score.Kills*5 + score.SellsToHarbor/5 + score.PurchasesFromHarbor/5
 }

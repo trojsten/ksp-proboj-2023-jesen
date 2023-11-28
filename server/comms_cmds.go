@@ -88,7 +88,7 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) -= amount
 		g.Ships[shipId].Resources.Gold -= price
-		p.Score.newPurchase()
+		p.Score.newPurchase(amount)
 		p.Statistics.newPurchase(resourceId, amount)
 	} else { // we give to harbor
 		g.Runner.Log(fmt.Sprintf("(%s) try to GIVE %d pieces. Ship storage: %d", p.Name, -1*amount, *g.Ships[shipId].Resources.Resource(ResourceType(resourceId))))
@@ -102,8 +102,8 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		unitPrice := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
 		price := unitPrice * amount
 		g.Ships[shipId].Resources.Gold += price
-		p.Score.newSell()
-		p.Score.newGoldEarned(amount)
+		p.Score.newSell(amount)
+		p.Score.newGoldEarned(price)
 		p.Statistics.newSell(resourceId, amount)
 	}
 	return nil
