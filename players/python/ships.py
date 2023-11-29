@@ -1,5 +1,4 @@
 import enum
-import sys
 from dataclasses import dataclass
 from typing import List
 
@@ -11,6 +10,7 @@ class XY:
     :attr x súradnica
     :attr y súradnica
     """
+
     x: int
     y: int
 
@@ -45,19 +45,18 @@ class ResourceEnum(enum.Enum):
 
 
 class Resources:
-
-    def __init__(self, resources: dict[str: int]):
+    def __init__(self, resources: dict[str, int]):
         assert len(resources) == len(ResourceEnum)
         self.resources = [
-            resources['wood'],
-            resources['stone'],
-            resources['iron'],
-            resources['gem'],
-            resources['wool'],
-            resources['hide'],
-            resources['wheat'],
-            resources['pineapple'],
-            resources['gold'],
+            resources["wood"],
+            resources["stone"],
+            resources["iron"],
+            resources["gem"],
+            resources["wool"],
+            resources["hide"],
+            resources["wheat"],
+            resources["pineapple"],
+            resources["gold"],
         ]
 
     def __getitem__(self, key: ResourceEnum):
@@ -112,6 +111,7 @@ class Ship:
     :attr resources aké stats má loď. Ak ju nevidíš, tak nulové.
     :attr mine či je loď tvoja
     """
+
     index: int
     player_index: int
     coords: XY
