@@ -1,5 +1,5 @@
 #include "common.h"
-#include "proboj.h"
+#include "utils.h"
 using namespace std;
 
 World world;
@@ -20,9 +20,9 @@ vector<Turn> do_turn(){
 			// takto sa pohybuje smerom na suradnice 50 50
             turns.push_back(MoveTurn(ship.index,move_to(ship,{50,50},condition)));
     }
-    if(world.my_ships.size() < 3)
+    if(world.my_ships().size() < 3)
 		// takto mozes kupit lod
-        turns.push_back(BuyTurn(ShipsEnum::Cln))
+        turns.push_back(BuyTurn(ShipsEnum::Cln));
     cerr << "Takto mozete vypisovat do logov" << endl;
     cerr << turns << endl;
     return turns;
