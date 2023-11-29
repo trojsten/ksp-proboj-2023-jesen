@@ -64,7 +64,7 @@ sa priblížia k prístavu bude prístav strielať. Taktiež nie je možné stri
 ### Loď
 
 Loď sa pohybuje po mriežke. Každá loď má svoj nákladný priestor, do ktorého ukladá suroviny. Lode sú rôznych
-typov a majú rôzne parametre:
+typov a majú rôzne staty:
 
 + **MaxHealth**: počet životov, ktoré má loď.
 + **Damage**: počet životov, ktorá loď uberá pri strielaní.
