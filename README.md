@@ -90,7 +90,7 @@ typov a majú rôzne štastiky:
 ### Suroviny
 
 Suroviny, ktoré nájdeme v prístavoch majú rôznu vzácnosť. Ich cena sa však mení podľa dopytu a produkcie.
-Mení sa podľa tohto vzorca: **VZOREC**
+Mení sa podľa tohto vzorca: **cena = min(100/(amount+3)+1, 4) * BASE_PRICE[resourceType]**
 
 | Name      | Base price |
 |-----------|------------|
@@ -110,7 +110,10 @@ Mení sa podľa tohto vzorca: **VZOREC**
 Vaši boti budú hodnotení na základe týchto kritérií:
 
 + **Zarobené zlato**: počet zlata, získaného počas hry.
-+ **Aktuálne zlato**: počet zlata, ktoré akutálne má.
++ **Aktuálne zlato**: počet zlata, ktoré akutálne má v základni a lodiach.
 + **Počet zabití lodí**: počet zabitých lodí.
 + **Objem predajov**: počet surovín, ktoré predal.
 + **Objem nákupov**: počet surovín, ktoré kúpil.
+
+### Vzorec hodnotenia
+**skóre = Zarobené zlato + Aktuálne zlato + Počet zabití lodí * 5 + Objem predajov / 5 + Objem nákupov / 5**
