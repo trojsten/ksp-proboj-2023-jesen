@@ -15,17 +15,12 @@ class MyPlayer(ProbojPlayer):
         # self.log(self.map)
         self.log(self.is_occupied_by_ship(XY(0, 0)))
 
-        moves = [
-            BuyTurn(ShipsEnum.Cln),
-            StoreTurn(0, 1)
-        ]
-
+        moves = [BuyTurn(ShipsEnum.Cln)]
+        self.log(self.base)
         for ship in self.mine_ships():
-            options = []
-            for coord in self.map.neighbours(ship.coords):
-                options.append(MoveTurn(ship.index, coord))
-            moves.append(random.choice(options))
-            
+            path = Utils.bfs_path(ship.coords, self.harbors[0].coords, self.map)
+            if path:
+                moves.append(MoveTurn(ship.index, path[0]))
         self.log(moves)
 
         return moves
