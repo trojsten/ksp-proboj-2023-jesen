@@ -88,14 +88,14 @@ struct Turn {
 
 struct MoveTurn : Turn {
     /// @brief Posunie loď
-    /// @param ship_id id lode, ktorú chceme posunúť
-    /// @param coords pozícia, na ktorú chceme loď posunúť (musí byť v dosahu)
+    /// @param ship_id id lode, ktorú chceme posunúť
+    /// @param coords pozícia, na ktorú chceme loď posunúť (musí byť v dosahu)
     MoveTurn(int ship_id, XY coords) : Turn{TurnType::MOVE, ship_id, coords} {}
 };
 
 struct TradeTurn : Turn {
     /// @brief Obchodovanie
-    /// @param ship_id id lode, ktorá obchoduje (musí byť v prístave)
+    /// @param ship_id id lode, ktorá obchoduje (musí byť v prístave)
     /// @param resource typ suroviny na obchodovanie
     /// @param amount množstvo suroviny na obchodovanie. Ak je záporné, tak predávame, ak kladné,
     /// tak kupujeme
@@ -107,7 +107,7 @@ struct TradeTurn : Turn {
 
 struct LootTurn : Turn {
     /// @brief Lootime vrak
-    /// @param ship_id id mojej lode, ktorá lootí
+    /// @param ship_id id mojej lode, ktorá lootí
     /// @param target id vraku na lootenie
     LootTurn(int ship_id, int target) : Turn{TurnType::LOOT, ship_id} { this->target = target; }
 };
@@ -121,14 +121,14 @@ struct ShootTurn : Turn {
 
 struct BuyTurn : Turn {
     /// @brief Kúpime loď
-    /// @param ship_to_buy typ lode, ktorú chceme kúpiť
+    /// @param ship_to_buy typ lode, ktorú chceme kúpiť
     BuyTurn(ShipsEnum ship_to_buy) : Turn{TurnType::BUY} {
         this->ship_to_buy = static_cast<int>(ship_to_buy);
     }
 };
 
 struct StoreTurn : Turn {
-    /// @brief Uložíme zlato do základne (musíme byť vo svojej základni)
+    /// @brief Uložíme zlato do základne (musíme byť vo svojej základni)
     /// @param ship_id id lode, z ktorej berieme zlato
     /// @param amount počet zlatiek, ktoré berieme, ak záporný, tak berieme zo základne, inak
     /// ukladáme do základne

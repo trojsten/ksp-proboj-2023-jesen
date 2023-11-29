@@ -58,7 +58,7 @@ std::vector<XY> ADJ{{1, 1}, {-1, 1}, {1, -1}, {-1, -1}, {0, 1}, {0, -1}, {1, 0},
 /// @brief Zráta vzdialenosti od viacero bodov
 /// @param start vector štartovacích bodov
 /// @param condition funkcia, ktorá vráti true ak sa dá pohnúť z bodu a do bodu b
-/// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
+/// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
 /// @param transitions povolené smery pohybu
 void bfs(std::vector<XY>& start, bool (*condition)(XY, XY),
          std::unordered_map<XY, std::pair<int, XY>>& dist, std::vector<XY>& transitions = SMERY) {
@@ -86,7 +86,7 @@ void bfs(std::vector<XY>& start, bool (*condition)(XY, XY),
 /// @brief Zráta vzdialenosti od jedného bodu
 /// @param start štartovací bod
 /// @param condition funkcia, ktorá vráti true ak sa dá pohnúť z bodu A do bodu B
-/// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
+/// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
 /// @param transitions povolené smery pohybu (default susedné hranou)
 void bfs(XY start, bool (*condition)(XY, XY), std::unordered_map<XY, std::pair<int, XY>>& dist,
          std::vector<XY>& transitions = SMERY) {
