@@ -72,7 +72,7 @@ class Resources:
 class ShipClass(enum.Enum):
     SHIP_TRADE = 0
     SHIP_ATTACK = 1
-    SHIP_LOOT = 1
+    SHIP_LOOT = 2
 
 
 @dataclass
