@@ -12,7 +12,7 @@ const HARBOR_BASE_HEAL = 1
 
 const WRECK_REMOVE_DAMAGE = -5
 
-const SHIP_SEE_RANGE = 3
+const SHIP_SEE_RANGE = 8
 const NEW_PLAYER_GOLD = 50
 
 const MOVE = "MOVE"

@@ -1,4 +1,10 @@
 [
-{"gamefolder":"hra",
- "players":[ "attack_loot","obet"],
- "args":"mapa.png"}]
+  {
+    "gamefolder": "game",
+    "players": [
+      "first",
+      "second"
+    ],
+    "args": "../maps/1.png"
+  }
+]

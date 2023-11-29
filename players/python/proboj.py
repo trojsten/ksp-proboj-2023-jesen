@@ -159,6 +159,19 @@ class Harbor:
             harbors.append(harbor)
         return harbors
 
+    def resource_cost(self, resource: ResourceEnum):
+        """
+        :param respi
+        return: cenu suroviny vo viditeľnom prístave.
+        Ak je funkcia volaný pre neviditeľný prístav, vráti základnú cenu.
+        """
+        base_price = [1, 2, 5, 10, 3, 5, 2, 3, 1]
+        if not self.visible:
+            return base_price[resource.value]
+        return int(
+            min(100 / (self.storage[resource] + 3) + 1, 4) * base_price[resource.value]
+        )
+
     def __str__(self):
         return f"Harbor({self.coords})"
 
@@ -167,6 +180,10 @@ class Harbor:
 
 
 class TileEnum(enum.Enum):
+    """
+    Enum, ktorý hovorí o type políčka.
+    """
+
     TILE_WATER = 0
     TILE_GROUND = 1
     TILE_HARBOR = 2
@@ -192,7 +209,7 @@ class Tile:
         )
 
     def __str__(self):
-        tiles = ['~', 'O', 'H', 'B']
+        tiles = ["~", "O", "H", "B"]
         return tiles[self.type.value]
 
     @classmethod
@@ -234,6 +251,10 @@ class Map:
         )
 
     def tile_type_at(self, pos: XY) -> "TileEnum":
+        """
+        :param pos súradnice
+        :return typ políčka na súradniciach `pos`
+        """
         return self.tiles[pos.y][pos.x].type
 
     def neighbours(self, pos: XY) -> List[XY]:
@@ -247,6 +268,7 @@ class Map:
                 if self.tiles[new_y][new_x].type != TileEnum.TILE_GROUND:
                     out.append(XY(new_x, new_y))
         return out
+
 
 class Player:
     """
@@ -278,6 +300,7 @@ class ProbojPlayer:
         self.harbors: List[Harbor]
         self.ships: List[Ship]
         self.myself: Player
+        self.base = XY(0, 0)
         self._myself: int
 
     def mine_ships(self) -> List[Ship]:
@@ -285,8 +308,12 @@ class ProbojPlayer:
         :return: pole lodí, ktoré patria tebe
         """
         return [i for i in self.ships if i.mine]
-    
+
     def is_occupied_by_ship(self, coord: XY) -> bool:
+        """
+        :param coord o akom políčku zisťujeme informáciu
+        :return či je políčko `coord` obsadené loďou
+        """
         for i in self.mine_ships():
             if coord == i.coords:
                 return True
@@ -295,7 +322,7 @@ class ProbojPlayer:
     @staticmethod
     def log(*args):
         """
-        Vypíše dáta do logu. Syntax je rovnaká ako print().
+        Vypíše dáta do logu. Syntax je rovnaká ako `print()`.
         """
         print(*args, file=sys.stderr, flush=True)
 
@@ -313,11 +340,19 @@ class ProbojPlayer:
         inp = input()
         print("size of json", len(inp), file=sys.stderr, flush=True)
         state = json.loads(inp)
+        self._read_myself(state["index"], state["gold"])
         if state["map"] is not None and state["map"]["tiles"] is not None:
             self.map = Map.read_map(state["map"])
+            for i in range(self.map.width):
+                for j in range(self.map.height):
+                    if (
+                        self.map.tile_type_at(XY(i, j)) == TileEnum.TILE_BASE
+                        and self.map.tiles[j][i].index == self.myself.index
+                    ):
+                        self.base = XY(i, j)
+
         self.harbors = Harbor.read_harbors(state["harbors"])
         self.ships = Ship.read_ships(state["ships"])
-        self._read_myself(state["index"], state["gold"])
         input()
         # input()
 
@@ -347,8 +382,6 @@ class ProbojPlayer:
 
 
 class Utils:
-
-
     @classmethod
     def bfs_path(cls, start: XY, goal: XY, mapa: Map) -> List[XY] | None:
         """

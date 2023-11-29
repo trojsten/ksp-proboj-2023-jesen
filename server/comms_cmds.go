@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 func move(g *Game, p *Player, args string, commandedShips map[int]bool) error {
 	var shipId, x, y int
@@ -35,7 +38,7 @@ func move(g *Game, p *Player, args string, commandedShips map[int]bool) error {
 }
 
 func price(resourceType ResourceType, amount int) int {
-	return 100/(amount+3) + BASE_PRICE[resourceType]
+	return min(100/(amount+3)+1, 4) * BASE_PRICE[resourceType]
 }
 
 func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
@@ -88,7 +91,7 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) += amount
 		*harbor.Storage.Resource(ResourceType(resourceId)) -= amount
 		g.Ships[shipId].Resources.Gold -= price
-		p.Score.newPurchase()
+		p.Score.newPurchase(amount)
 		p.Statistics.newPurchase(resourceId, amount)
 	} else { // we give to harbor
 		g.Runner.Log(fmt.Sprintf("(%s) try to GIVE %d pieces. Ship storage: %d", p.Name, -1*amount, *g.Ships[shipId].Resources.Resource(ResourceType(resourceId))))
@@ -102,8 +105,8 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		unitPrice := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
 		price := unitPrice * amount
 		g.Ships[shipId].Resources.Gold += price
-		p.Score.newSell()
-		p.Score.newGoldEarned(amount)
+		p.Score.newSell(amount)
+		p.Score.newGoldEarned(price)
 		p.Statistics.newSell(resourceId, amount)
 	}
 	return nil
@@ -163,6 +166,14 @@ func loot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	return nil
 }
 
+func minDistanceToHarbor(g *Game, x int, y int) int {
+	res := math.MaxInt
+	for _, harbor := range g.Harbors {
+		res = min(res, dist(harbor.X, harbor.Y, x, y))
+	}
+	return res
+}
+
 func shoot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	var shipId, targetShipId int
 	_, err := fmt.Sscanf(line, "%d %d", &shipId, &targetShipId)
@@ -187,13 +198,17 @@ func shoot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 
 	distance := dist(ship.X, ship.Y, enemyShip.X, enemyShip.Y)
 	if distance <= ship.Type.Stats().Range {
-		enemyShip.Health -= g.Ships[shipId].Type.Stats().Damage
-		if enemyShip.Health < 0 {
-			p.Score.newKill()
-			p.Statistics.newKill(enemyShip.PlayerIndex)
+		if minDistanceToHarbor(g, enemyShip.X, enemyShip.Y) < HARBOUR_DAMAGE_RADIUS/2 {
+			enemyShip.Health -= g.Ships[shipId].Type.Stats().Damage
+			if enemyShip.Health < 0 {
+				p.Score.newKill()
+				p.Statistics.newKill(enemyShip.PlayerIndex)
+			}
+			p.Statistics.addDamage(enemyShip.PlayerIndex, g.Ships[shipId].Type.Stats().Damage)
+			g.Ships[targetShipId] = enemyShip
+		} else {
+			return fmt.Errorf("refuse to shoot. Enemy ship is within range of some harbor")
 		}
-		p.Statistics.addDamage(enemyShip.PlayerIndex, g.Ships[shipId].Type.Stats().Damage)
-		g.Ships[targetShipId] = enemyShip
 	} else {
 		return fmt.Errorf("enemy ship with out of range (distance: %d, range: %d)", distance, ship.Type.Stats().Range)
 	}

@@ -7,7 +7,6 @@ import (
 	"image/png"
 	"math/rand"
 	"os"
-	"path"
 )
 
 type GameStats struct {
@@ -26,7 +25,7 @@ type Game struct {
 }
 
 func (g *Game) LoadMap(filename string) error {
-	f, err := os.OpenFile(path.Join("../maps", filename), os.O_RDONLY, os.ModePerm)
+	f, err := os.OpenFile(filename, os.O_RDONLY, os.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -61,20 +60,20 @@ func (g *Game) LoadMap(filename string) error {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_GROUND, Index: -1}
 			} else if red == 255 && green == 0 && blue == 0 {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_HARBOR, Index: -1}
-				prod_likely := []int{0, 1, 1, 1, -1, -1, -1}
-				prod_unlikely := []int{0, 0, 0, 1, -1}
+				prodLikely := []int{0, 1, 1, 1, -1, -1, -1}
+				prodUnlikely := []int{0, 0, 0, 1, -1}
 				h := Harbor{
 					X: x,
 					Y: y,
 					Production: Resources{
-						Wood:      prod_likely[rand.Intn(len(prod_likely))] * (BASE_PRODUCTION[0] + rand.Intn(5)),
-						Stone:     prod_likely[rand.Intn(len(prod_likely))] * (BASE_PRODUCTION[1] + rand.Intn(5)),
-						Iron:      prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[2] + rand.Intn(5)),
-						Gem:       prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[3] + rand.Intn(5)),
-						Wool:      prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[4] + rand.Intn(5)),
-						Hide:      prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[5] + rand.Intn(5)),
-						Wheat:     prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[6] + rand.Intn(5)),
-						Pineapple: prod_unlikely[rand.Intn(len(prod_unlikely))] * (BASE_PRODUCTION[7] + rand.Intn(5)),
+						Wood:      len(g.Players) / 4 * (prodLikely[rand.Intn(len(prodLikely))] * (BASE_PRODUCTION[0] + rand.Intn(2))),
+						Stone:     len(g.Players) / 4 * (prodLikely[rand.Intn(len(prodLikely))] * (BASE_PRODUCTION[1] + rand.Intn(2))),
+						Gem:       len(g.Players) / 4 * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[3] + rand.Intn(2))),
+						Iron:      len(g.Players) / 4 * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[2] + rand.Intn(2))),
+						Wool:      len(g.Players) / 4 * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[4] + rand.Intn(2))),
+						Hide:      len(g.Players) / 4 * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[5] + rand.Intn(2))),
+						Wheat:     len(g.Players) / 4 * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[6] + rand.Intn(2))),
+						Pineapple: len(g.Players) / 4 * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[7] + rand.Intn(2))),
 						Gold:      0,
 					},
 					Storage: Resources{

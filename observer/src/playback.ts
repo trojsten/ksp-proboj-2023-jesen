@@ -15,7 +15,7 @@ export default class Playback {
     stats: Stats;
     static turn: Turn;
     static map: GameMap;
-    constructor(private data: Turn[], private setSlider: (value: number) => void, slider: HTMLInputElement) {
+    constructor(private data: Turn[], private setSlider: (value: number) => void, slider: HTMLInputElement, private backUrl: string | null) {
         document.getElementById('forward')!.addEventListener('click', () => {
             this.next();
         });
@@ -27,6 +27,8 @@ export default class Playback {
         console.log(data[0]);
         window.addEventListener('keydown', (e) => {
             if (e.key == ' ') {
+                e.preventDefault();
+                
                 this.togglePlay();
             }
             else if (e.key == 'ArrowRight') {
@@ -58,7 +60,7 @@ export default class Playback {
     }
 
 
-    togglePlay() {
+    togglePlay() {        
         if (this.playing) {
             this.stop();
         }
@@ -84,6 +86,9 @@ export default class Playback {
         this.playing = true;
         this.playInterval = setInterval(() => {
             if (this.currentTurn == this.data.length - 1) {
+                if (this.backUrl) {
+                    location.replace(this.backUrl);
+                }
                 this.stop();
             }
             this.next();
@@ -108,7 +113,6 @@ export default class Playback {
         for (const ids of Object.keys(turn.ships)) {
             const id = parseInt(ids);
             const ship = turn.ships[id];
-            console.log(ship);
             updated.add(id);
             if (!this.ships[id]) {
                 this.ships[id] = new ShipClass(ship, shipLayer, 20, turn.ship_types[ship.index]);
@@ -116,6 +120,7 @@ export default class Playback {
             else {
                 this.ships[id].move(ship.x, ship.y);
                 this.ships[id].setHealth(ship.health);
+                this.ships[id].setResources(ship.resources);
                 if (ship.is_wreck) {
                     this.ships[id].setWreck();
                 }

@@ -37,7 +37,7 @@ fileInput.addEventListener('change', async () => {
   turnSlider.style.display = 'flex';
   slider.max = game.length.toString();
   setSlider(0);
-  new Playback(game, setSlider, slider);
+  new Playback(game, setSlider, slider, null);
   fileInput.remove();
 })
 
@@ -46,7 +46,6 @@ function setSlider(value: number) {
   sliderText.innerHTML = `${value + 1} / ${slider.max}`;
   const v = (value + 1) / parseInt(slider.max) * 100;
   slider.style.background = 'linear-gradient(to right, cornflowerblue 0%, cornflowerblue ' + v + '%, #616161 ' + v + '%, #616161 100%)';
-  console.log(slider.style.background);
 }
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -57,7 +56,11 @@ if (urlParams.get('file')) {
     createCanvas('canvas', game);
     slider.max = game.length.toString();
     setSlider(0);
-    new Playback(game, setSlider, slider);
+    const playback = new Playback(game, setSlider, slider, urlParams.get('back'));
+
+    if (urlParams.get('autoplay')) {
+      playback.togglePlay();
+    }
     fileInput.remove();
   })
 }
