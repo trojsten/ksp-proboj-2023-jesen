@@ -176,7 +176,7 @@ class Harbor:
         return f"Harbor({self.coords})"
 
     def __repr__(self):
-        return "" if self.visible else "invisible" + f"Harbor({self.coords})"
+        return ("" if self.visible else "invisible") + f"Harbor({self.coords})"
 
 
 class TileEnum(enum.Enum):
