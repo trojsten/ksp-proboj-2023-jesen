@@ -1,4 +1,10 @@
 [
-{"gamefolder":"game",
- "players":["first", "second"],
- "args":"mapa.png"}]
+  {
+    "gamefolder": "game",
+    "players": [
+      "first",
+      "second"
+    ],
+    "args": "../maps/1.png"
+  }
+]
