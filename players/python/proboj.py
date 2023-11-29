@@ -165,7 +165,7 @@ class Harbor:
         return: cenu suroviny vo viditeľnom prístave.
         Ak je funkcia volaný pre neviditeľný prístav, vráti základnú cenu.
         """
-        base_price = [1, 2, 2, 3, 3, 5, 5, 10, 1]
+        base_price = [1, 2, 5, 10, 3, 5, 2, 3, 1]
         if not self.visible:
             return base_price[resource.value]
         return int(
