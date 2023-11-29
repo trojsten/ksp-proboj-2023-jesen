@@ -190,13 +190,12 @@ struct Harbor{
 		vector<int> resourceCost{
 			1,
 			2,
+			5,
+			10,
+			3,
+			5,
 			2,
-			3,
-			3,
-			3,
-			5,
-			5,
-			10
+			3
 		};
 		if(!visible)
 			return resourceCost[static_cast<int>(what)];
