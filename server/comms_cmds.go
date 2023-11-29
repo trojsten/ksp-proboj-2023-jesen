@@ -74,6 +74,9 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	}
 
 	if amount > 0 { // we take from harbor
+		if *harbor.Production.Resource(ResourceType(resourceId)) <= 0 {
+			return fmt.Errorf("cannot take resource %d from harbor, because production is not greater than 0", resourceId)
+		}
 		g.Runner.Log(fmt.Sprintf("(%s) try to TAKE %d pieces. Harbor storage: %d", p.Name, amount, *harbor.Storage.Resource(ResourceType(resourceId))))
 		amount = min(amount, *harbor.Storage.Resource(ResourceType(resourceId)))
 		g.Runner.Log(fmt.Sprintf(", so taking %d\n", amount))
@@ -82,7 +85,7 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		if price > g.Ships[shipId].Resources.Gold {
 			return fmt.Errorf("ship %d don't have enough gold to trade", shipId)
 		}
-		if g.Ships[shipId].Resources.countResources()+amount-price > g.Ships[shipId].Type.Stats().MaxCargo {
+		if g.Ships[shipId].Resources.countResources()+amount > g.Ships[shipId].Type.Stats().MaxCargo {
 			return fmt.Errorf("ship %d don't have enough cargo space to make a trade", shipId)
 		}
 		if amount == 0 {
@@ -94,6 +97,9 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		p.Score.newPurchase(amount)
 		p.Statistics.newPurchase(resourceId, amount)
 	} else { // we give to harbor
+		if *harbor.Production.Resource(ResourceType(resourceId)) >= 0 {
+			return fmt.Errorf("cannot take resource %d from harbor, because production is not lesser than 0", resourceId)
+		}
 		g.Runner.Log(fmt.Sprintf("(%s) try to GIVE %d pieces. Ship storage: %d", p.Name, -1*amount, *g.Ships[shipId].Resources.Resource(ResourceType(resourceId))))
 		amount = min(-1*amount, *g.Ships[shipId].Resources.Resource(ResourceType(resourceId)))
 		g.Runner.Log(fmt.Sprintf(", so giving %d\n", amount))
@@ -166,10 +172,13 @@ func loot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 	return nil
 }
 
-func minDistanceToHarbor(g *Game, x int, y int) int {
+func minDistanceToHarborAndBase(g *Game, x int, y int) int {
 	res := math.MaxInt
 	for _, harbor := range g.Harbors {
 		res = min(res, dist(harbor.X, harbor.Y, x, y))
+	}
+	for _, base := range g.Bases {
+		res = min(res, dist(base.X, base.Y, x, y))
 	}
 	return res
 }
@@ -198,7 +207,7 @@ func shoot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 
 	distance := dist(ship.X, ship.Y, enemyShip.X, enemyShip.Y)
 	if distance <= ship.Type.Stats().Range {
-		if minDistanceToHarbor(g, enemyShip.X, enemyShip.Y) < HARBOUR_DAMAGE_RADIUS/2 {
+		if minDistanceToHarborAndBase(g, enemyShip.X, enemyShip.Y) < HARBOUR_DAMAGE_RADIUS/2 {
 			enemyShip.Health -= g.Ships[shipId].Type.Stats().Damage
 			if enemyShip.Health < 0 {
 				p.Score.newKill()
