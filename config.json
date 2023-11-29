@@ -12,7 +12,8 @@
     }
   },
   "timeout": {
-    "py": 1
+    "py": 1,
+    "cpp":1
   },
   "disable_gzip": true
 }
