@@ -4,6 +4,12 @@ using namespace std;
 
 World world;
 
+// funkcia na pohyb moze vyzerat napriklad takto
+// z a do b sa da dostat ak b je volne policko
+bool condition(XY a,XY b){
+	return world.mapa.can_move(b);
+}
+
 vector<Turn> do_turn(){
     // sem ide vas kod
     vector<Turn> turns;
@@ -11,8 +17,8 @@ vector<Turn> do_turn(){
         if(ship.coords == world.my_base && ship.resources[ResourceEnum::Gold] == 0)
             turns.push_back(StoreTurn(ship.index,-5));
         else
-			// takto sa pohybuje
-            turns.push_back(MoveTurn(ship.index,{50,50}));
+			// takto sa pohybuje smerom na suradnice 50 50
+            turns.push_back(MoveTurn(ship.index,move_to(ship,{50,50},condition)));
     }
     if(world.my_ships.size() < 3)
 		// takto mozes kupit lod

@@ -96,44 +96,6 @@ void bfs(XY start, bool (*condition)(XY,XY), std::unordered_map<XY,std::pair<int
     bfs(tmp,condition,dist,transitions);
 }
 
-/// @brief Zráta najkratšiu cestu z ľubovoľnej štartovnej pozície do ostatných pozícií
-/// @param start vector štartovacích bodov
-/// @param cost funkcia, ktorá vráti cenu pohybu z bodu A do bodu B (INT_MAX ak sa nedá pohnúť)
-/// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
-/// @param transitions povolené smery pohybu (default susedné hranou)
-void dijkstra(std::vector<XY> &start,int (*cost)(XY,XY),std::unordered_map<XY,std::pair<int,XY>> &dist,std::vector<XY> &transitions = SMERY){
-    std::priority_queue<std::pair<int,XY>> q;
-    for(auto i : start){
-        if(dist.find(i) == dist.end()){
-            dist[i] = {0,i};
-            q.push({0,i});
-        }else{
-            dist[i].second = i;
-            q.push({-dist[i].first,i});
-        }
-    }
-    while(!q.empty()){
-        std::pair<int,XY> nv = q.top();q.pop();
-        if(dist.find(nv.second) != dist.end()) continue;
-        for(auto i : transitions){
-            if(cost(nv.second,nv.second + i) != INT_MAX && dist.find(nv.second + i) == dist.end()){
-                q.push({nv.first - cost(nv.second,nv.second + i),nv.second + i});
-                dist[nv.second+i] = {-nv.first + cost(nv.second,nv.second + i),nv.second};
-            }
-        }
-    }
-}
-
-/// @brief Zráta najkratšiu cestu z štartovnej pozície do ostatných pozícií
-/// @param start štartovný bod
-/// @param cost funkcia, ktorá vráti cenu pohybu z bodu A do bodu B
-/// @param dist mapa vzdialeností a rodičov, ktorú táto funkcia naplní
-/// @param transitions povolené smery pohybu (default susedné hranou)
-void dijkstra(XY start,int (*cost)(XY,XY),std::unordered_map<XY,std::pair<int,XY>> &dist,std::vector<XY> &transitions = SMERY){
-    std::vector<XY> tmp{start};
-    dijkstra(tmp,cost,dist,transitions);
-}
-
 /// @brief Vypočíta cestu z destinácie a mapy vzdialeností
 /// @param destination koncový bod
 /// @param dist mapa vzdialeností

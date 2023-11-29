@@ -185,10 +185,23 @@ struct Harbor{
 	}
 	/// @brief Za akú cenu kúpim/predám jednu jednotku suroviny?
 	/// @param surovina
-	/// @return cena jednej jednotky suroviny
+	/// @return cena jednej jednotky suroviny (ak na harbor nevidím, tak base cost)
 	int resource_cost(ResourceEnum what){
-		// TODO
-		return 0;
+		vector<int> resourceCost{
+			1,
+			2,
+			2,
+			3,
+			3,
+			3,
+			5,
+			5,
+			10
+		};
+		if(!visible)
+			return resourceCost[static_cast<int>(what)];
+		int ret = min(100/(storage[what]+3) + 1,4)*resourceCost[static_cast<int>(what)];
+		return ret;
 	}
 };
 
@@ -311,7 +324,7 @@ struct Ship{
 	/// @param target pozícia na overenie
 	/// @return true ak vidíme, čo je na pozícii target
 	bool can_see(XY target){
-		return stats.range*3 >= dist(coords,target);
+		return stats.range*8 >= dist(coords,target);
 	}
 };
 
