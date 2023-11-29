@@ -16,35 +16,34 @@ Mapa je mriežka.
 
 ## Herné mechaniky
 
-Pre každú loď je možné vykonať jeden z týchto úkonov.
+Pre každú loď je možné vykonať jeden z týchto úkonov - pohyb, obchodovanie, strielanie, lootovanie. Okrem toho môžeme nakupovať nové lode.
 
 ### Pohyb
 
 Každá loď sa može pohybovať po mriežke v štyroch smeroch. V jednom ťahu sa loď može pohnúť o najviac toľko
-políčok, koľko je jej dosahu (`MaxMoveRange`).
+políčok, koľko je v jej dosahu (`MaxMoveRange`).
 
 ### Obchodovanie
 
-Keď loď dorazí prístavu može s ním obochodovať. Vieme nakupovať a predávať suroviny. Ceny týchto surovín sa menia
-na základe produkcie a dopytu.
-
-### Nákup lodí
-
-Môžeme kúpiť nové lode a objavia sa v základni.
+Keď loď dorazí do prístavu, može s ním obchodovať. Vie nakupovať a predávať suroviny. Ceny týchto surovín sa menia na základe produkcie a dopytu.
 
 ### Boj
 
 Lode medzi sebou možu bojovať - strielať po sebe. Možeme strielať na lubovoľnú loď v dosahu (`Range`) lode.
-Ak na loď vystrelím a je v dosahu vždy sa trafím a vykonám poškodenie (`Damage`). Ak loď zníčím zostane po nej vrak.
+Ak na loď vystrelím a je v dosahu vždy sa trafím a vykonám poškodenie (`Damage`). Ak loď zníčím, zostane po nej vrak.
 
 ### Lootavanie
 
-Zničené lode - vraky možem lootvať. Lootavanie je však dosť náročné a teda nedostaneme celý obsah nákladného priestoru.
+Zničené lode - vraky - možem lootvať. Lootavanie je však dosť náročné a teda nedostaneme celý obsah nákladného priestoru.
 Koľko z neho naozaj dostaneme záleží na state `Yield` lootujucej lode.
 
 ### Odkladanie bohatstva
 
-Keďže lode môžu byť zničené, tak si zlato vieme odloziť aj do základne.
+Keďže lode môžu byť zničené, tak si zlato vieme odložiť aj do základne.
+
+### Nákup lodí
+
+Môžeme kúpiť nové lode. Objavia sa v základni.
 
 ## Herné objekty
 
@@ -58,14 +57,14 @@ ktoré sa k nej priblížia.
 
 ### Prístav
 
-V prístave vytvára suroviny a taktiež suroviny spotrebúva. Vieme tu suroviny nakupovať a predávať suroviny.
-V prístave neviem útočiť na iné lode. Prístav je však mierová zóna teda na všetky útočné lode, ktoré
-sa priblížia k prístavu strielať. Taktiež nie je možné strielať na žiadne lode, ktoré sú blízko prístavu.
+Prístav vytvára suroviny a taktiež suroviny spotrebúva. Vieme tu suroviny nakupovať a predávať.
+V prístave nevieme útočiť na iné lode. Prístav je však mierová zóna teda na všetky útočné lode, ktoré
+sa priblížia k prístavu bude prístav strielať. Taktiež nie je možné strielať na žiadne lode, ktoré sú blízko prístavu.
 
 ### Loď
 
 Loď sa pohybuje po mriežke. Každá loď má svoj nákladný priestor, do ktorého ukladá suroviny. Lode sú rôznych
-typov a majú rôzne štastiky:
+typov a majú rôzne parametre:
 
 + **MaxHealth**: počet životov, ktoré má loď.
 + **Damage**: počet životov, ktorá loď uberá pri strielaní.
