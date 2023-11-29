@@ -1,5 +1,5 @@
 import sys
-from typing import Tuple
+from typing import Tuple, Union
 
 try:
     import ujson as json
@@ -383,7 +383,7 @@ class ProbojPlayer:
 
 class Utils:
     @classmethod
-    def bfs_path(cls, start: XY, goal: XY, mapa: Map) -> List[XY] | None:
+    def bfs_path(cls, start: XY, goal: XY, mapa: Map) -> Union[List[XY], None]:
         """
         :return pole políčok, cez ktoré treba ísť, alebo `None`, ak sa nedá dosiahnuť
         """
