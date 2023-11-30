@@ -31,7 +31,7 @@ func StateForPlayer(g *Game, p *Player, sendMap bool) (state State) {
 
 		var harborVisible = false
 		for _, ship := range p.Ships() {
-			if ship.X == harbor.X && ship.Y == harbor.Y {
+			if dist(ship.X, ship.Y, harbor.X, harbor.Y) < ship.Type.Stats().Range {
 				harborVisible = true
 				break
 			}
