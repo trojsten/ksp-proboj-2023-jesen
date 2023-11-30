@@ -44,8 +44,10 @@ func (g *Game) LoadMap(filename string) error {
 	playerIdx := 0
 
 	g.Map.Tiles = make([][]Tile, g.Map.Height)
+	g.Map.HeatMap = make([][]int, g.Map.Height)
 	for y := 0; y < g.Map.Height; y++ {
 		g.Map.Tiles[y] = make([]Tile, g.Map.Width)
+		g.Map.HeatMap[y] = make([]int, g.Map.Width)
 
 		for x := 0; x < g.Map.Width; x++ {
 			color := im.At(im.Bounds().Min.X+x, im.Bounds().Min.Y+y)
@@ -54,6 +56,7 @@ func (g *Game) LoadMap(filename string) error {
 			green &= 255
 			blue &= 255
 
+			g.Map.HeatMap[y][x] = 0
 			if red == 0 && green == 0 && blue == 255 {
 				g.Map.Tiles[y][x] = Tile{Type: TILE_WATER, Index: -1}
 			} else if red == 0 && green == 128 && blue == 0 {
@@ -66,14 +69,14 @@ func (g *Game) LoadMap(filename string) error {
 					X: x,
 					Y: y,
 					Production: Resources{
-						Wood:      len(g.Players) * (prodLikely[rand.Intn(len(prodLikely))] * (BASE_PRODUCTION[0] + rand.Intn(2)))/4,
-						Stone:     len(g.Players) * (prodLikely[rand.Intn(len(prodLikely))] * (BASE_PRODUCTION[1] + rand.Intn(2)))/4,
-						Iron:      len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[2] + rand.Intn(2)))/4,
-						Gem:       len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[3] + rand.Intn(2)))/4,
-						Wool:      len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[4] + rand.Intn(2)))/4,
-						Hide:      len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[5] + rand.Intn(2)))/4,
-						Wheat:     len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[6] + rand.Intn(2)))/4,
-						Pineapple: len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[7] + rand.Intn(2)))/4,
+						Wood:      len(g.Players) * (prodLikely[rand.Intn(len(prodLikely))] * (BASE_PRODUCTION[0] + rand.Intn(2))) / 4,
+						Stone:     len(g.Players) * (prodLikely[rand.Intn(len(prodLikely))] * (BASE_PRODUCTION[1] + rand.Intn(2))) / 4,
+						Iron:      len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[2] + rand.Intn(2))) / 4,
+						Gem:       len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[3] + rand.Intn(2))) / 4,
+						Wool:      len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[4] + rand.Intn(2))) / 4,
+						Hide:      len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[5] + rand.Intn(2))) / 4,
+						Wheat:     len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[6] + rand.Intn(2))) / 4,
+						Pineapple: len(g.Players) * (prodUnlikely[rand.Intn(len(prodUnlikely))] * (BASE_PRODUCTION[7] + rand.Intn(2))) / 4,
 						Gold:      0,
 					},
 					Storage: Resources{
@@ -121,11 +124,17 @@ func (g *Game) LoadMap(filename string) error {
 	return nil
 }
 
+type GlobalStatistics struct {
+	Players map[string]Statistics `json:"players"`
+	HeatMap [][]int               `json:"heatmap"`
+}
+
 func (g *Game) SaveStats() error {
-	stats := map[string]Statistics{}
+	stats := GlobalStatistics{}
 	for _, player := range g.Players {
-		stats[player.Name] = player.Statistics
+		stats.Players[player.Name] = player.Statistics
 	}
+	stats.HeatMap = g.Map.HeatMap
 
 	f, err := os.Create("stats.json")
 	if err != nil {

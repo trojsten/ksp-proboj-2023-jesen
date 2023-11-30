@@ -77,6 +77,10 @@ func (g *Game) Run() error {
 			}
 		}
 
+		for _, ship := range g.Ships {
+			g.Map.HeatMap[ship.Y][ship.X] += 1
+		}
+
 		var gameToMarshall = GameStats{
 			Game: Game{
 				Map:       nil,

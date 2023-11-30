@@ -22,6 +22,7 @@ func NewPlayer(game *Game, idx int, name string) Player {
 			Damage:          map[string]int{},
 			SellsByType:     map[int]int{},
 			PurchasesByType: map[int]int{},
+			TimeByShip:      map[string]int{},
 			TimeOfResponses: 0,
 		},
 	}

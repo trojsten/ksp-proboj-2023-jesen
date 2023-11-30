@@ -42,9 +42,10 @@ func (h *Harbor) tick() {
 }
 
 type Map struct {
-	Tiles  [][]Tile `json:"tiles"`
-	Width  int      `json:"width"`
-	Height int      `json:"height"`
+	Tiles   [][]Tile `json:"tiles"`
+	Width   int      `json:"width"`
+	Height  int      `json:"height"`
+	HeatMap [][]int  `json:"-"`
 }
 
 type XY struct {

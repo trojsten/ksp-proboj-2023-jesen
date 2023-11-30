@@ -5,6 +5,7 @@ type Statistics struct {
 	Damage          map[string]int `json:"damage"`
 	SellsByType     map[int]int    `json:"sells_by_type"`
 	PurchasesByType map[int]int    `json:"purchases_by_type"`
+	TimeByShip      map[string]int `json:"time_by_ship"`
 	TimeOfResponses int64          `json:"time_of_responses"`
 }
 
@@ -41,6 +42,15 @@ func (statistics *Statistics) newPurchase(resourceId int, amount int) {
 		statistics.PurchasesByType[resourceId] += amount
 	} else {
 		statistics.PurchasesByType[resourceId] = amount
+	}
+}
+
+func (statistics *Statistics) addTimeByShip(shipType ShipType) {
+	_, ok := statistics.TimeByShip[shipType.Name()]
+	if ok {
+		statistics.TimeByShip[shipType.Name()] += 1
+	} else {
+		statistics.TimeByShip[shipType.Name()] = 1
 	}
 }
 
