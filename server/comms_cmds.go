@@ -207,7 +207,7 @@ func shoot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 
 	distance := dist(ship.X, ship.Y, enemyShip.X, enemyShip.Y)
 	if distance <= ship.Type.Stats().Range {
-		if minDistanceToHarborAndBase(g, enemyShip.X, enemyShip.Y) < HARBOUR_DAMAGE_RADIUS/2 {
+		if minDistanceToHarborAndBase(g, enemyShip.X, enemyShip.Y) > HARBOUR_DAMAGE_RADIUS/2 {
 			enemyShip.Health -= g.Ships[shipId].Type.Stats().Damage
 			if enemyShip.Health < 0 {
 				p.Score.newKill()
