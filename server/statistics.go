@@ -1,28 +1,28 @@
 package main
 
 type Statistics struct {
-	Kills           map[int]int `json:"kills"`
-	Damage          map[int]int `json:"damage"`
-	SellsByType     map[int]int `json:"sells_by_type"`
-	PurchasesByType map[int]int `json:"purchases_by_type"`
-	TimeOfResponses int64       `json:"time_of_responses"`
+	Kills           map[string]int `json:"kills"`
+	Damage          map[string]int `json:"damage"`
+	SellsByType     map[int]int    `json:"sells_by_type"`
+	PurchasesByType map[int]int    `json:"purchases_by_type"`
+	TimeOfResponses int64          `json:"time_of_responses"`
 }
 
-func (statistics *Statistics) newKill(playerIndex int) {
-	_, ok := statistics.Kills[playerIndex]
+func (statistics *Statistics) newKill(playerName string) {
+	_, ok := statistics.Kills[playerName]
 	if ok {
-		statistics.Kills[playerIndex] += 1
+		statistics.Kills[playerName] += 1
 	} else {
-		statistics.Kills[playerIndex] = 1
+		statistics.Kills[playerName] = 1
 	}
 }
 
-func (statistics *Statistics) addDamage(playerIndex int, damage int) {
-	_, ok := statistics.Damage[playerIndex]
+func (statistics *Statistics) addDamage(playerName string, damage int) {
+	_, ok := statistics.Damage[playerName]
 	if ok {
-		statistics.Damage[playerIndex] += damage
+		statistics.Damage[playerName] += damage
 	} else {
-		statistics.Damage[playerIndex] = damage
+		statistics.Damage[playerName] = damage
 	}
 }
 

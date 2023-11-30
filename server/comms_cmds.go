@@ -211,9 +211,9 @@ func shoot(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 			enemyShip.Health -= g.Ships[shipId].Type.Stats().Damage
 			if enemyShip.Health < 0 {
 				p.Score.newKill()
-				p.Statistics.newKill(enemyShip.PlayerIndex)
+				p.Statistics.newKill(g.Players[enemyShip.PlayerIndex].Name)
 			}
-			p.Statistics.addDamage(enemyShip.PlayerIndex, g.Ships[shipId].Type.Stats().Damage)
+			p.Statistics.addDamage(g.Players[enemyShip.PlayerIndex].Name, g.Ships[shipId].Type.Stats().Damage)
 			g.Ships[targetShipId] = enemyShip
 		} else {
 			return fmt.Errorf("refuse to shoot. Enemy ship is within range of some harbor")
