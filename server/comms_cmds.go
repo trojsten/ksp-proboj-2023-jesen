@@ -284,9 +284,8 @@ func store(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 				p.Gold += goldToStore
 				g.Ships[shipId].Resources.Gold -= goldToStore
 			} else {
-				var emptySpaceInShip = ship.Type.Stats().MaxCargo - ship.Resources.countResources()
-				g.Runner.Log(fmt.Sprintf("(%s) try to WITHDRAW %d golds. Player gold: %d. Space in ship: %d", p.Name, -1*amount, p.Gold, emptySpaceInShip))
-				var goldToRemove = min(min(-1*amount, p.Gold), emptySpaceInShip)
+				g.Runner.Log(fmt.Sprintf("(%s) try to WITHDRAW %d golds. Player gold: %d.", p.Name, -1*amount, p.Gold))
+				var goldToRemove = min(-1*amount, p.Gold)
 				g.Ships[shipId].Resources.Gold += goldToRemove
 				p.Gold -= goldToRemove
 			}
