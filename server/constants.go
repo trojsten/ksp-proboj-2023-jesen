@@ -1,6 +1,6 @@
 package main
 
-const MAX_ROUNDS = 250
+const MAX_ROUNDS = 500
 
 const HARBOUR_DAMAGE_RADIUS = 8
 const HARBOUR_DAMAGE = 1
