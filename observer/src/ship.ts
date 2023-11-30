@@ -26,13 +26,13 @@ export default class ShipClass {
         });
         konvaImage.on('mouseleave', () => {
             this.mouseOver = false;
-            konvaImage.find('#circle')[0].opacity(0.2);
+            konvaImage.find('#circle')[0].opacity(0.5);
         });
 
         konvaImage.add(new Konva.Circle({
             radius: 0.8 * tileSize / 2,
             fill: this.getColor(),
-            opacity: 0.2,
+            opacity: 0.5,
             id: 'circle',
         }), new Konva.Image({
             image: image,
@@ -50,7 +50,7 @@ export default class ShipClass {
                 konvaImage.find('#circle')[0].opacity(1);
             }
             else if ((Stats.currentShown == null || (Stats.currentShown as Ship).index != this.data.index) && !this.mouseOver) {
-                konvaImage.find('#circle')[0].opacity(0.2);
+                konvaImage.find('#circle')[0].opacity(0.5);
             }
         }).start();
         shipLayer.add(konvaImage);
@@ -108,7 +108,7 @@ export default class ShipClass {
     }
 
     deselect() {    
-        this.ship.find('#circle')[0].opacity(0.2);
+        this.ship.find('#circle')[0].opacity(0.5);
     }
 
     getColor() {
