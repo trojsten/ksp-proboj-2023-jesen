@@ -34,7 +34,6 @@ func handlePlayer(g *Game, p *Player) error {
 	g.Runner.Log(fmt.Sprintf("(%s) player responded in %d us", p.Name, responseTime))
 	p.Statistics.addTimeOfResponse(responseTime)
 	for _, ship := range p.Ships() {
-		ship.Type.Name()
 		p.Statistics.addTimeByShip(ship.Type)
 	}
 

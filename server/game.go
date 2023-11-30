@@ -130,7 +130,9 @@ type GlobalStatistics struct {
 }
 
 func (g *Game) SaveStats() error {
-	stats := GlobalStatistics{}
+	stats := GlobalStatistics{
+		Players: map[string]Statistics{},
+	}
 	for _, player := range g.Players {
 		stats.Players[player.Name] = player.Statistics
 	}
