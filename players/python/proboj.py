@@ -37,7 +37,7 @@ class MoveTurn(Turn):
 
 
 class TradeTurn(Turn):
-    def __init__(self, ship_id: int, resource: ResourceEnum, amount: int):
+    def __init__(self, ship_id: int, resource: Union[ResourceEnum, int], amount: int):
         """
         Trieda, ktorou dávame lodi príkaz k obchodovaniu s prístavom.
         Loď musí byť na rovnakých súradniciach ako prístav.
@@ -51,7 +51,10 @@ class TradeTurn(Turn):
         self.amount = amount
 
     def __str__(self):
-        return f"TRADE {self.ship_id} {self.resource} {self.amount}"
+        resource = self.resource
+        if isinstance(resource, ResourceEnum):
+            resource = resource.value
+        return f"TRADE {self.ship_id} {resource} {self.amount}"
 
     def __repr__(self):
         return str(self)
