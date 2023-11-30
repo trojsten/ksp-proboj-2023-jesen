@@ -335,6 +335,7 @@ struct World {
         json data = json::parse(inp);
         world.harbors = load<Harbor>(data["harbors"]);
         world.ships = load<Ship>(data["ships"]);
+        world.index = data["index"].get<int>();
         if (!data["map"]["tiles"].is_null()) {
             world.mapa = Map(data["map"]);
             for (int i = 0; i < world.mapa.height; i++) {
@@ -346,7 +347,6 @@ struct World {
             }
         }
         world.gold = data["gold"].get<int>();
-        world.index = data["index"].get<int>();
         return is;
     }
 };
