@@ -20,6 +20,7 @@ export default class Stats {
         Stats.currentShown = ship;
 
         const shipType = Playback.turn.ship_types[ship.index];
+        const playerName = Playback.turn.players.find((player) => player.index === ship.player_index)!.name;
         Stats.stats.innerHTML = `
             <div class="stats">
                 <button class="close" id="closeBtn">
@@ -28,7 +29,7 @@ export default class Stats {
                 ${ship.is_wreck ? `
                     <h1>Wreck</h1>
                     ` : `
-                        <h1>${shipType} ${ship.index} (${Playback.turn.players[ship.player_index].name})</h1>
+                        <h1>${shipType} ${ship.index} (${playerName})</h1>
                         <div class="health">
                             <div class="bar" style="width:${ship.health / shipTypeHealth[shipType] * 100}%;"></div>
                             <p>${ship.health} / ${shipTypeHealth[shipType]}</p>
