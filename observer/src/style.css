@@ -223,3 +223,16 @@ input[type="range"]{
   text-align: center;
   color: #242424;
 }
+
+.player-pill {
+  width: 1rem;
+  height: 1rem;
+  margin: 0.3rem;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.player-name {
+  display: flex;
+  align-items: center;
+}

@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { Resources, Ship, ShipType } from './observer';
+import { Resources, Ship, ShipType, stringToColour } from './observer';
 import Playback from './playback';
 import Stats from './stats';
 
@@ -31,7 +31,7 @@ export default class ShipClass {
 
         konvaImage.add(new Konva.Circle({
             radius: 0.8 * tileSize / 2,
-            fill: 'black',
+            fill: this.getColor(),
             opacity: 0.2,
             id: 'circle',
         }), new Konva.Image({
@@ -109,5 +109,11 @@ export default class ShipClass {
 
     deselect() {    
         this.ship.find('#circle')[0].opacity(0.2);
+    }
+
+    getColor() {
+        const playerName = Playback.turn.players[this.data.player_index].name;
+        return stringToColour(playerName);
+        
     }
 }

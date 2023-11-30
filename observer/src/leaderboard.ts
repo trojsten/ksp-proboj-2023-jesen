@@ -1,4 +1,4 @@
-import { Player } from "./observer";
+import { Player, stringToColour } from "./observer";
 
 export function leaderboard(players: Player[]) {
     const parent = document.querySelector<HTMLDivElement>('#leaderboard')!;
@@ -9,7 +9,10 @@ export function leaderboard(players: Player[]) {
         return `
             <div class="player">
                 <header>
-                    <p>${player.name}</p>
+                    <div class="player-name">
+                        <div class="player-pill" style="background-color: ${stringToColour(player.name)}"></div>
+                        <p>${player.name}</p>
+                    </div>
                     <p>${player.score.final_score}</p>
                 </header>
                 <div class="data">
