@@ -35,5 +35,5 @@ func (score *Score) updateCurrentGold(amount int) {
 }
 
 func (score *Score) updateFinalScore() {
-	score.FinalScore = (score.GoldEarned + score.CurrentGold + score.Kills*5 + score.SellsToHarbor/5 + score.PurchasesFromHarbor/5) - NEW_PLAYER_GOLD
+	score.FinalScore = (score.GoldEarned + score.CurrentGold + score.Kills*500 + score.SellsToHarbor/5 + score.PurchasesFromHarbor/5) - NEW_PLAYER_GOLD
 }
