@@ -55,7 +55,6 @@ export function createMap(mapLayer: Konva.Layer, shipLayer: Konva.Layer, map: Ga
                 if (dirs.length === 0) {
                     img.src = "./mapImages/water.png";
                 } else {
-
                     img.src = "./mapImages/water-" + dirs.join(',') + ".png";
                 }
             }
