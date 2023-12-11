@@ -22,5 +22,5 @@ const SHOOT = "SHOOT"
 const BUY = "BUY"
 const STORE = "STORE"
 
-var BASE_PRODUCTION = [...]int{10, 5, 2, 1, 3, 2, 5, 3, 0}
+var BASE_PRODUCTION = [...]int{6, 3, 2, 1, 2, 2, 3, 3, 0}
 var BASE_PRICE = [...]int{1, 2, 5, 10, 3, 5, 2, 3, 1}
