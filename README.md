@@ -12,7 +12,7 @@ ostatných hráčov tým najbohatším z nich.
 Mapa je rozdelená na dve časti - more a zem. Po mori sa, samozrejme, budete pohybovať loďami.
 Na súši sa nachádzajú základne hráčov a prístavy.
 
-Mapa je mriežka.
+Mapa je mriežka, po ktorej sa viete pohybovať v štyroch smeroch. 
 
 ## Herné mechaniky
 
@@ -20,12 +20,25 @@ Pre každú loď je možné vykonať jeden z týchto úkonov - pohyb, obchodovan
 
 ### Pohyb
 
-Každá loď sa može pohybovať po mriežke v štyroch smeroch. V jednom ťahu sa loď može pohnúť o najviac toľko
-políčok, koľko je v jej dosahu (`MaxMoveRange`).
+Každá loď sa može pohybovať po mriežke v štyroch smeroch. 
+
+V jednom ťahu sa loď može pohnúť o najviac toľko
+políčok, koľko je v jej dosahu (`MaxMoveRange`) - táto vzdialenosť sa rátat v BFS vzdialenosť.
+
+
+Loďou sa nemôžete pohnúť na políčko, kde už je iné loď (výnimkou je prístav). 
+
+Možete však vašou loďou "preskakovať" ostatné lode alebo aj zem, všetko v rámci dosahu lode (`MaxMoveRange`) 
 
 ### Obchodovanie
 
-Keď loď dorazí do prístavu, može s ním obchodovať. Vie nakupovať a predávať suroviny. Ceny týchto surovín sa menia na základe produkcie a dopytu.
+Keď loď dorazí do prístavu, može s ním obchodovať. Vie nakupovať a predávať suroviny. 
+
+Ceny týchto surovín sa menia na základe produkcie a dopytu. 
+
+Prístav však nechce suroviny, ktoré mu netreba - dajú sa mu predať len tie, ktoré konzumuje. 
+
+Keď nakupujem alebo predávam tak sa na celú transakciu aplikuje cena vzhľadom na stav sladku na jej začiatku.
 
 ### Boj
 
@@ -41,9 +54,11 @@ Koľko z neho naozaj dostaneme záleží na state `Yield` lootujucej lode.
 
 Keďže lode môžu byť zničené, tak si zlato vieme odložiť aj do základne.
 
+Zo základne si vieme uložené zlato znova vybrať.
+
 ### Nákup lodí
 
-Môžeme kúpiť nové lode. Objavia sa v základni.
+Môžeme kúpiť nové lode. Objavia sa v základni s prázdnym nákladnym priestorom. 
 
 ## Herné objekty
 
@@ -51,15 +66,25 @@ Všetky objekty, s ktorými sa počas hry interaguje.
 
 ### Základňa
 
-Základňa je miesto, kde sa spawnujú naše nakúpené lode. V základi môžem uložiť svoje goldy.
-Taktiež sa mi v základni "opravuje" poškodená loď. Základňa striela na všetky nepriateľské lode,
-ktoré sa k nej priblížia.
+Základňa je miesto, kde sa spawnujú naše nakúpené lode. 
+
+V základi môžem uložiť svoje goldy.
+
+Taktiež sa mi v základni "opravuje" poškodená loď. 
+
+Základňa striela na všetky nepriateľské lode, ktoré sa k nej priblížia. Toto robí vo vzdialenosti štyroch políčok od seba.
 
 ### Prístav
 
-Prístav vytvára suroviny a taktiež suroviny spotrebúva. Vieme tu suroviny nakupovať a predávať.
-V prístave nevieme útočiť na iné lode. Prístav je však mierová zóna teda na všetky útočné lode, ktoré
-sa priblížia k prístavu bude prístav strielať. Taktiež nie je možné strielať na žiadne lode, ktoré sú blízko prístavu.
+Prístav vytvára suroviny a taktiež suroviny spotrebúva. Na to aby sme zistili aké suroviny predáva a aký je stav jeho skladu musíme byť priamo v prístave.
+
+Vieme tu suroviny nakupovať a predávať.
+
+V prístave nevieme útočiť na iné lode. 
+
+Prístav je však mierová zóna teda na všetky útočné lode, ktoré
+sa priblížia k prístavu bude prístav strielať. Toto robí vo vzdialenosti ôsmich políčok od seba.
+Taktiež nie je možné strielať na žiadne lode, ktoré sú blízko prístavu. Platí to pre lode, ktoré sú bližšie ako štyry políčka k prístavu.
 
 ### Loď
 
@@ -115,4 +140,4 @@ Vaši boti budú hodnotení na základe týchto kritérií:
 + **Objem nákupov**: počet surovín, ktoré kúpil.
 
 ### Vzorec hodnotenia
-**skóre = Zarobené zlato + Aktuálne zlato + Počet zabití lodí * 5 + Objem predajov / 5 + Objem nákupov / 5**
+**skóre = Zarobené zlato + Aktuálne zlato + Počet zabití lodí * 500 + Objem predajov / 5 + Objem nákupov / 5**
