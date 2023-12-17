@@ -1,8 +1,26 @@
 # ksp-proboj-2023-jesen
+
 # Čo je to Proboj a ako funguje? 
+
 Proboj, skratka pre progamátorský boj, je aktivita z KSP sústredení, kde hráči (vy) programujú vlastného bota, ktorý
 súťazí v predom pripravenej hre. K hre je taktiež pripravený template bota, ktorý zvláda komunikáciu so serverom a nejaké
 užitočné funkcie. Taktiež obsahuje veľmi jednoduchý príklad jednoduchého bota, ktorého môžete dalej upravovať.
+
+## Štruktúra/harmonogram 
+
+Počas proboja bežia hry (matche), v ktoré sa skladajú z niekoľko stovák kôl, v ktorých vaši boti hrajú. Počas tejto hry 
+(matchu) sa nemení mapa, na ktorej hráte a ani ostatní boti, proti ktorým hráte.
+
+Po každej hre (matchy) sa náhodne zvolí mapa a boti, ktorí na nej budú hrať a spustí sa hra (match).
+
+**Začiatok proboju**: XX.12.2023
+**Koniec proboju**: XX.1.2024
+
+## Ciele
+
+Zabaviť sa a vyskúsať si niečo pekné nakódiť.
+
+A pre tých kompetetívnejších z vás: Počas hry (matchu) bude váš bot získavať body za rôzne úkony (vid. pravidlá) počas hry. Tieto body sa sčítavajú medzi hrami (matchmi). Kto bude mať na konci najviac bodov, vyhráva.
 
 # Pravidlá hry
 
