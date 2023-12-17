@@ -1,11 +1,17 @@
 # ksp-proboj-2023-jesen
+# Čo je to Proboj a ako funguje? 
+Proboj, skratka pre progamátorský boj, je aktivita z KSP sústredení, kde hráči (vy) programujú vlastného bota, ktorý
+súťazí v predom pripravenej hre. K hre je taktiež pripravený template bota, ktorý zvláda komunikáciu so serverom a nejaké
+užitočné funkcie. Taktiež obsahuje veľmi jednoduchý príklad jednoduchého bota, ktorého môžete dalej upravovať.
 
-# Pravidlá
+# Pravidlá hry
 
 ## Krátky opis hry
 
 Každý hráč riadi folitlu lodí. Cieľom hry je sa stať pomocou obchovania a zabíjania
 ostatných hráčov tým najbohatším z nich.
+
+Hra sa hrá na ťahy - pre každú loď môžete v jednom ťahu urobiť jeden úkon, ktorý pridáte do zoznamu úkonov, ktoré tvoria váš ťah.
 
 ## Ako vyzerá mapa ?
 
@@ -23,8 +29,7 @@ Pre každú loď je možné vykonať jeden z týchto úkonov - pohyb, obchodovan
 Každá loď sa može pohybovať po mriežke v štyroch smeroch. 
 
 V jednom ťahu sa loď može pohnúť o najviac toľko
-políčok, koľko je v jej dosahu (`MaxMoveRange`) - táto vzdialenosť sa rátat v BFS vzdialenosť.
-
+políčok, koľko je v jej dosahu (`MaxMoveRange`) - dosah sa ráta ako BFS vzdialenosť.
 
 Loďou sa nemôžete pohnúť na políčko, kde už je iné loď (výnimkou je prístav). 
 
@@ -48,7 +53,9 @@ Ak na loď vystrelím a je v dosahu vždy sa trafím a vykonám poškodenie (`Da
 ### Lootavanie
 
 Zničené lode - vraky - možem lootvať. Lootavanie je však dosť náročné a teda nedostaneme celý obsah nákladného priestoru.
-Koľko z neho naozaj dostaneme záleží na state `Yield` lootujucej lode.
+
+Koľko z neho naozaj dostaneme záleží na state `Yield%` lootujucej lode. Z každej suroviny na lodi dostanem do nákladného
+priestoru lode, ktorá lootuje `počet suroviny*Yield%` pre každú surovinu, ktorú mala zničená loď na palube.
 
 ### Odkladanie bohatstva
 
@@ -58,7 +65,9 @@ Zo základne si vieme uložené zlato znova vybrať.
 
 ### Nákup lodí
 
-Môžeme kúpiť nové lode. Objavia sa v základni s prázdnym nákladnym priestorom. 
+Môžeme kúpiť nové lode. Objavia sa v základni hráča s prázdnym nákladnym priestorom. 
+
+Novo nakúpenej lodi môžem dávať príkazy až v nasledujúcom kole od nákupu.
 
 ## Herné objekty
 
@@ -70,9 +79,10 @@ Základňa je miesto, kde sa spawnujú naše nakúpené lode.
 
 V základi môžem uložiť svoje goldy.
 
-Taktiež sa mi v základni "opravuje" poškodená loď. 
+Taktiež sa mi v základni "opravuje" poškodená loď. Pri pobyte v základni sa lodi regeneruje 1 HP každé kolo.
 
 Základňa striela na všetky nepriateľské lode, ktoré sa k nej priblížia. Toto robí vo vzdialenosti štyroch políčok od seba.
+Základňa týmto lodiam dáva 1 damage.
 
 ### Prístav
 
@@ -84,7 +94,7 @@ V prístave nevieme útočiť na iné lode.
 
 Prístav je však mierová zóna teda na všetky útočné lode, ktoré
 sa priblížia k prístavu bude prístav strielať. Toto robí vo vzdialenosti ôsmich políčok od seba.
-Taktiež nie je možné strielať na žiadne lode, ktoré sú blízko prístavu. Platí to pre lode, ktoré sú bližšie ako štyry políčka k prístavu.
+Taktiež nie je možné strielať na žiadne lode, ktoré sú blízko prístavu. Platí to pre lode, ktoré sú bližšie ako štyry políčka k prístavu. Prístav týmto lodiam dáva 1 damage.
 
 ### Loď
 
@@ -97,19 +107,19 @@ typov a majú rôzne staty:
 + **MaxMoveRange**: maximálna vzdialenosť, ktorú može loď prejsť v jednom ťahu.
 + **MaxCargo**: kapacita nákladného priestoru.
 + **Price**: koľko zlata za loď zaplatím.
-+ **Yield**: aké percento surovín je pri lootovaní loď schopná extrahovať.
++ **Yield%**: aké percento surovín je pri lootovaní loď schopná extrahovať.
 + **Class**: akého typu je loď.
 
-| Name               | MaxHealth | Damage | Range | MaxMoveRange | MaxCargo | Price | Yield | Class  |
+| Name               | MaxHealth | Damage | Range | MaxMoveRange | MaxCargo | Price | Yield% | Class  |
 |--------------------|-----------|--------|-------|--------------|----------|-------|-------|--------|
-| Cln                | 10        | 1      | 1     | 2            | 10       | 10    | 20    | Trade  |
-| Plt                | 15        | 1      | 2     | 1            | 50       | 30    | 20    | Trade  |
-| SmallMerchantShip  | 30        | 1      | 3     | 3            | 50       | 100   | 20    | Trade  |
-| LargeMerchantShip  | 50        | 2      | 4     | 2            | 100      | 200   | 20    | Trade  |
-| SomalianPirateShip | 10        | 3      | 2     | 3            | 5        | 15    | 50    | Attack |
-| BlackPearl         | 50        | 5      | 4     | 2            | 30       | 50    | 50    | Attack |
-| SniperAttackShip   | 5         | 8      | 3     | 1            | 10       | 30    | 50    | Attack |
-| LooterScooter      | 5         | 0      | 5     | 4            | 30       | 50    | 80    | Loot   |
+| Cln                | 10        | 1      | 1     | 2            | 10       | 10    | 20 %  | Trade  |
+| Plt                | 15        | 1      | 2     | 1            | 50       | 30    | 20 %  | Trade  |
+| SmallMerchantShip  | 30        | 1      | 3     | 3            | 50       | 100   | 20 %  | Trade  |
+| LargeMerchantShip  | 50        | 2      | 4     | 2            | 100      | 200   | 20 %  | Trade  |
+| SomalianPirateShip | 10        | 3      | 2     | 3            | 5        | 15    | 50 %  | Attack |
+| BlackPearl         | 50        | 5      | 4     | 2            | 30       | 50    | 50 %  | Attack |
+| SniperAttackShip   | 5         | 8      | 3     | 1            | 10       | 30    | 50 %  | Attack |
+| LooterScooter      | 5         | 0      | 5     | 4            | 30       | 50    | 80 %  | Loot   |
 
 ### Suroviny
 
