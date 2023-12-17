@@ -150,4 +150,4 @@ Vaši boti budú hodnotení na základe týchto kritérií:
 + **Objem nákupov**: počet surovín, ktoré kúpil.
 
 ### Vzorec hodnotenia
-**skóre = Zarobené zlato + Aktuálne zlato + Počet zabití lodí * 500 + Objem predajov / 5 + Objem nákupov / 5**
+**skóre = Zarobené zlato + Aktuálne zlato / 3 + Počet zabití lodí * 500 + Objem predajov / 5 + Objem nákupov / 5**
