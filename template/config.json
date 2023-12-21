@@ -1,0 +1,23 @@
+{
+  "server": "./server",
+  "game_root": ".",
+  "players": {
+    "first": {
+      "command": "./players/python/player.py",
+      "language": "py"
+    },
+    "second": {
+      "command": "./players/cpp/player",
+      "language": "cpp"
+    },
+    "windows": {
+      "command": "C:/absolutna/cesta/ku/python.exe ../players/python/player.py",
+      "language": "py"
+    }
+  },
+  "timeout": {
+    "py": 1,
+    "cpp":1
+  },
+  "disable_gzip": true
+}
