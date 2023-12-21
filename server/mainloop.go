@@ -14,6 +14,15 @@ func (g *Game) Run() error {
 		playerOrder := rand.Perm(len(g.Players))
 		for _, i := range playerOrder {
 			player := &g.Players[i]
+
+			// Players are not paused at start, let's avoid unnecessary error messages in logs.
+			if round != 0 {
+				resp := g.Runner.ResumePlayer(player.Name)
+				if resp != client.Ok {
+					g.Runner.Log(fmt.Sprintf("error while resuming player %s: %v", player.Name, resp))
+				}
+			}
+			
 			err := sendStateToPlayer(g, player, round == 0, round, MAX_ROUNDS)
 			if err != nil {
 				g.Runner.Log(fmt.Sprintf("error while communicating with player %s: %v", player.Name, err))
@@ -28,6 +37,11 @@ func (g *Game) Run() error {
 				continue
 			}
 			player.Score.updateCurrentGold(player.CurrentGold())
+
+			resp = g.Runner.PausePlayer(player.Name)
+			if resp != client.Ok {
+				g.Runner.Log(fmt.Sprintf("error while pausing player %s: %v", player.Name, resp))
+			}
 		}
 
 		for i, _ := range g.Harbors {
