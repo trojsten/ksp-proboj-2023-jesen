@@ -9,6 +9,7 @@ type Player struct {
 	Score      Score  `json:"score"`
 	Statistics Statistics
 	game       *Game
+	died bool
 }
 
 func NewPlayer(game *Game, idx int, name string) Player {

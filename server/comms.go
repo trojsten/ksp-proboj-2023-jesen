@@ -16,6 +16,9 @@ func sendStateToPlayer(g *Game, p *Player, sendMap bool, round int, maxRounds in
 	}
 
 	resp := g.Runner.ToPlayer(p.Name, fmt.Sprintf("ROUND %d/%d", round, maxRounds), string(data))
+	if resp == client.Died {
+		p.died = true
+	}
 	if resp != client.Ok {
 		return fmt.Errorf("response from Runner: %v", resp)
 	}
@@ -26,6 +29,9 @@ func handlePlayer(g *Game, p *Player) error {
 	start := time.Now()
 	status, resp := g.Runner.ReadPlayer(p.Name)
 	end := time.Now()
+	if status == client.Died {
+		p.died = true
+	}
 	if status != client.Ok {
 		return fmt.Errorf("(%s) response from Runner: %v", p.Name, status)
 	}

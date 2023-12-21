@@ -10,10 +10,26 @@ import (
 
 func (g *Game) Run() error {
 	for round := 0; round < MAX_ROUNDS; round++ {
+		alivePlayers := 0
+		for _, p := range g.Players {
+			if !p.died {
+				alivePlayers++
+			}
+		}
+
+		if alivePlayers <= 1 {
+			g.Runner.Log("not enough players alive, terminating the game")
+			break
+		}
+	
 		g.Runner.Log(fmt.Sprintf("started round %d", round))
 		playerOrder := rand.Perm(len(g.Players))
 		for _, i := range playerOrder {
 			player := &g.Players[i]
+
+			if player.died {
+				continue
+			}
 
 			// Players are not paused at start, let's avoid unnecessary error messages in logs.
 			if round != 0 {
@@ -38,7 +54,7 @@ func (g *Game) Run() error {
 			}
 			player.Score.updateCurrentGold(player.CurrentGold())
 
-			resp = g.Runner.PausePlayer(player.Name)
+			resp := g.Runner.PausePlayer(player.Name)
 			if resp != client.Ok {
 				g.Runner.Log(fmt.Sprintf("error while pausing player %s: %v", player.Name, resp))
 			}
