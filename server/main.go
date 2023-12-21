@@ -7,8 +7,11 @@ import (
 	"time"
 )
 
+var BuildTime = "unknown"
+
 func main() {
 	runner := client.NewRunner()
+	runner.Log(fmt.Sprintf("Started server, built on %v", BuildTime))
 	runner.Log(fmt.Sprintf("started"))
 	seed := time.Now().UnixMilli()
 	rand.Seed(seed)
