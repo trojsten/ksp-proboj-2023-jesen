@@ -106,10 +106,10 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 		if amount == 0 {
 			return fmt.Errorf("result amount for trade is 0, so not trading")
 		}
-		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) -= amount
-		*harbor.Storage.Resource(ResourceType(resourceId)) += amount
 		unitPrice := price(ResourceType(resourceId), *harbor.Storage.Resource(ResourceType(resourceId)))
 		price := unitPrice * amount
+		*g.Ships[shipId].Resources.Resource(ResourceType(resourceId)) -= amount
+		*harbor.Storage.Resource(ResourceType(resourceId)) += amount
 		g.Ships[shipId].Resources.Gold += price
 		p.Score.newSell(amount)
 		p.Score.newGoldEarned(price)
