@@ -152,7 +152,7 @@ export default class Stats {
             return;
         }
         Stats.currentShown = base;
-        const player = Playback.turn.players[base.player];
+        const player = Playback.turn.players.find((player) => player.index === base.player)!;
         Stats.stats.innerHTML = `
             <div class="stats">
                 <button class="close" id="closeBtn">
