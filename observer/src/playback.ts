@@ -129,6 +129,8 @@ export default class Playback {
                 this.ships[id].setResources(ship.resources);
                 if (ship.is_wreck) {
                     this.ships[id].setWreck();
+                } else {
+                    this.ships[id].setAlive();
                 }
             }
         }
