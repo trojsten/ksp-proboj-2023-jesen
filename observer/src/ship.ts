@@ -112,7 +112,7 @@ export default class ShipClass {
     }
 
     getColor() {
-        const playerName = Playback.turn.players[this.data.player_index].name;
+        const playerName = Playback.getPlayer(this.data.player_index)!.name;
         return stringToColour(playerName);
         
     }

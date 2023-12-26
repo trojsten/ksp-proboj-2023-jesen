@@ -123,7 +123,7 @@ export default class Stats {
         return ships.map((ship) => {
             return `
                 <div class="ship">
-                    <p>Ship ${ship.index} (${Playback.turn.players[ship.player_index].name})</p>
+                    <p>Ship ${ship.index} (${Playback.getPlayer(ship.player_index)!.name})</p>
                     <button id="ship${ship.index}">View</button>
                 </div>
             `;
@@ -152,7 +152,7 @@ export default class Stats {
             return;
         }
         Stats.currentShown = base;
-        const player = Playback.turn.players.find((player) => player.index === base.player)!;
+        const player = Playback.getPlayer(base.player)!;
         Stats.stats.innerHTML = `
             <div class="stats">
                 <button class="close" id="closeBtn">

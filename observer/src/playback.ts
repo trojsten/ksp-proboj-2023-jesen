@@ -28,7 +28,7 @@ export default class Playback {
         window.addEventListener('keydown', (e) => {
             if (e.key == ' ') {
                 e.preventDefault();
-                
+
                 this.togglePlay();
             }
             else if (e.key == 'ArrowRight') {
@@ -54,13 +54,19 @@ export default class Playback {
         this.stats = new Stats();
     }
 
+    static getPlayer = (index: number) => {
+        return Playback.turn.players.find((player) => {
+            return player.index === index;
+        });
+    }
+
     seek(time: number) {
         this.currentTurn = time;
         this.renderTurn();
     }
 
 
-    togglePlay() {        
+    togglePlay() {
         if (this.playing) {
             this.stop();
         }
