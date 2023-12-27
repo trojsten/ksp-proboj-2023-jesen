@@ -29,12 +29,12 @@ export interface Score {
 
 export const shipTypeHealth = {
     Cln: 10,
-    Plt: 25,
-    SmallMerchantShip: 15,
+    Plt: 15,
+    SmallMerchantShip: 30,
     LargeMerchantShip: 50,
     SomalianPirateShip: 10,
     BlackPearl: 50,
-    SniperAttackShip: 15,
+    SniperAttackShip: 5,
     LooterScooter: 5,
 }
 
