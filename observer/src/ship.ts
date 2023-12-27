@@ -95,6 +95,13 @@ export default class ShipClass {
         this.ship.opacity(0.2);
     }
 
+    setAlive() {
+        if (this.data.is_wreck) {
+            this.data.is_wreck = false;
+            this.ship.opacity(1);
+        }
+    }
+
     setHealth(health: number) {
         this.data.health = health;
     }
@@ -112,7 +119,7 @@ export default class ShipClass {
     }
 
     getColor() {
-        const playerName = Playback.turn.players[this.data.player_index].name;
+        const playerName = Playback.getPlayer(this.data.player_index)!.name;
         return stringToColour(playerName);
         
     }
