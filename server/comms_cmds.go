@@ -63,9 +63,9 @@ func trade(g *Game, p *Player, line string, commandedShips map[int]bool) error {
 
 	var harbor *Harbor = nil
 
-	for _, h := range g.Harbors {
+	for i, h := range g.Harbors {
 		if h.X == g.Ships[shipId].X && h.Y == g.Ships[shipId].Y {
-			harbor = &h
+			harbor = &g.Harbors[i]
 			break
 		}
 	}
