@@ -8,9 +8,9 @@ from collections import deque
 import sys
 
 
-map_x, map_y = int(sys.argv[1]), int(sys.argv[1])
+map_x, map_y = int(sys.argv[1]), int(sys.argv[2])
 player_count = int(sys.argv[3])
-harbor_count = player_count * 3
+harbor_count = int(sys.argv[4])
 total_count = player_count + harbor_count
 base_range = 4
 chosen_pixels = set()
@@ -125,8 +125,10 @@ while len(chosen_pixels)<(player_count+harbor_count):
     chosen_pixels = set()
 
     c+=1
-    seed = np.random.randint(0, 250)
-
+    seed = np.random.randint(0, 2048)
+    scale = np.random.randint(25, 40)
+    persistence = np.random.uniform(0.3,0.5)
+    lacunarity = np.random.uniform(2,3)
     world_map, island_centers = generate_perlin_noise(
         width, height, scale, octaves, persistence, lacunarity, seed
     )
@@ -159,4 +161,4 @@ while len(chosen_pixels)<(player_count+harbor_count):
 
     # Display the image
     # image.show()
-image.save(sys.argv[4])
+image.save(sys.argv[5])
