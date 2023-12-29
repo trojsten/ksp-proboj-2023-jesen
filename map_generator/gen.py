@@ -10,8 +10,10 @@ import sys
 
 map_x, map_y = int(sys.argv[1]), int(sys.argv[1])
 player_count = int(sys.argv[3])
-harbor_count = player_count * 2
-base_range = 5
+harbor_count = player_count * 3
+total_count = player_count + harbor_count
+base_range = 4
+chosen_pixels = set()
 
 
 def generate_perlin_noise(width, height, scale, octaves, persistence, lacunarity, seed):
@@ -71,11 +73,12 @@ def find_harbor_coordinates(world_map):
 
 def fill_pixels(image, possible_coordinates, count, color, distance):
     """Fills the pixels on final image. Used for bases and harbors."""
-    chosen_pixels = set()
+    tries = 0
     possible_coordinates = list(possible_coordinates)
-    while len(chosen_pixels) < count:
+    while len(chosen_pixels) < count and tries<len(possible_coordinates):
         base_coordinate = random.choice(possible_coordinates)
         dist_ok = True
+        tries+=1
         for i in chosen_pixels:
             dist = math.hypot(base_coordinate[0] - i[0], base_coordinate[1] - i[1])
             if dist < distance:
@@ -116,37 +119,44 @@ scale = 30.0  # Adjust the scale for Perlin noise (smaller scale for more island
 octaves = 2
 persistence = 0.4
 lacunarity = 2.5
-seed = np.random.randint(0, 250)
+c = 0
+while len(chosen_pixels)<(player_count+harbor_count):
+    print("Starting try",c)
+    chosen_pixels = set()
 
-world_map, island_centers = generate_perlin_noise(
-    width, height, scale, octaves, persistence, lacunarity, seed
-)
+    c+=1
+    seed = np.random.randint(0, 250)
 
-# Create a custom colormap for land and ocean
-custom_cmap = ListedColormap(["blue", "green"])
+    world_map, island_centers = generate_perlin_noise(
+        width, height, scale, octaves, persistence, lacunarity, seed
+    )
 
-# Apply the colormap to the world map
-colored_map = apply_colormap(world_map, custom_cmap)
+    # Create a custom colormap for land and ocean
+    custom_cmap = ListedColormap(["blue", "green"])
 
-# Convert the world map to an imagex
-image = Image.fromarray(colored_map, mode="RGBA")
+    # Apply the colormap to the world map
+    colored_map = apply_colormap(world_map, custom_cmap)
 
-# Find and mark harbor coordinates as red dots
-possible_coordinates = find_harbor_coordinates(colored_map)
+    # Convert the world map to an imagex
+    image = Image.fromarray(colored_map, mode="RGBA")
 
-print(
-    "Generated",
-    fill_pixels(image, possible_coordinates, harbor_count, (255, 0, 0, 255), 3),
-    "harbor pixels",
-)
-print(
+    # Find and mark harbor coordinates as red dots
+    possible_coordinates = find_harbor_coordinates(colored_map)
+    print(
     "Generated",
     fill_pixels(
         image, possible_coordinates, player_count, (255, 255, 255, 255), base_range
     ),
     "base pixels",
-)
+    )
 
-# Display the image
-# image.show()
+    print(
+        "Generated",
+        fill_pixels(image, possible_coordinates, total_count, (255, 0, 0, 255), 8)-player_count,
+        "harbor pixels",
+    )
+
+
+    # Display the image
+    # image.show()
 image.save(sys.argv[4])
