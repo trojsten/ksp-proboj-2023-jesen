@@ -21,7 +21,7 @@ func (g *Game) Run() error {
 			g.Runner.Log("not enough players alive, terminating the game")
 			break
 		}
-	
+
 		g.Runner.Log(fmt.Sprintf("started round %d", round))
 		playerOrder := rand.Perm(len(g.Players))
 		for _, i := range playerOrder {
@@ -38,7 +38,7 @@ func (g *Game) Run() error {
 					g.Runner.Log(fmt.Sprintf("error while resuming player %s: %v", player.Name, resp))
 				}
 			}
-			
+
 			err := sendStateToPlayer(g, player, round == 0, round, MAX_ROUNDS)
 			if err != nil {
 				g.Runner.Log(fmt.Sprintf("error while communicating with player %s: %v", player.Name, err))
@@ -68,7 +68,7 @@ func (g *Game) Run() error {
 		for _, harbor := range g.Harbors {
 			for _, ship := range g.Ships {
 				if ship.Type.Stats().Class == SHIP_ATTACK {
-					if dist(harbor.X, harbor.Y, ship.X, ship.Y) < HARBOUR_DAMAGE_RADIUS {
+					if dist(harbor.X, harbor.Y, ship.X, ship.Y) <= HARBOUR_DAMAGE_RADIUS {
 						ship.Health -= HARBOUR_DAMAGE
 						g.Runner.Log(fmt.Sprintf("attack ship %d was near harbour, so applying HARBOUR_DAMAGE", ship.Id))
 					}
@@ -79,7 +79,7 @@ func (g *Game) Run() error {
 		for _, base := range g.Bases {
 			for _, ship := range g.Ships {
 				if ship.PlayerIndex != base.PlayerIndex {
-					if dist(base.X, base.Y, ship.X, ship.Y) < BASE_DAMAGE_RADIUS {
+					if dist(base.X, base.Y, ship.X, ship.Y) <= BASE_DAMAGE_RADIUS {
 						ship.Health -= BASE_DAMAGE
 						g.Runner.Log(fmt.Sprintf("ship %d from player \"%s\" was near base of player \"%s\", so applying BASE_DAMAGE", ship.Id, g.Players[ship.PlayerIndex].Name, g.Players[base.PlayerIndex].Name))
 					}
