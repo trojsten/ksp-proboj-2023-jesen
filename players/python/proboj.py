@@ -172,7 +172,7 @@ class Harbor:
         if not self.visible:
             return base_price[resource.value]
         return int(
-            min(100 / (self.storage[resource] + 3) + 1, 4) * base_price[resource.value]
+            min(100 // (self.storage[resource] + 3) + 1, 4) * base_price[resource.value]
         )
 
     def __str__(self):
